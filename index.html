@@ -32,7 +32,109 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2.1.0">
+
+    <!-- Bulletproof Inline Styling Fallback -->
+    <style>
+        :root {
+            --bg-dark: #07090E;
+            --sidebar-bg: #0B0E17;
+            --content-bg: #0F1420;
+            --card-bg: #141A29;
+            --border-color: rgba(51, 65, 85, 0.45);
+            --cyan: #00F0FF;
+            --gold: #E5B958;
+            --white: #FFFFFF;
+            --slate: #E2E8F0;
+            --muted: #94A3B8;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'Fira Code', 'JetBrains Mono', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { width: 100%; min-height: 100vh; background-color: var(--bg-dark); color: var(--slate); font-family: var(--font-sans); line-height: 1.8; -webkit-font-smoothing: antialiased; }
+        
+        .portal-layout { display: grid; grid-template-columns: 320px 1fr; min-height: 100vh; }
+        .portal-sidebar { background: var(--sidebar-bg); border-right: 1px solid var(--border-color); padding: 24px 20px; display: flex; flex-direction: column; height: 100vh; position: sticky; top: 0; overflow-y: auto; }
+        
+        .sidebar-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+        .pulse-indicator { width: 8px; height: 8px; border-radius: 50%; background-color: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+        .brand-title { font-family: var(--font-mono); font-size: 16px; font-weight: 800; letter-spacing: 0.2em; color: var(--white); text-decoration: none; }
+        .brand-title .gold { color: var(--gold); }
+        .sidebar-subtitle { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.2em; color: var(--gold); margin-bottom: 20px; }
+        
+        .search-box { margin-bottom: 24px; }
+        .search-box input { width: 100%; background: #04060A; border: 1px solid var(--border-color); border-radius: 4px; padding: 10px 12px; color: var(--white); font-family: var(--font-mono); font-size: 11px; outline: none; }
+        .search-box input:focus { border-color: var(--cyan); box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); }
+        
+        .sidebar-section { margin-bottom: 24px; }
+        .section-title { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.15em; color: var(--muted); margin-bottom: 10px; }
+        
+        .solvers-link { display: block; font-family: var(--font-mono); font-size: 11px; color: var(--cyan); text-decoration: none; padding: 8px 12px; border-radius: 4px; background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.25); margin-bottom: 8px; transition: all 0.2s ease; }
+        .solvers-link:hover { background: var(--cyan); color: #000; font-weight: 600; }
+        .gold-link { color: var(--gold) !important; background: rgba(229, 185, 88, 0.12) !important; border-color: rgba(229, 185, 88, 0.4) !important; }
+        .gold-link:hover { background: var(--gold) !important; color: #000 !important; }
+        
+        .paper-nav-list { list-style: none; }
+        .paper-nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 6px; cursor: pointer; margin-bottom: 6px; border: 1px solid transparent; transition: all 0.2s ease; }
+        .paper-nav-item:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.15); }
+        .paper-nav-item.active { background: rgba(0, 240, 255, 0.12); border-color: var(--cyan); }
+        .paper-icon { font-size: 16px; }
+        .paper-info { display: flex; flex-direction: column; }
+        .p-title { font-size: 13.5px; font-weight: 600; color: var(--white); }
+        .p-sub { font-family: var(--font-mono); font-size: 10px; color: var(--muted); }
+        .sidebar-footer { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-color); font-family: var(--font-mono); font-size: 10px; color: var(--gold); }
+        
+        .portal-content { background: var(--content-bg); padding: 36px 48px; overflow-y: auto; }
+        .content-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); margin-bottom: 36px; }
+        .header-breadcrumb { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em; color: var(--cyan); }
+        .header-actions { display: flex; align-items: center; gap: 12px; }
+        .status-badge { font-family: var(--font-mono); font-size: 10px; color: var(--gold); padding: 4px 10px; background: rgba(229, 185, 88, 0.15); border: 1px solid rgba(229, 185, 88, 0.4); border-radius: 3px; }
+        .github-btn { font-family: var(--font-mono); font-size: 11px; color: var(--white); text-decoration: none; padding: 6px 14px; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-color); border-radius: 4px; transition: all 0.2s ease; }
+        .github-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+        
+        .reader-surface { max-width: 840px; margin: 0 auto; }
+        .paper-content { display: none; }
+        .paper-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .article-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .meta-tag { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.15em; padding: 3px 8px; border-radius: 3px; }
+        .meta-tag.gold { background: rgba(229, 185, 88, 0.15); color: var(--gold); border: 1px solid rgba(229, 185, 88, 0.4); }
+        .meta-tag.cyan { background: rgba(0, 240, 255, 0.15); color: var(--cyan); border: 1px solid rgba(0, 240, 255, 0.4); }
+        .meta-date { font-family: var(--font-mono); font-size: 10px; color: var(--muted); }
+        
+        .article-title { font-size: 32px; font-weight: 800; color: var(--white); line-height: 1.25; margin-bottom: 10px; }
+        .byline { font-family: var(--font-mono); font-size: 12px; color: var(--muted); margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .lead-text { font-size: 17px; line-height: 1.85; color: var(--white); margin-bottom: 28px; }
+        
+        .section-title { font-size: 20px; font-weight: 700; color: var(--white); margin-top: 36px; margin-bottom: 16px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color); }
+        p { font-size: 15.5px; color: var(--slate); line-height: 1.85; margin-bottom: 18px; }
+        
+        mjx-container { color: var(--cyan) !important; font-size: 108% !important; }
+        .styled-list { margin-left: 20px; margin-bottom: 24px; }
+        .styled-list li { font-size: 15px; color: var(--slate); margin-bottom: 10px; }
+        .styled-list li strong { color: var(--white); }
+        
+        .code-block { background: #04060A; border: 1px solid var(--border-color); border-left: 4px solid var(--cyan); border-radius: 6px; padding: 18px 22px; margin-bottom: 24px; overflow-x: auto; }
+        .code-block pre code { font-family: var(--font-mono); font-size: 13px; color: var(--cyan); line-height: 1.6; }
+        
+        .table-wrapper { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; padding: 16px; overflow-x: auto; margin-bottom: 28px; }
+        .concept-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 12px; }
+        .concept-table th { text-align: left; padding: 10px; color: var(--cyan); font-size: 10px; letter-spacing: 0.15em; border-bottom: 1px solid var(--border-color); }
+        .concept-table td { padding: 10px; border-bottom: 1px solid rgba(51, 65, 85, 0.4); color: var(--slate); }
+        
+        .cyan { color: var(--cyan); }
+        .gold { color: var(--gold); }
+        .lineage-tree { background: #04060A; border: 1px solid var(--border-color); border-left: 4px solid var(--gold); border-radius: 6px; padding: 18px 22px; margin-bottom: 28px; font-family: var(--font-mono); font-size: 12.5px; color: var(--gold); }
+        
+        @media (max-width: 900px) {
+            .portal-layout { grid-template-columns: 1fr; }
+            .portal-sidebar { height: auto; position: relative; }
+            .portal-content { padding: 24px 20px; }
+            .article-title { font-size: 24px; }
+        }
+    </style>
 </head>
 <body>
 
@@ -75,28 +177,28 @@
                         <span class="paper-icon">🏃</span>
                         <div class="paper-info">
                             <span class="p-title">The Ultramarathon</span>
-                            <span class="p-sub">Zeta, Wigner & Ising</span>
+                            <span class="p-sub">Zeta, Wigner &amp; Ising</span>
                         </div>
                     </li>
                     <li class="paper-nav-item" data-paper="dyadic-ternary" onclick="loadPaper('dyadic-ternary')">
                         <span class="paper-icon">📐</span>
                         <div class="paper-info">
                             <span class="p-title">Dyadic-Ternary Bridge</span>
-                            <span class="p-sub">β₁ Cycle Rank & T(x)</span>
+                            <span class="p-sub">β₁ Cycle Rank &amp; T(x)</span>
                         </div>
                     </li>
                     <li class="paper-nav-item" data-paper="microstructure-chaos" onclick="loadPaper('microstructure-chaos')">
                         <span class="paper-icon">🌊</span>
                         <div class="paper-info">
-                            <span class="p-title">Microstructure & Chaos</span>
-                            <span class="p-sub">VPIN Toxicity & Almgren</span>
+                            <span class="p-title">Microstructure &amp; Chaos</span>
+                            <span class="p-sub">VPIN Toxicity &amp; Almgren</span>
                         </div>
                     </li>
                     <li class="paper-nav-item" data-paper="transfer-operator" onclick="loadPaper('transfer-operator')">
                         <span class="paper-icon">🔄</span>
                         <div class="paper-info">
                             <span class="p-title">Transfer Operator</span>
-                            <span class="p-sub">Cantor & Devil's Staircase</span>
+                            <span class="p-sub">Cantor &amp; Devil's Staircase</span>
                         </div>
                     </li>
                     <li class="paper-nav-item" data-paper="black-scholes" onclick="loadPaper('black-scholes')">
@@ -145,7 +247,7 @@
                     </div>
 
                     <h1 class="article-title">Concept Map: The Five Threshold Domains</h1>
-                    <div class="byline">N. Flyxion & P. Lodri • Axiom Quant Research Monograph</div>
+                    <div class="byline">N. Flyxion &amp; P. Lodri • Axiom Quant Research Monograph</div>
 
                     <p class="lead-text">
                         All five research areas on <strong>axiomquant.org</strong> share the same underlying mathematical structure: a critical parameter controlling a phase transition in a complex system.
@@ -217,20 +319,20 @@
                     <div class="code-block">
                         <pre><code>Graph edges ≡ Ternary weights {-1, 0, +1}
 Giant component threshold (p = 1/n) ≡ Quantization threshold (|w/scale| = 0.5)
-β₁ (cycle rank) ≡ Sparsity & topological memory</code></pre>
+β₁ (cycle rank) ≡ Sparsity &amp; topological memory</code></pre>
                     </div>
 
                     <h2 class="section-title">3. Research Lineage</h2>
                     <div class="lineage-tree">
-                        <pre><code>Erdős & Rényi (1959) — Random Graphs & Phase Transitions
+                        <pre><code>Erdős &amp; Rényi (1959) — Random Graphs &amp; Phase Transitions
     │
-    ├──→ Markowitz (1952) — Portfolio Selection & Convex Frontiers
-    ├──→ Black & Scholes (1973) — Option Pricing & Risk-Neutral Measures
-    ├──→ Rényi (1957) — β-Transformations & Symbolic Dynamics
+    ├──→ Markowitz (1952) — Portfolio Selection &amp; Convex Frontiers
+    ├──→ Black &amp; Scholes (1973) — Option Pricing &amp; Risk-Neutral Measures
+    ├──→ Rényi (1957) — β-Transformations &amp; Symbolic Dynamics
     │       └─→ Dyadic Map → BitNet b1.58 (Ma et al., 2024)
     │
     └─→ O'Hara (1995) — Market Microstructure Theory
-            └─→ Almgren & Chriss (2000) — Optimal Execution</code></pre>
+            └─→ Almgren &amp; Chriss (2000) — Optimal Execution</code></pre>
                     </div>
                 </div>
 
@@ -242,7 +344,7 @@ Giant component threshold (p = 1/n) ≡ Quantization threshold (|w/scale| = 0.5)
                     </div>
 
                     <h1 class="article-title">The Ultramarathon: Deep Mathematics of Thresholds</h1>
-                    <div class="byline">N. Flyxion & P. Lodri • Axiom Quant Research Monograph</div>
+                    <div class="byline">N. Flyxion &amp; P. Lodri • Axiom Quant Research Monograph</div>
 
                     <h2 class="section-title">1. Zeta Zeros ≡ Random Matrix Eigenvalues</h2>
                     <p>
@@ -279,14 +381,14 @@ Giant component threshold (p = 1/n) ≡ Quantization threshold (|w/scale| = 0.5)
                         <span class="meta-date">JULY 2026</span>
                     </div>
 
-                    <h1 class="article-title">Dyadic Transformation & Context Realizability</h1>
-                    <div class="byline">N. Flyxion & P. Lodri • Axiom Quant Research Monograph</div>
+                    <h1 class="article-title">Dyadic Transformation &amp; Context Realizability</h1>
+                    <div class="byline">N. Flyxion &amp; P. Lodri • Axiom Quant Research Monograph</div>
 
                     <p class="lead-text">
                         The dyadic transformation $T(x) = 2x \pmod 1$ maps the unit interval to itself, generating the canonical Bernoulli shift. When extended to context transition graphs, the cycle rank $\beta_1$ determines the exact field extension required to close holonomy.
                     </p>
 
-                    <h2 class="section-title">1. Spanning Trees & Cycle Rank</h2>
+                    <h2 class="section-title">1. Spanning Trees &amp; Cycle Rank</h2>
                     <p>
                         For any context graph $G = (V, E)$, the cycle rank is given by $\beta_1(G) = |E| - |V| + k$, where $k$ is the number of connected components.
                     </p>
@@ -304,8 +406,8 @@ Giant component threshold (p = 1/n) ≡ Quantization threshold (|w/scale| = 0.5)
                         <span class="meta-date">JULY 2026</span>
                     </div>
 
-                    <h1 class="article-title">Market Microstructure & Chaos</h1>
-                    <div class="byline">N. Flyxion & P. Lodri • Axiom Quant Research Monograph</div>
+                    <h1 class="article-title">Market Microstructure &amp; Chaos</h1>
+                    <div class="byline">N. Flyxion &amp; P. Lodri • Axiom Quant Research Monograph</div>
 
                     <p class="lead-text">
                         High-frequency Level-2 orderbook dynamics, Volume-Synchronized Probability of Toxicity (VPIN), and Almgren-Chriss optimal execution control.
@@ -330,8 +432,8 @@ Giant component threshold (p = 1/n) ≡ Quantization threshold (|w/scale| = 0.5)
                         <span class="meta-date">JULY 2026</span>
                     </div>
 
-                    <h1 class="article-title">The Transfer Operator & the Devil's Staircase</h1>
-                    <div class="byline">N. Flyxion & P. Lodri • Axiom Quant Research Monograph</div>
+                    <h1 class="article-title">The Transfer Operator &amp; the Devil's Staircase</h1>
+                    <div class="byline">N. Flyxion &amp; P. Lodri • Axiom Quant Research Monograph</div>
 
                     <h2 class="section-title">1. Frobenius-Perron-Ruelle Operator</h2>
                     <p>
@@ -352,8 +454,8 @@ Giant component threshold (p = 1/n) ≡ Quantization threshold (|w/scale| = 0.5)
                         <span class="meta-date">JULY 2026</span>
                     </div>
 
-                    <h1 class="article-title">Black-Scholes & Stochastic Calculus</h1>
-                    <div class="byline">N. Flyxion & P. Lodri • Axiom Quant Research Monograph</div>
+                    <h1 class="article-title">Black-Scholes &amp; Stochastic Calculus</h1>
+                    <div class="byline">N. Flyxion &amp; P. Lodri • Axiom Quant Research Monograph</div>
 
                     <p class="lead-text">
                         European option valuation under Geometric Brownian Motion $dS_t = \mu S_t dt + \sigma S_t dW_t$ and exact analytical Greeks ($\Delta, \Gamma, \Theta, \nu, \rho$).
@@ -369,7 +471,7 @@ d2 = d1 - σ √T</code></pre>
                 <!-- PAPER 7: BIBLIOGRAPHY -->
                 <div class="paper-content" id="paper-bibliography">
                     <div class="article-meta">
-                        <span class="meta-tag gold">BIBLIOGRAPHY & CATALOG</span>
+                        <span class="meta-tag gold">BIBLIOGRAPHY &amp; CATALOG</span>
                         <span class="meta-date">JULY 2026</span>
                     </div>
 
@@ -377,9 +479,9 @@ d2 = d1 - σ √T</code></pre>
                     <div class="byline">Curated Catalog of Foundational Literature</div>
 
                     <ul class="styled-list">
-                        <li><strong>Erdős, P., & Rényi, A. (1959).</strong> On random graphs I. <em>Publicationes Mathematicae Debrecen</em>, 6, 290–297.</li>
+                        <li><strong>Erdős, P., &amp; Rényi, A. (1959).</strong> On random graphs I. <em>Publicationes Mathematicae Debrecen</em>, 6, 290–297.</li>
                         <li><strong>Markowitz, H. (1952).</strong> Portfolio selection. <em>The Journal of Finance</em>, 7(1), 77–91.</li>
-                        <li><strong>Black, F., & Scholes, M. (1973).</strong> The pricing of options and corporate liabilities. <em>Journal of Political Economy</em>, 81(3), 637–654.</li>
+                        <li><strong>Black, F., &amp; Scholes, M. (1973).</strong> The pricing of options and corporate liabilities. <em>Journal of Political Economy</em>, 81(3), 637–654.</li>
                         <li><strong>Ma, S., et al. (2024).</strong> The Era of 1-bit LLMs: All Large Language Models are in 1.58 Bits. <em>arXiv:2402.17764</em>.</li>
                         <li><strong>Fan Chung (1997).</strong> <em>Spectral Graph Theory</em>. AMS Regional Conference Series in Mathematics, No. 92.</li>
                     </ul>
@@ -389,6 +491,6 @@ d2 = d1 - σ √T</code></pre>
         </main>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=2.1.0"></script>
 </body>
 </html>
