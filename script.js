@@ -96,6 +96,8 @@ function loadPaper(paperId) {
           'MONOGRAPH // TOPOLOGY // RADIATION Δ-NETWORK',
       'standard-galactic-decentralized-kb' :
           'MONOGRAPH // VAULT // STANDARD GALACTIC KB',
+      'google-pqc-standards' :
+          'SECURITY // GOOGLE PQC STANDARDS & NIST FIPS 203/204/205',
       'bibliography' : 'CATALOG // FOUNDATIONAL BIBLIOGRAPHY'
     };
     breadcrumb.innerText = titles[paperId] || 'MONOGRAPH // RESEARCH';
