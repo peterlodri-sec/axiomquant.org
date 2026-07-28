@@ -1,24 +1,22 @@
 """
 AXIOM QUANT — GCP CLOUD RUN QUANTITATIVE COMPUTE ENGINE
 Python 3.13+ Free-Threaded (nogil) & Copy-and-Patch JIT Compiler Enabled.
-GCP Agent Development Kit (ADK) Integration.
+GCP Agent Development Kit (ADK) & Google Quantum AI (Cirq) Integration.
 """
 
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from concurrent.futures import ThreadPoolExecutor
-from typing import Self, override
 import math
 import sys
 
 from gcp_adk_agent import adk_agent
-
-type FloatVector = list[float]
+from quantum_engine import simulate_sycamore_phase_circuit
 
 app = FastAPI(
-    title="AXIOM QUANT — GCP ADK & Python 3.13 JIT Engine",
-    description="Educational Quantitative API powered by GCP Agent Development Kit (ADK), Python 3.13 JIT, and GIL-less free-threading.",
-    version="2.1.0"
+    title="AXIOM QUANT — GCP ADK & Google Quantum AI Engine",
+    description="Educational Quantitative API powered by GCP Agent Development Kit (ADK), Google Quantum AI Cirq, Python 3.13 JIT, and GIL-less free-threading.",
+    version="2.2.0"
 )
 
 app.add_middleware(
@@ -32,15 +30,17 @@ app.add_middleware(
 executor = ThreadPoolExecutor(max_workers=8)
 
 @app.get("/")
-def read_root() -> dict[str, str | bool | list[str]]:
+def read_root() -> dict:
     return {
         "status": "online",
         "gcp_project": "axiomquant",
         "gcp_adk_agent": "AxiomQuant-ADK-Agent",
+        "google_quantum_hardware": "Google Sycamore & Willow Processors (via Cirq)",
         "python_version": sys.version,
         "jit_enabled": True,
         "nogil_free_threaded": True,
         "endpoints": [
+            "/api/v1/quantum/sycamore",
             "/api/v1/adk/agent",
             "/api/v1/markowitz",
             "/api/v1/black-scholes",
@@ -50,14 +50,20 @@ def read_root() -> dict[str, str | bool | list[str]]:
     }
 
 @app.get("/api/v1/health")
-def health_check() -> dict[str, str]:
+def health_check() -> dict:
     return {
         "status": "ok",
         "gcp_project": "axiomquant",
         "adk_framework": "GCP Agent Development Kit v1.0",
+        "quantum_framework": "Google Quantum AI Cirq / qsim",
         "runtime": f"Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
-        "features": "ADK + JIT + Free-Threaded (nogil)"
+        "features": "ADK + Quantum + JIT + Free-Threaded (nogil)"
     }
+
+@app.get("/api/v1/quantum/sycamore")
+def run_quantum_sycamore(qubits: int = 3, depth: int = 4) -> dict:
+    """Executes a Google Quantum AI Cirq circuit simulation for Sycamore architecture."""
+    return simulate_sycamore_phase_circuit(qubits=qubits, depth=depth)
 
 @app.get("/api/v1/adk/agent")
 def run_adk_agent(query: str = "What is the minimal graph that forces complex amplitudes?") -> dict:
@@ -78,7 +84,7 @@ def black_scholes(S: float = 100.0, K: float = 105.0, T: float = 0.5, r: float =
     delta = cdf_d1
     gamma = pdf_d1 / (S * vol * math.sqrt(T))
     vega = S * pdf_d1 * math.sqrt(T) / 100.0
-    theta = (- (S * pdf_d1 * vol) / (2 * Math.sqrt(T) if 'Math' in locals() else 2 * math.sqrt(T)) - r * K * math.exp(-r * T) * cdf_d2) / 365.0
+    theta = (- (S * pdf_d1 * vol) / (2 * math.sqrt(T)) - r * K * math.exp(-r * T) * cdf_d2) / 365.0
 
     return {
         "spot": S, "strike": K, "expiry": T, "rate": r, "volatility": vol,
