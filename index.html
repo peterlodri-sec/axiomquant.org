@@ -166,6 +166,27 @@
         .gold { color: var(--gold); }
         .lineage-tree { background: #04060A; border: 1px solid var(--border-color); border-left: 4px solid var(--gold); border-radius: 6px; padding: 18px 22px; margin-bottom: 28px; font-family: var(--font-mono); font-size: 12.5px; color: var(--gold); }
         
+        /* Wikipedia Bridge Links & License Styles */
+        .wiki-link { color: var(--cyan); text-decoration: none; border-bottom: 1px dotted var(--cyan); transition: all 0.2s ease; }
+        .wiki-link:hover { color: var(--gold); border-bottom: 1px solid var(--gold); background: rgba(229, 185, 88, 0.1); padding: 0 3px; border-radius: 3px; }
+        
+        .license-banner { background: rgba(10, 15, 26, 0.9); border: 1px solid var(--border-color); border-left: 4px solid var(--cyan); border-radius: 8px; padding: 18px 24px; margin: 32px 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+        .license-info { font-family: var(--font-mono); font-size: 12px; color: var(--slate); }
+        .license-badges { display: flex; gap: 10px; }
+        .badge-link { background: rgba(0, 240, 255, 0.1); border: 1px solid var(--cyan); color: var(--cyan); padding: 4px 10px; border-radius: 4px; font-family: var(--font-mono); font-size: 11px; text-decoration: none; transition: all 0.2s ease; }
+        .badge-link.gold { background: rgba(229, 185, 88, 0.1); border-color: var(--gold); color: var(--gold); }
+        .badge-link:hover { transform: translateY(-1px); box-shadow: 0 0 12px rgba(0, 240, 255, 0.3); }
+
+        /* Constellation Footer */
+        .constellation-footer { background: #030509; border-top: 1px solid var(--border-color); padding: 40px 32px 24px 32px; margin-top: 48px; position: relative; overflow: hidden; }
+        .constellation-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 32px; max-width: 1200px; margin: 0 auto; position: relative; z-index: 2; }
+        .footer-col h4 { font-family: var(--font-mono); font-size: 11px; color: var(--cyan); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 16px; }
+        .footer-col ul { list-style: none; padding: 0; margin: 0; }
+        .footer-col li { margin-bottom: 8px; }
+        .footer-col a { color: var(--slate); font-size: 13px; text-decoration: none; transition: color 0.2s ease; }
+        .footer-col a:hover { color: var(--gold); }
+        .constellation-bottom { margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(51, 65, 85, 0.3); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; font-family: var(--font-mono); font-size: 11px; color: var(--slate); }
+
         @media (max-width: 900px) {
             .portal-layout { grid-template-columns: 1fr; }
             .portal-sidebar { height: auto; position: relative; }
@@ -692,6 +713,70 @@ Turn 01 ───► Prompt / Tool   ───► Observation     ───► T
                 </div>
 
             </article>
+
+            <!-- License Banner -->
+            <div class="license-banner">
+                <div class="license-info">
+                    <strong>AXIOM QUANT OPEN RESEARCH ARCHIVE △</strong><br/>
+                    All monograph papers, mathematical proofs, and code snippets are published under open access licenses.
+                </div>
+                <div class="license-badges">
+                    <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" class="badge-link">CC BY 4.0 International</a>
+                    <a href="https://opensource.org/licenses/MIT" target="_blank" class="badge-link gold">MIT License</a>
+                </div>
+            </div>
+
+            <!-- Constellation Footer -->
+            <footer class="constellation-footer">
+                <div class="constellation-grid">
+                    <div class="footer-col">
+                        <h4>FOUNDATION DOMAINS</h4>
+                        <ul>
+                            <li><a href="#" onclick="loadPaper('concept-map')">01. Concept Map &amp; Thresholds</a></li>
+                            <li><a href="#" onclick="loadPaper('ultramarathon')">02. The Ultramarathon</a></li>
+                            <li><a href="#" onclick="loadPaper('dyadic-ternary')">03. Dyadic-Ternary Bridge</a></li>
+                            <li><a href="#" onclick="loadPaper('microstructure-chaos')">04. Microstructure &amp; Chaos</a></li>
+                            <li><a href="#" onclick="loadPaper('transfer-operator')">05. Transfer Operator</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>ADVANCED RESEARCH LAPS</h4>
+                        <ul>
+                            <li><a href="#" onclick="loadPaper('lap2-tracy-widom')">Lap 2. Tracy-Widom &amp; SLE</a></li>
+                            <li><a href="#" onclick="loadPaper('lap3-universal-kernel')">Lap 3. Universal Kernel</a></li>
+                            <li><a href="#" onclick="loadPaper('lap4-zeta-gff')">Lap 4. Zeta-GFF Blueprint</a></li>
+                            <li><a href="#" onclick="loadPaper('laps-5-8-synthesis')">Laps 5-8 Synthesis</a></li>
+                            <li><a href="#" onclick="loadPaper('laps-9-13-beyond-pain-cage')">Laps 9-13 Beyond Pain Cage</a></li>
+                            <li><a href="#" onclick="loadPaper('laps-14-42-grand-finale')">Laps 14-42 Grand Finale</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>SPECIAL &amp; SECURITY</h4>
+                        <ul>
+                            <li><a href="#" onclick="loadPaper('magyarok-flugos')">Magyarok Vagyunk &amp; FLUG-OS</a></li>
+                            <li><a href="#" onclick="loadPaper('google-pqc-standards')">Google &amp; NIST PQC Standards</a></li>
+                            <li><a href="#" onclick="loadPaper('radiation-delta-network')">Radiation Δ-Network</a></li>
+                            <li><a href="#" onclick="loadPaper('standard-galactic-decentralized-kb')">Standard Galactic KB</a></li>
+                            <li><a href="#" onclick="loadPaper('backyard-ultra')">08. Backyard Ultra &amp; MCPs</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>WIKIPEDIA KNOWLEDGE BRIDGES</h4>
+                        <ul>
+                            <li><a href="https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model" target="_blank" class="wiki-link">Erdős–Rényi Model ↗</a></li>
+                            <li><a href="https://en.wikipedia.org/wiki/Post-quantum_cryptography" target="_blank" class="wiki-link">Post-Quantum Crypto ↗</a></li>
+                            <li><a href="https://en.wikipedia.org/wiki/Yoneda_lemma" target="_blank" class="wiki-link">Yoneda Lemma ↗</a></li>
+                            <li><a href="https://en.wikipedia.org/wiki/Amplituhedron" target="_blank" class="wiki-link">Amplituhedron Polytope ↗</a></li>
+                            <li><a href="https://en.wikipedia.org/wiki/Riemann_zeta_function" target="_blank" class="wiki-link">Riemann Zeta Function ↗</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="constellation-bottom">
+                    <div>© 2026 AXIOM QUANT ARCHIVE △ • Standard Galactic Research Node</div>
+                    <div>Licensed under CC BY 4.0 &amp; MIT • Powered by GCP Cloud Run &amp; Cloudflare Pages</div>
+                </div>
+            </footer>
         </main>
     </div>
 
