@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AXIOM QUANT — Research Portal, Monograph & Quantitative Calculus</title>
+    <title>AXIOM QUANT — Research Portal, Monograph & GCP Cloud Calculus</title>
     <meta name="description" content="Axiom Quant Research Portal: Graph-theoretic foundations of quantum calculus, Erdős phase transitions, BitNet b1.58 ternary quantization, Markowitz QP solvers, and Black-Scholes Greeks.">
-    <meta name="keywords" content="quantitative finance, graph theory, Erdos-Renyi, BitNet b1.58, ternary quantization, Markowitz QP, Black-Scholes, options greeks, VPIN toxicity, quantum calculus">
+    <meta name="keywords" content="quantitative finance, GCP Cloud Run, Google Cloud, graph theory, Erdos-Renyi, BitNet b1.58, ternary quantization, Markowitz QP, Black-Scholes, options greeks, VPIN toxicity, quantum calculus">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <link rel="canonical" href="https://axiomquant.org/">
 
     <!-- Open Graph / Facebook / LinkedIn Metadata -->
     <meta property="og:site_name" content="AXIOM QUANT">
-    <meta property="og:title" content="AXIOM QUANT — Research Portal & Monograph">
+    <meta property="og:title" content="AXIOM QUANT — Research Portal & GCP Cloud Calculus">
     <meta property="og:description" content="Graph-theoretic foundations of quantum calculus, Erdős phase transitions, BitNet b1.58 ternary quantization, and Markowitz QP solvers.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://axiomquant.org/">
@@ -23,7 +23,7 @@
     <!-- Twitter Card Metadata -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@axiomquant">
-    <meta name="twitter:title" content="AXIOM QUANT — Research Portal & Monograph">
+    <meta name="twitter:title" content="AXIOM QUANT — Research Portal & GCP Cloud Calculus">
     <meta name="twitter:description" content="Forbidden subgraphs, density thresholds, and the minimal cycle rank that forces complex amplitudes.">
     <meta name="twitter:image" content="https://axiomquant.org/og-image.png">
 
@@ -64,7 +64,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="style.css?v=2.2.0">
+    <link rel="stylesheet" href="style.css?v=2.3.0">
 
     <!-- Critical Inline Stylesheet Fallback -->
     <style>
@@ -93,13 +93,15 @@
         .pulse-indicator { width: 8px; height: 8px; border-radius: 50%; background-color: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
         .brand-title { font-family: var(--font-mono); font-size: 16px; font-weight: 800; letter-spacing: 0.2em; color: var(--white); text-decoration: none; }
         .brand-title .gold { color: var(--gold); }
-        .sidebar-subtitle { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.2em; color: var(--gold); margin-bottom: 20px; }
+        .sidebar-subtitle { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.2em; color: var(--gold); margin-bottom: 14px; }
         
-        .search-box { margin-bottom: 24px; }
+        .gcp-badge { font-family: var(--font-mono); font-size: 9px; color: #4285F4; background: rgba(66, 133, 244, 0.1); border: 1px solid rgba(66, 133, 244, 0.3); border-radius: 4px; padding: 6px 10px; margin-bottom: 18px; text-align: center; }
+        
+        .search-box { margin-bottom: 20px; }
         .search-box input { width: 100%; background: #04060A; border: 1px solid var(--border-color); border-radius: 4px; padding: 10px 12px; color: var(--white); font-family: var(--font-mono); font-size: 11px; outline: none; }
         .search-box input:focus { border-color: var(--cyan); box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); }
         
-        .sidebar-section { margin-bottom: 24px; }
+        .sidebar-section { margin-bottom: 22px; }
         .section-title { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.15em; color: var(--muted); margin-bottom: 10px; }
         
         .solvers-link { display: block; font-family: var(--font-mono); font-size: 11px; color: var(--cyan); text-decoration: none; padding: 8px 12px; border-radius: 4px; background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.25); margin-bottom: 8px; transition: all 0.2s ease; }
@@ -134,6 +136,7 @@
         .meta-tag { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.15em; padding: 3px 8px; border-radius: 3px; }
         .meta-tag.gold { background: rgba(229, 185, 88, 0.15); color: var(--gold); border: 1px solid rgba(229, 185, 88, 0.4); }
         .meta-tag.cyan { background: rgba(0, 240, 255, 0.15); color: var(--cyan); border: 1px solid rgba(0, 240, 255, 0.4); }
+        .meta-tag.gcp { background: rgba(66, 133, 244, 0.15); color: #4285F4; border: 1px solid rgba(66, 133, 244, 0.4); }
         .meta-date { font-family: var(--font-mono); font-size: 10px; color: var(--muted); }
         
         .article-title { font-size: 32px; font-weight: 800; color: var(--white); line-height: 1.25; margin-bottom: 10px; }
@@ -179,6 +182,9 @@
                 <a href="/" class="brand-title">AXIOM <span class="gold">QUANT</span></a>
             </div>
             <div class="sidebar-subtitle">RESEARCH PORTAL v1.0</div>
+
+            <!-- GCP Cloud Alignment Badge -->
+            <div class="gcp-badge">☁️ GOOGLE CLOUD RUN // PROJECT: axiomquant</div>
 
             <!-- Search & Filter Box -->
             <div class="search-box">
@@ -275,6 +281,7 @@
                 <div class="paper-content active" id="paper-concept-map">
                     <div class="article-meta">
                         <span class="meta-tag gold">MONOGRAPH CHAPTER 01</span>
+                        <span class="meta-tag gcp">☁️ GCP CLOUD COMPUTING</span>
                         <span class="meta-date">JULY 2026</span>
                     </div>
 
@@ -282,7 +289,7 @@
                     <div class="byline">N. Flyxion &amp; P. Lodri • Axiom Quant Research Monograph</div>
 
                     <p class="lead-text">
-                        All five research areas on <strong>axiomquant.org</strong> share the same underlying mathematical structure: a critical parameter controlling a phase transition in a complex system.
+                        All five research areas on <strong>axiomquant.org</strong> share the same underlying mathematical structure: a critical parameter controlling a phase transition in a complex system, containerized and served at scale via <strong>Google Cloud Platform (Project: <code>axiomquant</code>)</strong>.
                     </p>
 
                     <div class="table-wrapper">
@@ -346,7 +353,18 @@
                         <li><strong>Scaling law</strong> — how the transition sharpens as system size $N \to \infty$</li>
                     </ol>
 
-                    <h2 class="section-title">2. Graph → Ternary Bridge</h2>
+                    <h2 class="section-title">2. GCP Cloud Compute Architecture</h2>
+                    <p>Educational quantitative solvers are deployed as serverless microservices on Google Cloud Run:</p>
+                    <div class="code-block">
+                        <pre><code>GCP Project ID: axiomquant
+Container API: FastAPI + NumPy + Uvicorn
+Endpoints:
+  GET /api/v1/markowitz?universe=BigTech
+  GET /api/v1/black-scholes?S=100&K=105&T=0.5&r=0.05&vol=0.20
+  GET /api/v1/health</code></pre>
+                    </div>
+
+                    <h2 class="section-title">3. Graph → Ternary Bridge</h2>
                     <p>The strongest bridge connects Erdős–Rényi $G(n,p)$ random graphs to BitNet b1.58 ternary matrices:</p>
                     <div class="code-block">
                         <pre><code>Graph edges ≡ Ternary weights {-1, 0, +1}
@@ -354,7 +372,7 @@ Giant component threshold (p = 1/n) ≡ Quantization threshold (|w/scale| = 0.5)
 β₁ (cycle rank) ≡ Sparsity &amp; topological memory</code></pre>
                     </div>
 
-                    <h2 class="section-title">3. Research Lineage</h2>
+                    <h2 class="section-title">4. Research Lineage</h2>
                     <div class="lineage-tree">
                         <pre><code>Erdős &amp; Rényi (1959) — Random Graphs &amp; Phase Transitions
     │
@@ -523,6 +541,6 @@ d2 = d1 - σ √T</code></pre>
         </main>
     </div>
 
-    <script src="script.js?v=2.2.0"></script>
+    <script src="script.js?v=2.3.0"></script>
 </body>
 </html>
