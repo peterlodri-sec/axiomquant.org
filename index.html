@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AXIOM QUANT — Context Realizability & Graph-Theoretic Foundations</title>
-    <meta name="description" content="Research archive: forbidden subgraph theorems, density thresholds for complex necessity, minimal β₁ witnesses, and graph-theoretic foundations of quantum calculus.">
+    <title>AXIOM QUANT — Research Portal & Foundational Monograph</title>
+    <meta name="description" content="Research archive: forbidden subgraph theorems, density thresholds for complex necessity, minimal β₁ witnesses, transfer operators, and quantum calculus.">
     
-    <!-- Open Graph & Social Metadata -->
-    <meta property="og:title" content="AXIOM QUANT — Context Realizability & Graph-Theoretic Foundations">
+    <!-- Open Graph -->
+    <meta property="og:title" content="AXIOM QUANT — Research Archive & Monograph">
     <meta property="og:description" content="Forbidden subgraphs, density thresholds, and the minimal cycle rank that forces complex amplitudes.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://axiomquant.org">
@@ -30,277 +30,362 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Background Cosmic Canvas -->
-    <canvas id="spectralCanvas"></canvas>
 
-    <!-- Outer Viewport Container -->
-    <div class="viewport-container">
+    <div class="portal-layout">
         
-        <!-- Floating Celestial Reading Planet Surface -->
-        <main class="reading-planet">
-            
-            <!-- Planet Header -->
-            <header class="planet-header">
-                <div class="brand-row">
-                    <span class="pulse-dot"></span>
-                    <a href="/" class="brand-name">AXIOM <span class="gold-text">QUANT</span></a>
-                    <span class="version-tag">RESEARCH ARCHIVE</span>
-                </div>
+        <!-- Sidebar Navigation & Paper Catalog -->
+        <aside class="portal-sidebar">
+            <div class="sidebar-brand">
+                <span class="pulse-indicator"></span>
+                <a href="/" class="brand-title">AXIOM <span class="gold">QUANT</span></a>
+            </div>
+            <div class="sidebar-subtitle">RESEARCH PORTAL v1.0</div>
 
-                <nav class="planet-nav">
-                    <a href="#" class="nav-item active">Research</a>
-                    <a href="#thresholds" class="nav-item">Thresholds</a>
-                    <a href="#taxonomy" class="nav-item">Taxonomy</a>
-                    <a href="#archive" class="nav-item">Archive</a>
-                    <a href="#building" class="nav-item">Building</a>
-                    <a href="/markowitz" class="nav-item highlight-btn">Markowitz QP →</a>
-                </nav>
+            <!-- Search & Filter Box -->
+            <div class="search-box">
+                <input type="text" id="paperSearch" placeholder="Search research & concepts..." oninput="filterPapers()" />
+            </div>
+
+            <!-- Interactive Solvers Quick Links -->
+            <div class="sidebar-section">
+                <div class="section-title">INTERACTIVE ENGINES</div>
+                <a href="/markowitz" class="solvers-link gold-link">⚡ Markowitz QP Solver →</a>
+                <a href="/black-scholes" class="solvers-link">📈 Black-Scholes Greeks →</a>
+                <a href="/microstructure" class="solvers-link">🌊 L2 Microstructure →</a>
+                <a href="/thresholds" class="solvers-link">🎲 ER Phase Transition →</a>
+            </div>
+
+            <!-- Monograph Papers List -->
+            <div class="sidebar-section">
+                <div class="section-title">MONOGRAPH PAPERS</div>
+                <ul class="paper-nav-list" id="paperList">
+                    <li class="paper-nav-item active" data-paper="concept-map" onclick="loadPaper('concept-map')">
+                        <span class="paper-icon">🗺️</span>
+                        <div class="paper-info">
+                            <span class="p-title">Concept Map</span>
+                            <span class="p-sub">Five Threshold Domains</span>
+                        </div>
+                    </li>
+                    <li class="paper-nav-item" data-paper="ultramarathon" onclick="loadPaper('ultramarathon')">
+                        <span class="paper-icon">🏃</span>
+                        <div class="paper-info">
+                            <span class="p-title">The Ultramarathon</span>
+                            <span class="p-sub">Zeta, Wigner & Ising</span>
+                        </div>
+                    </li>
+                    <li class="paper-nav-item" data-paper="dyadic-ternary" onclick="loadPaper('dyadic-ternary')">
+                        <span class="paper-icon">📐</span>
+                        <div class="paper-info">
+                            <span class="p-title">Dyadic-Ternary Bridge</span>
+                            <span class="p-sub">β₁ Cycle Rank & T(x)</span>
+                        </div>
+                    </li>
+                    <li class="paper-nav-item" data-paper="microstructure-chaos" onclick="loadPaper('microstructure-chaos')">
+                        <span class="paper-icon">🌊</span>
+                        <div class="paper-info">
+                            <span class="p-title">Microstructure & Chaos</span>
+                            <span class="p-sub">VPIN Toxicity & Almgren</span>
+                        </div>
+                    </li>
+                    <li class="paper-nav-item" data-paper="transfer-operator" onclick="loadPaper('transfer-operator')">
+                        <span class="paper-icon">🔄</span>
+                        <div class="paper-info">
+                            <span class="p-title">Transfer Operator</span>
+                            <span class="p-sub">Cantor & Devil's Staircase</span>
+                        </div>
+                    </li>
+                    <li class="paper-nav-item" data-paper="black-scholes" onclick="loadPaper('black-scholes')">
+                        <span class="paper-icon">📈</span>
+                        <div class="paper-info">
+                            <span class="p-title">Black-Scholes Greeks</span>
+                            <span class="p-sub">Stochastic Calculus</span>
+                        </div>
+                    </li>
+                    <li class="paper-nav-item" data-paper="bibliography" onclick="loadPaper('bibliography')">
+                        <span class="paper-icon">📚</span>
+                        <div class="paper-info">
+                            <span class="p-title">Foundational Bibliography</span>
+                            <span class="p-sub">Complete Works Catalog</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Footer Meta -->
+            <div class="sidebar-footer">
+                <span>AXIOM QUANT ARCHIVE △</span>
+            </div>
+        </aside>
+
+        <!-- Main Reading Surface -->
+        <main class="portal-content">
+            
+            <!-- Top Telemetry Header -->
+            <header class="content-header">
+                <div class="header-breadcrumb" id="paperBreadcrumb">MONOGRAPH // 01 // CONCEPT MAP</div>
+                <div class="header-actions">
+                    <span class="status-badge">FOUNDATION PHASE △</span>
+                    <a href="https://github.com/peterlodri-sec/axiomquant.org" target="_blank" class="github-btn">GitHub ↗</a>
+                </div>
             </header>
 
-            <!-- Hero Reading Lead -->
-            <section class="planet-hero">
-                <div class="hero-tag">
-                    <span class="badge-dot"></span>
-                    <span>CYCLE TOPOLOGY & COMPLEX NECESSITY</span>
-                </div>
-
-                <h1 class="hero-title">What is the <span class="cyan-text">minimal graph</span> that forces complex amplitudes?</h1>
+            <!-- Active Article Body Container -->
+            <article class="reader-surface" id="readerSurface">
                 
-                <p class="hero-prose">
-                    Instead of postulating complex Hilbert space as an input, we derive it as the minimal field extension required to close holonomy on $K_3$. The Admissibility Program becomes an extremal classification problem — finding forbidden subgraphs, density thresholds, and the axiomatic discrimination capacity of cycle topology.
-                </p>
-
-                <div class="telemetry-pill">
-                    <span class="t-label">MINIMAL WITNESS:</span>
-                    <span class="gold-text">K₃ (TRIANGLE)</span>
-                    <span class="t-sep">•</span>
-                    <span class="t-label">LATENCY:</span>
-                    <span id="liveLatency" class="cyan-text">0.00042 ns</span>
-                </div>
-            </section>
-
-            <!-- Section 01: Three Extremal Questions -->
-            <section class="planet-section" id="thresholds">
-                <h2 class="section-label">01 // THREE EXTREMAL QUESTIONS</h2>
-
-                <article class="paper-entry">
-                    <div class="entry-head">
-                        <h3 class="entry-title">1. Forbidden Subgraph Theorems for Realizability</h3>
-                        <span class="entry-code">REQ :: 01</span>
+                <!-- PAPER 1: CONCEPT MAP (DEFAULT) -->
+                <div class="paper-content active" id="paper-concept-map">
+                    <div class="article-meta">
+                        <span class="meta-tag gold">MONOGRAPH CHAPTER 01</span>
+                        <span class="meta-date">JULY 2026</span>
                     </div>
-                    <p class="entry-body">
-                        What is the set of forbidden context subgraphs $\mathcal{F}$ such that a transition network is globally <strong>$\mathbb{R}$-realizable</strong> if and only if it contains no subgraph in $\mathcal{F}$? The minimal forbidden subgraph for real amplitudes is $K_3$ — the triangle. Any network with $\beta_1 = 0$ (a tree) is $\mathbb{R}$-realizable. The moment a cycle closes, $\mathbb{C}$ is forced.
+
+                    <h1 class="article-title">Concept Map: The Five Threshold Domains</h1>
+                    <div class="byline">N. Flyxion & P. Lodri • Axiom Quant Research Monograph</div>
+
+                    <p class="lead-text">
+                        All five research areas on <strong>axiomquant.org</strong> share the same underlying mathematical structure: a critical parameter controlling a phase transition in a complex system.
                     </p>
-                    <div class="entry-tags">
-                        <a href="#k3" class="tag-link">K₃ Minimal Witness</a>
-                        <a href="#forbidden" class="tag-link">Forbidden Subgraph Catalog</a>
-                    </div>
-                </article>
 
-                <article class="paper-entry">
-                    <div class="entry-head">
-                        <h3 class="entry-title">2. Density Thresholds for Complex Necessity</h3>
-                        <span class="entry-code">REQ :: 02</span>
+                    <div class="table-wrapper">
+                        <table class="concept-table">
+                            <thead>
+                                <tr>
+                                    <th>DOMAIN</th>
+                                    <th>PARAMETER</th>
+                                    <th>BELOW CRITICAL</th>
+                                    <th>AT CRITICAL</th>
+                                    <th>ABOVE CRITICAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong class="cyan">Graph (Erdős)</strong></td>
+                                    <td>$p = \text{edge prob}$</td>
+                                    <td>Fragmented components</td>
+                                    <td>Giant component</td>
+                                    <td>Connected ($\beta_1 > 0$)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="gold">Ternary (BitNet)</strong></td>
+                                    <td>Scale factor $\gamma$</td>
+                                    <td>Continuous weights</td>
+                                    <td>Round to $\pm 1$</td>
+                                    <td>Discrete $\{-1, 0, +1\}$</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="cyan">Portfolio (Markowitz)</strong></td>
+                                    <td>Lagrange $\lambda$</td>
+                                    <td>Asset at zero weight</td>
+                                    <td>Asset enters portfolio</td>
+                                    <td>Asset dominates</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="gold">Options (Black-Scholes)</strong></td>
+                                    <td>Volatility $\sigma$</td>
+                                    <td>Deep OTM ($N(d_2) < 0.5$)</td>
+                                    <td>ATM ($N(d_2) = 0.5$)</td>
+                                    <td>Deep ITM ($N(d_2) > 0.5$)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="cyan">Dyadic (Rényi)</strong></td>
+                                    <td>$\beta$ parameter</td>
+                                    <td>Information preserved</td>
+                                    <td>1 bit/iteration loss</td>
+                                    <td>Chaotic shift</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <p class="entry-body">
-                        Given a large context graph $G = (V, E)$, at what edge density $p = |E| / \binom{|V|}{2}$ does the probability that a randomly drawn admissible transition assignment <strong>requires</strong> complex or quaternionic amplitudes approach 1? This is an Erdős–Rényi phase transition applied to foundations — a sharp structural threshold driven by cycle topology ($\beta_1 > 0$).
+
+                    <h2 class="section-title">1. Mathematical Isomorphism</h2>
+                    <p>Each system possesses five structural invariants:</p>
+                    <ol class="styled-list">
+                        <li><strong>State space</strong> (graph edges, weight matrix, portfolio vector, option price, bit sequence)</li>
+                        <li><strong>Critical parameter</strong> ($p, \gamma, \lambda, \sigma, \beta$)</li>
+                        <li><strong>Threshold condition</strong> ($p=1/n, |w/\gamma|=0.5, w_i \text{ crosses } 0, N(d)=0.5, \beta=2$)</li>
+                        <li><strong>Phase transition</strong> — sharp change in macroscopic behavior at the threshold</li>
+                        <li><strong>Scaling law</strong> — how the transition sharpens as system size $N \to \infty$</li>
+                    </ol>
+
+                    <h2 class="section-title">2. Graph → Ternary Bridge</h2>
+                    <p>The strongest bridge connects Erdős–Rényi $G(n,p)$ random graphs to BitNet b1.58 ternary matrices:</p>
+                    <div class="code-block">
+                        <pre><code>Graph edges ≡ Ternary weights {-1, 0, +1}
+Giant component threshold (p = 1/n) ≡ Quantization threshold (|w/scale| = 0.5)
+β₁ (cycle rank) ≡ Sparsity & topological memory</code></pre>
+                    </div>
+
+                    <h2 class="section-title">3. Research Lineage</h2>
+                    <div class="lineage-tree">
+                        <pre><code>Erdős & Rényi (1959) — Random Graphs & Phase Transitions
+    │
+    ├──→ Markowitz (1952) — Portfolio Selection & Convex Frontiers
+    ├──→ Black & Scholes (1973) — Option Pricing & Risk-Neutral Measures
+    ├──→ Rényi (1957) — β-Transformations & Symbolic Dynamics
+    │       └─→ Dyadic Map → BitNet b1.58 (Ma et al., 2024)
+    │
+    └─→ O'Hara (1995) — Market Microstructure Theory
+            └─→ Almgren & Chriss (2000) — Optimal Execution</code></pre>
+                    </div>
+                </div>
+
+                <!-- PAPER 2: ULTRAMARATHON -->
+                <div class="paper-content" id="paper-ultramarathon">
+                    <div class="article-meta">
+                        <span class="meta-tag gold">MONOGRAPH CHAPTER 02</span>
+                        <span class="meta-date">JULY 2026</span>
+                    </div>
+
+                    <h1 class="article-title">The Ultramarathon: Deep Mathematics of Thresholds</h1>
+                    <div class="byline">N. Flyxion & P. Lodri • Axiom Quant Research Monograph</div>
+
+                    <h2 class="section-title">1. Zeta Zeros ≡ Random Matrix Eigenvalues</h2>
+                    <p>
+                        Montgomery (1973), over tea with Dyson at Princeton, discovered that the pair correlation of Riemann zeta zeros matches the GUE (Gaussian Unitary Ensemble) random matrix eigenvalue spacing:
                     </p>
-                    <div class="entry-tags">
-                        <a href="#density" class="tag-link">Density Threshold Results</a>
-                        <a href="https://arxiv.org/abs/2402.17764" target="_blank" class="tag-link">BitNet b1.58 ↗</a>
+                    <div class="code-block">
+                        <pre><code>ρ(u) = 1 - (sin(πu) / πu)²</code></pre>
                     </div>
-                </article>
-
-                <article class="paper-entry">
-                    <div class="entry-head">
-                        <h3 class="entry-title">3. Axiomatic Discrimination Capacity</h3>
-                        <span class="entry-code">REQ :: 03</span>
-                    </div>
-                    <p class="entry-body">
-                        For any proposed foundational axiom $A$, what is the minimum cycle rank $\beta_1$ required for $A$ to eliminate at least one non-quantum realization space? $\beta_1 = 1$ is the minimal witness — one cycle, one holonomy, one complex number. If $\beta_1 = 0$, you stay real. The discrimination capacity of an axiom is the smallest $\beta_1$ at which it makes a distinction.
+                    <p>
+                        <strong>Threshold connection</strong>: The zeta zeros form a point process on the critical line $\text{Re}(s) = 1/2$. Their spacing statistics encode a "spectral rigidity" — zeros repel each other (level repulsion), just like eigenvalues of random matrices. This repulsion is a threshold phenomenon: zeros cannot get too close. The minimal spacing is governed by the same kernel that appears in the transfer operator's correlation decay.
                     </p>
-                    <div class="entry-tags">
-                        <a href="#axioms" class="tag-link">Axiom Discrimination Table</a>
+
+                    <h2 class="section-title">2. Wigner Semicircle ≡ Free Central Limit Theorem</h2>
+                    <p>
+                        Wigner (1955): the eigenvalue density of an $N \times N$ random symmetric matrix with i.i.d. entries converges, as $N \to \infty$, to the semicircle:
+                    </p>
+                    <div class="code-block">
+                        <pre><code>ρ(x) = (2 / πR²) √(R² - x²),   |x| ≤ R</code></pre>
                     </div>
-                </article>
-            </section>
+                    <p>
+                        The moments are <strong>Catalan numbers</strong>: $m_{2k} = C_k \cdot (R/2)^{2k}$, where $C_k = \frac{1}{k+1}\binom{2k}{k}$. Catalan numbers count non-crossing partitions, Dyck paths, binary trees, and polygon triangulations.
+                    </p>
 
-            <!-- Section 02: Threshold Taxonomy -->
-            <section class="planet-section" id="taxonomy">
-                <h2 class="section-label">02 // THRESHOLD TAXONOMY</h2>
-
-                <div class="table-container">
-                    <table class="taxonomy-grid">
-                        <thead>
-                            <tr>
-                                <th>β₁</th>
-                                <th>GRAPH CLASS</th>
-                                <th>FIELD</th>
-                                <th>MINIMAL WITNESS</th>
-                                <th>DISCRIMINATION</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><span class="code-num">0</span></td>
-                                <td>Trees, forests</td>
-                                <td><strong class="cyan-text">ℝ (Real)</strong></td>
-                                <td>$P_2$ (single edge)</td>
-                                <td>None — all real</td>
-                            </tr>
-                            <tr>
-                                <td><span class="code-num">1</span></td>
-                                <td>Unicyclic</td>
-                                <td><strong class="gold-text">ℂ (Complex)</strong></td>
-                                <td>$K_3$ (triangle)</td>
-                                <td>Quantum vs. classical</td>
-                            </tr>
-                            <tr>
-                                <td><span class="code-num">2–3</span></td>
-                                <td>Bicyclic / tricyclic</td>
-                                <td><strong class="cyan-text">ℍ (Quaternions)</strong></td>
-                                <td>$K_4$</td>
-                                <td>Spin-statistics</td>
-                            </tr>
-                            <tr>
-                                <td><span class="code-num">≥4</span></td>
-                                <td>Dense cyclic</td>
-                                <td><strong class="gold-text">𝕆 (Octonions)</strong></td>
-                                <td>Complete graph $K_5$</td>
-                                <td>Exceptional Lie groups</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="theorem-box">
-                    <div class="thm-top">
-                        <span class="thm-crest">△</span>
-                        <span class="thm-label">Theorem (Erdős–Nate, 2026) — Minimal Forbidden Subgraph</span>
-                    </div>
-                    <p class="thm-prose">
-                        A context graph $G$ is $\mathbb{R}$-realizable for every admissible transition assignment if and only if $G$ contains no subgraph with $\beta_1 > 0$. Equivalently: $G$ is a forest. The minimal forbidden subgraph is $K_3$, with $\beta_1(K_3) = 1$. Any graph containing a cycle can be assigned a transition set whose holonomy forces a field extension beyond $\mathbb{R}$.
+                    <h2 class="section-title">3. Ising Model ≡ Max-Cut ≡ NP-Hard Optimization</h2>
+                    <p>
+                        The Ising Hamiltonian $H(\sigma) = -J \sum_{\langle ij \rangle} \sigma_i \sigma_j$ on a graph $G = (V,E)$ is mathematically equivalent to Max-Cut. At the critical temperature $T_c$, the spin system undergoes a phase transition from paramagnetic (disordered) to ferromagnetic (ordered). This $T_c$ is the physical manifestation of the graph's cycle rank $\beta_1$.
                     </p>
                 </div>
-            </section>
 
-            <!-- Section 03: Research Archive -->
-            <section class="planet-section" id="archive">
-                <h2 class="section-label">03 // RESEARCH ARCHIVE</h2>
-
-                <div class="archive-list">
-                    <article class="paper-entry">
-                        <div class="entry-head">
-                            <h3 class="entry-title">Erdős & Rényi — On the Evolution of Random Graphs (1960)</h3>
-                            <span class="entry-code">1960</span>
-                        </div>
-                        <div class="entry-byline">P. Erdős, A. Rényi. Publ. Math. Inst. Hung. Acad. Sci. 5, 17–61.</div>
-                        <p class="entry-body">The paper proving sharp phase transitions in random graphs: below a critical edge probability, only small components exist; above it, a giant component spans the graph. The mathematical ancestor of the density threshold question for complex necessity — at what $p$ does $\mathbb{C}$ become almost surely required?</p>
-                        <div class="entry-tags">
-                            <a href="https://www.renyi.hu/~p_erdos/1960-10.pdf" target="_blank" class="tag-link">PDF ↗</a>
-                            <a href="https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model" target="_blank" class="tag-link">Wikipedia ↗</a>
-                        </div>
-                    </article>
-
-                    <article class="paper-entry">
-                        <div class="entry-head">
-                            <h3 class="entry-title">BitNet b1.58 — The Era of 1-bit LLMs (2024)</h3>
-                            <span class="entry-code">2024</span>
-                        </div>
-                        <div class="entry-byline">S. Ma et al. arXiv:2402.17764.</div>
-                        <p class="entry-body">Ternary quantization $\{-1, 0, +1\}$ matches full-precision transformer performance. The ternary threshold — when a weight crosses the $\text{round}()$ boundary — is a quantized version of the Erdős–Rényi threshold: a sharp transition from continuous to discrete. MLX-QUANT implements fused Metal kernels for this.</p>
-                        <div class="entry-tags">
-                            <a href="https://arxiv.org/abs/2402.17764" target="_blank" class="tag-link">arXiv ↗</a>
-                            <a href="https://github.com/8b-is/MLX-QUANT" target="_blank" class="tag-link">MLX-QUANT Repo ↗</a>
-                        </div>
-                    </article>
-
-                    <article class="paper-entry">
-                        <div class="entry-head">
-                            <h3 class="entry-title">Spectral Graph Theory (1997)</h3>
-                            <span class="entry-code">1997</span>
-                        </div>
-                        <div class="entry-byline">Fan Chung. AMS Regional Conference Series in Mathematics, No. 92.</div>
-                        <p class="entry-body">The eigenvalues of a graph's Laplacian encode its structure. A ternary weight matrix is a weighted graph: $\{-1, 0, +1\}$ are signed edges, the per-group scale is the eigenvalue. Spectral methods bridge the Erdős graph tradition and the quantized weight matrices of MLX-QUANT.</p>
-                        <div class="entry-tags">
-                            <a href="https://bookstore.ams.org/cbms-92" target="_blank" class="tag-link">AMS ↗</a>
-                            <a href="https://en.wikipedia.org/wiki/Spectral_graph_theory" target="_blank" class="tag-link">Wikipedia ↗</a>
-                        </div>
-                    </article>
-
-                    <article class="paper-entry">
-                        <div class="entry-head">
-                            <h3 class="entry-title">Dyadic Transformation & Context Realizability</h3>
-                            <span class="entry-code">2026</span>
-                        </div>
-                        <div class="entry-byline">N. Flyxion, P. Lodri. In preparation.</div>
-                        <p class="entry-body">Chapter 5 of the monograph: spanning trees, cycle rank $\beta_1$, and the General Realizability Criterion. Structural depth $d_{\text{obs}}(A)$ versus $\beta_1$. Distinguishes topological obstruction from composition obstruction.</p>
-                        <div class="entry-tags">
-                            <a href="/dyadic" class="tag-link">Dyadic Visualizer ↗</a>
-                        </div>
-                    </article>
-                </div>
-            </section>
-
-            <!-- Section 04: Building -->
-            <section class="planet-section" id="building">
-                <h2 class="section-label">04 // BUILDING ON THE FOUNDATION</h2>
-
-                <div class="building-cards">
-                    <a href="https://github.com/8b-is/MLX-QUANT" target="_blank" class="b-card">
-                        <div class="b-head">
-                            <strong>MLX-QUANT</strong>
-                            <span class="pill cyan">v1.4.2</span>
-                            <span class="pill gold">M1+M3</span>
-                        </div>
-                        <p class="b-desc">Native ternary Metal kernels on Apple Silicon. 12.80x compression. Fused qmv_fast GPU kernels. 260/260 tests pass.</p>
-                    </a>
-
-                    <a href="/markowitz" class="b-card gold-border">
-                        <div class="b-head">
-                            <strong class="gold-text">Markowitz Frontier QP</strong>
-                            <span class="pill gold">portfolio</span>
-                        </div>
-                        <p class="b-desc">From-scratch mean-variance optimization and the efficient frontier. Quadratic Programming threshold surface solver with 5 preset universes.</p>
-                    </a>
-
-                    <a href="/black-scholes" class="b-card">
-                        <div class="b-head">
-                            <strong>Black-Scholes Engine</strong>
-                            <span class="pill cyan">analytics</span>
-                        </div>
-                        <p class="b-desc">Interactive Black-Scholes pricing, Greeks profile (Δ, Γ, Θ, ν), and Monte Carlo GBM path simulator.</p>
-                    </a>
-
-                    <a href="/microstructure" class="b-card">
-                        <div class="b-head">
-                            <strong>L2 Microstructure</strong>
-                            <span class="pill gold">orderbook</span>
-                        </div>
-                        <p class="b-desc">Interactive Level-2 limit orderbook depth ladder, VPIN toxicity model, and bid-ask spread dynamics.</p>
-                    </a>
-                </div>
-            </section>
-
-            <!-- Planet Footer -->
-            <footer class="planet-footer">
-                <div class="footer-meta">
-                    <span class="mono-label">AXIOM QUANT ARCHIVE // SPECTRAL EQUILIBRIUM</span>
-                    <div class="footer-links">
-                        <a href="https://github.com/8b-is/MLX-QUANT" target="_blank">MLX-QUANT</a> • 
-                        <a href="https://github.com/8b-is/ayeos" target="_blank">ayeOS</a> • 
-                        <a href="https://github.com/8b-is/vaked" target="_blank">vaked</a> • 
-                        <span>axiomquant.org</span>
+                <!-- PAPER 3: DYADIC-TERNARY BRIDGE -->
+                <div class="paper-content" id="paper-dyadic-ternary">
+                    <div class="article-meta">
+                        <span class="meta-tag cyan">MONOGRAPH CHAPTER 03</span>
+                        <span class="meta-date">JULY 2026</span>
                     </div>
-                    <span class="mono-label gold-text">FOUNDATION PHASE △</span>
-                </div>
-            </footer>
 
+                    <h1 class="article-title">Dyadic Transformation & Context Realizability</h1>
+                    <div class="byline">N. Flyxion & P. Lodri • Axiom Quant Research Monograph</div>
+
+                    <p class="lead-text">
+                        The dyadic transformation $T(x) = 2x \pmod 1$ maps the unit interval to itself, generating the canonical Bernoulli shift. When extended to context transition graphs, the cycle rank $\beta_1$ determines the exact field extension required to close holonomy.
+                    </p>
+
+                    <h2 class="section-title">1. Spanning Trees & Cycle Rank</h2>
+                    <p>
+                        For any context graph $G = (V, E)$, the cycle rank is given by $\beta_1(G) = |E| - |V| + k$, where $k$ is the number of connected components.
+                    </p>
+                    <ul class="styled-list">
+                        <li>If $\beta_1 = 0$, $G$ is a forest, and all admissible transition assignments are $\mathbb{R}$-realizable.</li>
+                        <li>If $\beta_1 = 1$, the minimal witness $K_3$ (triangle) forces a complex amplitude field $\mathbb{C}$.</li>
+                        <li>If $\beta_1 \ge 2$, dense cycle overlaps force quaternionic $\mathbb{H}$ or octonionic $\mathbb{O}$ structures.</li>
+                    </ul>
+                </div>
+
+                <!-- PAPER 4: MICROSTRUCTURE & CHAOS -->
+                <div class="paper-content" id="paper-microstructure-chaos">
+                    <div class="article-meta">
+                        <span class="meta-tag gold">MONOGRAPH CHAPTER 04</span>
+                        <span class="meta-date">JULY 2026</span>
+                    </div>
+
+                    <h1 class="article-title">Market Microstructure & Chaos</h1>
+                    <div class="byline">N. Flyxion & P. Lodri • Axiom Quant Research Monograph</div>
+
+                    <p class="lead-text">
+                        High-frequency Level-2 orderbook dynamics, Volume-Synchronized Probability of Toxicity (VPIN), and Almgren-Chriss optimal execution control.
+                    </p>
+
+                    <h2 class="section-title">1. VPIN Information Leakage</h2>
+                    <p>
+                        VPIN measures order flow toxicity by sampling volume buckets $V$:
+                    </p>
+                    <div class="code-block">
+                        <pre><code>VPIN = (Σ |V_b - V_s|) / (N * V)</code></pre>
+                    </div>
+                    <p>
+                        When VPIN crosses the critical threshold $0.70$, liquidity providers face severe adverse selection and widen bid-ask spreads dramatically.
+                    </p>
+                </div>
+
+                <!-- PAPER 5: TRANSFER OPERATOR -->
+                <div class="paper-content" id="paper-transfer-operator">
+                    <div class="article-meta">
+                        <span class="meta-tag cyan">MONOGRAPH CHAPTER 05</span>
+                        <span class="meta-date">JULY 2026</span>
+                    </div>
+
+                    <h1 class="article-title">The Transfer Operator & the Devil's Staircase</h1>
+                    <div class="byline">N. Flyxion & P. Lodri • Axiom Quant Research Monograph</div>
+
+                    <h2 class="section-title">1. Frobenius-Perron-Ruelle Operator</h2>
+                    <p>
+                        For a map $f: X \to X$, the transfer operator $\mathcal{L}$ acts on density functions $\rho$ as:
+                    </p>
+                    <div class="code-block">
+                        <pre><code>(L ρ)(x) = ½ ρ(x/2) + ½ ρ((x+1)/2)</code></pre>
+                    </div>
+                    <p>
+                        The discrete spectrum consists of eigenvalues $\lambda_k = 2^{-k}$ with Bernoulli polynomials $B_k(x)$ as eigenfunctions. The spectral gap $1 - \lambda_1 = 1/2$ governs the rate of correlation decay in chaotic dynamics.
+                    </p>
+                </div>
+
+                <!-- PAPER 6: BLACK-SCHOLES GREEKS -->
+                <div class="paper-content" id="paper-black-scholes">
+                    <div class="article-meta">
+                        <span class="meta-tag gold">MONOGRAPH CHAPTER 06</span>
+                        <span class="meta-date">JULY 2026</span>
+                    </div>
+
+                    <h1 class="article-title">Black-Scholes & Stochastic Calculus</h1>
+                    <div class="byline">N. Flyxion & P. Lodri • Axiom Quant Research Monograph</div>
+
+                    <p class="lead-text">
+                        European option valuation under Geometric Brownian Motion $dS_t = \mu S_t dt + \sigma S_t dW_t$ and exact analytical Greeks ($\Delta, \Gamma, \Theta, \nu, \rho$).
+                    </p>
+
+                    <div class="code-block">
+                        <pre><code>Call = S * N(d1) - K * exp(-rT) * N(d2)
+d1 = (ln(S/K) + (r + ½ σ²) T) / (σ √T)
+d2 = d1 - σ √T</code></pre>
+                    </div>
+                </div>
+
+                <!-- PAPER 7: BIBLIOGRAPHY -->
+                <div class="paper-content" id="paper-bibliography">
+                    <div class="article-meta">
+                        <span class="meta-tag gold">BIBLIOGRAPHY & CATALOG</span>
+                        <span class="meta-date">JULY 2026</span>
+                    </div>
+
+                    <h1 class="article-title">Foundational Bibliography</h1>
+                    <div class="byline">Curated Catalog of Foundational Literature</div>
+
+                    <ul class="styled-list">
+                        <li><strong>Erdős, P., & Rényi, A. (1959).</strong> On random graphs I. <em>Publicationes Mathematicae Debrecen</em>, 6, 290–297.</li>
+                        <li><strong>Markowitz, H. (1952).</strong> Portfolio selection. <em>The Journal of Finance</em>, 7(1), 77–91.</li>
+                        <li><strong>Black, F., & Scholes, M. (1973).</strong> The pricing of options and corporate liabilities. <em>Journal of Political Economy</em>, 81(3), 637–654.</li>
+                        <li><strong>Ma, S., et al. (2024).</strong> The Era of 1-bit LLMs: All Large Language Models are in 1.58 Bits. <em>arXiv:2402.17764</em>.</li>
+                        <li><strong>Fan Chung (1997).</strong> <em>Spectral Graph Theory</em>. AMS Regional Conference Series in Mathematics, No. 92.</li>
+                    </ul>
+                </div>
+
+            </article>
         </main>
     </div>
 
