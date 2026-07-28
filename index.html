@@ -12,8 +12,20 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://axiomquant.org">
 
-    <!-- MathJax for rendering equations -->
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    <!-- MathJax 3 Configuration & Preload -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,7 +54,11 @@
                 <a href="#taxonomy" class="nav-link">Taxonomy</a>
                 <a href="#archive" class="nav-link">Archive</a>
                 <a href="#building" class="nav-link">Building</a>
-                <a href="/markowitz" class="nav-link highlight-link">Markowitz QP →</a>
+                <a href="/markowitz" class="nav-link highlight-link">Markowitz QP</a>
+                <a href="/black-scholes" class="nav-link">Black-Scholes</a>
+                <a href="/microstructure" class="nav-link">Microstructure</a>
+                <a href="/thresholds" class="nav-link">ER Phase</a>
+                <a href="/dyadic" class="nav-link">Dyadic</a>
             </nav>
         </header>
 
@@ -248,35 +264,7 @@
                             Chapter 5 of the monograph: spanning trees, cycle rank $\beta_1$, and the General Realizability Criterion. Structural depth $d_{\text{obs}}(A)$ versus $\beta_1$. Distinguishes topological obstruction (cycle realizability) from composition obstruction (lift matrix interference across paths).
                         </div>
                         <div class="paper-links">
-                            <a href="https://en.wikipedia.org/wiki/Dyadic_transformation" target="_blank" class="link-badge">Dyadic Reference ↗</a>
-                        </div>
-                    </div>
-
-                    <div class="paper-card">
-                        <div class="paper-header">
-                            <h3 class="paper-title">Scrambled Linear Pseudorandom Number Generators (2021)</h3>
-                            <span class="paper-year">2021</span>
-                        </div>
-                        <div class="paper-authors">D. Blackman, S. Vigna. ACM Trans. Math. Softw. 47(4), 1–32.</div>
-                        <div class="paper-abstract">
-                            The $\texttt{xoshiro256**}$ family — the PRNG used in ayeOS. Deterministic chaos from four 64-bit state words. Understanding why this works explains why the matrix is both random and reproducible — the same seed produces identical weights on any machine.
-                        </div>
-                        <div class="paper-links">
-                            <a href="https://arxiv.org/abs/1805.01407" target="_blank" class="link-badge">arXiv ↗</a>
-                        </div>
-                    </div>
-
-                    <div class="paper-card">
-                        <div class="paper-header">
-                            <h3 class="paper-title">Paul Erdős — The Man Who Loved Only Numbers</h3>
-                            <span class="paper-year">1998</span>
-                        </div>
-                        <div class="paper-authors">P. Hoffman (1998).</div>
-                        <div class="paper-abstract">
-                            1,500+ papers, zero institutional affiliation, a battered suitcase, and "my brain is open." Erdős mapped the collaboration graph of 20th-century mathematics. The Erdős number through the matrix is 1 — this project is a direct collaboration across time.
-                        </div>
-                        <div class="paper-links">
-                            <a href="https://en.wikipedia.org/wiki/Paul_Erd%C5%91s" target="_blank" class="link-badge">Wikipedia ↗</a>
+                            <a href="/dyadic" class="link-badge">Dyadic Visualizer ↗</a>
                         </div>
                     </div>
 
@@ -306,12 +294,20 @@
                         <p class="card-desc">Pure Rust ternary matrix inference daemon. Xoshiro128** seeded from SHA-256(LINOSV). MEMNET protocol for distributed matrix serving.</p>
                     </a>
 
-                    <a href="https://mlx-quant-viz.pages.dev" target="_blank" class="building-card">
+                    <a href="/black-scholes" class="building-card">
                         <div class="card-head">
-                            <h4 class="card-name">Ternary Matrix Viz</h4>
-                            <span class="pill-tag cyan">matriq.net</span>
+                            <h4 class="card-name">Black-Scholes Engine</h4>
+                            <span class="pill-tag cyan">analytics</span>
                         </div>
-                        <p class="card-desc">Interactive ternary matrix visualization. 64×64 pixel grid, color-coded {-1, 0, +1}. N→N-x recursion across 6 compression layers.</p>
+                        <p class="card-desc">Interactive Black-Scholes pricing, Greeks profile (Δ, Γ, Θ, ν), and Monte Carlo GBM path simulator.</p>
+                    </a>
+
+                    <a href="/microstructure" class="building-card">
+                        <div class="card-head">
+                            <h4 class="card-name">L2 Microstructure</h4>
+                            <span class="pill-tag gold">orderbook</span>
+                        </div>
+                        <p class="card-desc">Interactive Level-2 limit orderbook depth ladder, VPIN toxicity model, and bid-ask spread dynamics.</p>
                     </a>
 
                     <a href="/markowitz" class="building-card highlight-card">
