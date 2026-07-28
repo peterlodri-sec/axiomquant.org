@@ -76,6 +76,10 @@ function loadPaper(paperId) {
             'transfer-operator': 'MONOGRAPH // 05 // TRANSFER OPERATOR',
             'black-scholes': 'MONOGRAPH // 06 // BLACK-SCHOLES GREEKS',
             'backyard-ultra': 'MONOGRAPH // 08 // BACKYARD ULTRA LOOP ENGINEERING',
+            'lap2-tracy-widom': 'MONOGRAPH // LAP 2 // TRACY-WIDOM & SLE',
+            'lap3-universal-kernel': 'MONOGRAPH // LAP 3 // THE UNIVERSAL THRESHOLD KERNEL',
+            'lap4-zeta-gff': 'MONOGRAPH // LAP 4 // ZETA-GFF BLUEPRINT',
+            'laps-5-8-synthesis': 'MONOGRAPH // LAPS 5-8 // SPECTRAL RIGIDITY SYNTHESIS',
             'bibliography': 'CATALOG // FOUNDATIONAL BIBLIOGRAPHY'
         };
         breadcrumb.innerText = titles[paperId] || 'MONOGRAPH // RESEARCH';
