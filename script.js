@@ -75,6 +75,7 @@ function loadPaper(paperId) {
             'microstructure-chaos': 'MONOGRAPH // 04 // MICROSTRUCTURE & CHAOS',
             'transfer-operator': 'MONOGRAPH // 05 // TRANSFER OPERATOR',
             'black-scholes': 'MONOGRAPH // 06 // BLACK-SCHOLES GREEKS',
+            'backyard-ultra': 'MONOGRAPH // 08 // BACKYARD ULTRA LOOP ENGINEERING',
             'bibliography': 'CATALOG // FOUNDATIONAL BIBLIOGRAPHY'
         };
         breadcrumb.innerText = titles[paperId] || 'MONOGRAPH // RESEARCH';
