@@ -1,17 +1,18 @@
 /* ==========================================================================
    AXIOM QUANT — FLOATING CELESTIAL PLANET READING INTERFACE (SPECTRAL EQUILIBRIUM)
+   HIGH CONTRAST & MAXIMUM LEGIBILITY FIX
    ========================================================================== */
 
 :root {
-    --bg-color: #05060A;
+    --bg-color: #040508;
     --cyan-accent: #00F0FF;
     --gold-accent: #E5B958;
-    --white-text: #F8FAFC;
-    --slate-text: #CBD5E1;
-    --muted-text: #64748B;
-    --grid-line: rgba(30, 41, 59, 0.35);
-    --planet-bg: rgba(9, 13, 23, 0.88);
-    --card-bg: rgba(15, 22, 36, 0.6);
+    --white-text: #FFFFFF;
+    --slate-text: #E2E8F0;
+    --muted-text: #94A3B8;
+    --grid-line: rgba(51, 65, 85, 0.5);
+    --planet-bg: rgba(10, 15, 26, 0.94);
+    --card-bg: rgba(15, 23, 42, 0.85);
     --font-mono: 'Fira Code', 'JetBrains Mono', monospace;
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
@@ -26,7 +27,7 @@ html, body {
     width: 100%;
     min-height: 100vh;
     background-color: var(--bg-color);
-    color: var(--white-text);
+    color: var(--slate-text);
     font-family: var(--font-sans);
     line-height: 1.8;
     -webkit-font-smoothing: antialiased;
@@ -40,9 +41,9 @@ html, body {
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 0;
+    z-index: -1;
     pointer-events: none;
-    opacity: 0.35;
+    opacity: 0.4;
 }
 
 /* Outer Viewport Container */
@@ -53,7 +54,7 @@ html, body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    padding: 60px 20px;
+    padding: 40px 16px;
 }
 
 /* FLOATING CELESTIAL READING PLANET SURFACE */
@@ -61,35 +62,33 @@ html, body {
     max-width: 720px;
     width: 100%;
     background: var(--planet-bg);
-    border: 1px solid rgba(0, 240, 255, 0.22);
-    border-radius: 24px;
-    padding: 48px 48px;
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-radius: 20px;
+    padding: 44px 40px;
     box-shadow: 
-        0 0 90px rgba(0, 240, 255, 0.15),
-        0 0 160px rgba(5, 6, 10, 0.95),
-        inset 0 0 40px rgba(0, 240, 255, 0.04);
-    backdrop-filter: blur(28px);
-    transition: box-shadow 0.4s ease, border-color 0.4s ease;
+        0 0 60px rgba(0, 240, 255, 0.18),
+        0 0 120px rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 }
 
-.reading-planet:hover {
-    border-color: rgba(0, 240, 255, 0.35);
-    box-shadow: 
-        0 0 110px rgba(0, 240, 255, 0.2),
-        0 0 180px rgba(5, 6, 10, 0.98),
-        inset 0 0 50px rgba(0, 240, 255, 0.06);
+/* MathJax High-Contrast Fallback */
+mjx-container, .MathJax {
+    color: var(--cyan-accent) !important;
+    font-size: 105% !important;
+    outline: none;
 }
 
 /* Utility Text Classes */
 .mono-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em; color: var(--slate-text); }
-.cyan-text { color: var(--cyan-accent); }
-.gold-text { color: var(--gold-accent); }
+.cyan-text { color: var(--cyan-accent) !important; text-shadow: 0 0 12px rgba(0, 240, 255, 0.4); }
+.gold-text { color: var(--gold-accent) !important; text-shadow: 0 0 12px rgba(229, 185, 88, 0.3); }
 .muted { color: var(--muted-text); }
 
 /* Planet Header */
 .planet-header {
-    margin-bottom: 40px;
-    padding-bottom: 20px;
+    margin-bottom: 36px;
+    padding-bottom: 18px;
     border-bottom: 1px solid var(--grid-line);
 }
 
@@ -101,8 +100,8 @@ html, body {
 }
 
 .pulse-dot {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background-color: var(--cyan-accent);
     box-shadow: 0 0 12px var(--cyan-accent);
@@ -116,7 +115,7 @@ html, body {
 
 .brand-name {
     font-family: var(--font-mono);
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 800;
     letter-spacing: 0.2em;
     color: var(--white-text);
@@ -125,11 +124,11 @@ html, body {
 
 .version-tag {
     font-family: var(--font-mono);
-    font-size: 9px;
+    font-size: 9.5px;
     color: var(--gold-accent);
-    padding: 2px 7px;
-    background: rgba(229, 185, 88, 0.1);
-    border: 1px solid rgba(229, 185, 88, 0.25);
+    padding: 3px 8px;
+    background: rgba(229, 185, 88, 0.15);
+    border: 1px solid rgba(229, 185, 88, 0.4);
     border-radius: 3px;
     margin-left: auto;
 }
@@ -144,37 +143,39 @@ html, body {
 
 .nav-item {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 11.5px;
     color: var(--slate-text);
     text-decoration: none;
-    padding: 5px 10px;
+    padding: 6px 12px;
     border-radius: 4px;
-    border: 1px solid transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
     transition: all 0.25s ease;
 }
 
 .nav-item:hover, .nav-item.active {
-    color: var(--cyan-accent);
-    border-color: rgba(0, 240, 255, 0.3);
-    background: rgba(0, 240, 255, 0.05);
+    color: var(--white-text);
+    border-color: var(--cyan-accent);
+    background: rgba(0, 240, 255, 0.12);
 }
 
 .highlight-btn {
     color: var(--gold-accent) !important;
-    border-color: rgba(229, 185, 88, 0.4) !important;
-    background: rgba(229, 185, 88, 0.08) !important;
+    border-color: rgba(229, 185, 88, 0.5) !important;
+    background: rgba(229, 185, 88, 0.12) !important;
     margin-left: auto;
+    font-weight: 600;
 }
 
 .highlight-btn:hover {
     background: var(--gold-accent) !important;
-    color: var(--bg-color) !important;
-    box-shadow: 0 0 15px rgba(229, 185, 88, 0.3);
+    color: #000000 !important;
+    box-shadow: 0 0 15px rgba(229, 185, 88, 0.4);
 }
 
 /* Planet Hero Reading Lead */
 .planet-hero {
-    margin-bottom: 44px;
+    margin-bottom: 40px;
 }
 
 .hero-tag {
@@ -183,18 +184,18 @@ html, body {
     gap: 8px;
     padding: 4px 12px;
     border-radius: 4px;
-    background: rgba(0, 240, 255, 0.05);
-    border: 1px solid rgba(0, 240, 255, 0.2);
+    background: rgba(0, 240, 255, 0.1);
+    border: 1px solid rgba(0, 240, 255, 0.3);
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.15em;
     color: var(--cyan-accent);
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .badge-dot {
-    width: 5px;
-    height: 5px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background-color: var(--cyan-accent);
 }
@@ -205,14 +206,14 @@ html, body {
     line-height: 1.3;
     letter-spacing: -0.01em;
     color: var(--white-text);
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .hero-prose {
-    font-size: 15px;
+    font-size: 15.5px;
     color: var(--slate-text);
     line-height: 1.8;
-    margin-bottom: 24px;
+    margin-bottom: 22px;
 }
 
 .telemetry-pill {
@@ -220,11 +221,11 @@ html, body {
     align-items: center;
     gap: 10px;
     padding: 8px 16px;
-    background: rgba(6, 7, 11, 0.9);
+    background: #020305;
     border: 1px solid var(--grid-line);
     border-radius: 20px;
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 10.5px;
 }
 
 .t-label { color: var(--muted-text); letter-spacing: 0.1em; }
@@ -232,7 +233,7 @@ html, body {
 
 /* Planet Sections */
 .planet-section {
-    margin-bottom: 44px;
+    margin-bottom: 40px;
 }
 
 .section-label {
@@ -240,7 +241,7 @@ html, body {
     font-size: 12px;
     letter-spacing: 0.2em;
     color: var(--cyan-accent);
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--grid-line);
 }
@@ -248,19 +249,18 @@ html, body {
 /* Paper Reading Entries */
 .paper-entry {
     background: var(--card-bg);
-    border: 1px solid var(--grid-line);
-    border-left: 3px solid var(--cyan-accent);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    border-left: 4px solid var(--cyan-accent);
     border-radius: 6px;
     padding: 22px 24px;
     margin-bottom: 16px;
-    backdrop-filter: blur(12px);
     transition: all 0.3s ease;
 }
 
 .paper-entry:hover {
-    border-color: rgba(0, 240, 255, 0.4);
+    border-color: var(--cyan-accent);
     transform: translateX(4px);
-    box-shadow: 0 4px 20px rgba(0, 240, 255, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 240, 255, 0.15);
 }
 
 .entry-head {
@@ -271,7 +271,7 @@ html, body {
 }
 
 .entry-title {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
     color: var(--white-text);
     line-height: 1.4;
@@ -282,7 +282,7 @@ html, body {
     font-size: 10px;
     color: var(--gold-accent);
     padding: 2px 7px;
-    background: rgba(229, 185, 88, 0.1);
+    background: rgba(229, 185, 88, 0.15);
     border-radius: 3px;
 }
 
@@ -294,7 +294,7 @@ html, body {
 }
 
 .entry-body {
-    font-size: 13.5px;
+    font-size: 14px;
     color: var(--slate-text);
     line-height: 1.75;
     margin-bottom: 14px;
@@ -311,16 +311,17 @@ html, body {
     font-size: 10px;
     color: var(--cyan-accent);
     text-decoration: none;
-    padding: 3px 9px;
-    background: rgba(0, 240, 255, 0.08);
-    border: 1px solid rgba(0, 240, 255, 0.25);
+    padding: 4px 10px;
+    background: rgba(0, 240, 255, 0.12);
+    border: 1px solid rgba(0, 240, 255, 0.3);
     border-radius: 3px;
     transition: all 0.2s ease;
 }
 
 .tag-link:hover {
     background: var(--cyan-accent);
-    color: var(--bg-color);
+    color: #000000;
+    font-weight: 600;
     box-shadow: 0 0 10px var(--cyan-accent);
 }
 
@@ -338,21 +339,21 @@ html, body {
     width: 100%;
     border-collapse: collapse;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .taxonomy-grid th {
     text-align: left;
     padding: 10px;
     color: var(--cyan-accent);
-    font-size: 9.5px;
+    font-size: 10px;
     letter-spacing: 0.15em;
     border-bottom: 1px solid var(--grid-line);
 }
 
 .taxonomy-grid td {
     padding: 10px;
-    border-bottom: 1px solid rgba(30, 41, 59, 0.3);
+    border-bottom: 1px solid rgba(51, 65, 85, 0.4);
     color: var(--slate-text);
 }
 
@@ -360,8 +361,8 @@ html, body {
 
 /* Theorem Box */
 .theorem-box {
-    background: rgba(229, 185, 88, 0.04);
-    border: 1px solid rgba(229, 185, 88, 0.3);
+    background: rgba(229, 185, 88, 0.06);
+    border: 1px solid rgba(229, 185, 88, 0.4);
     border-left: 4px solid var(--gold-accent);
     border-radius: 6px;
     padding: 22px 24px;
@@ -376,7 +377,7 @@ html, body {
 
 .thm-crest { font-size: 16px; color: var(--gold-accent); }
 .thm-label { font-family: var(--font-mono); font-size: 12px; color: var(--gold-accent); font-weight: 700; }
-.thm-prose { font-size: 13.5px; color: var(--white-text); line-height: 1.7; }
+.thm-prose { font-size: 14px; color: var(--white-text); line-height: 1.75; }
 
 /* Building Cards */
 .building-cards {
@@ -404,7 +405,7 @@ html, body {
     box-shadow: 0 6px 20px rgba(0, 240, 255, 0.15);
 }
 
-.gold-border { border-color: rgba(229, 185, 88, 0.4); background: rgba(229, 185, 88, 0.04); }
+.gold-border { border-color: rgba(229, 185, 88, 0.4); background: rgba(229, 185, 88, 0.06); }
 
 .b-head {
     display: flex;
@@ -421,10 +422,10 @@ html, body {
     border-radius: 3px;
 }
 
-.pill.cyan { background: rgba(0, 240, 255, 0.1); color: var(--cyan-accent); }
-.pill.gold { background: rgba(229, 185, 88, 0.1); color: var(--gold-accent); }
+.pill.cyan { background: rgba(0, 240, 255, 0.15); color: var(--cyan-accent); }
+.pill.gold { background: rgba(229, 185, 88, 0.15); color: var(--gold-accent); }
 
-.b-desc { font-size: 12px; color: var(--slate-text); line-height: 1.6; }
+.b-desc { font-size: 12.5px; color: var(--slate-text); line-height: 1.6; }
 
 /* Planet Footer */
 .planet-footer {
@@ -452,8 +453,8 @@ html, body {
 
 /* Mobile Adaptability */
 @media (max-width: 768px) {
-    .viewport-container { padding: 20px 10px; }
-    .reading-planet { padding: 28px 20px; border-radius: 16px; }
+    .viewport-container { padding: 16px 8px; }
+    .reading-planet { padding: 24px 16px; border-radius: 14px; }
     .building-cards { grid-template-columns: 1fr; }
     .planet-nav { flex-direction: column; align-items: flex-start; }
     .highlight-btn { margin-left: 0; width: 100%; text-align: center; }
