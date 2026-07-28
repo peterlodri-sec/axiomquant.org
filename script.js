@@ -88,6 +88,14 @@ function loadPaper(paperId) {
       'lap4-zeta-gff' : 'MONOGRAPH // LAP 4 // ZETA-GFF BLUEPRINT',
       'laps-5-8-synthesis' :
           'MONOGRAPH // LAPS 5-8 // SPECTRAL RIGIDITY SYNTHESIS',
+      'laps-9-13-beyond-pain-cage' :
+          'MONOGRAPH // LAPS 9-13 // BEYOND THE PAIN CAGE',
+      'magyarok-flugos' : 'MONOGRAPH // SPECIAL // MAGYAROK & FLUG-OS',
+      'laps-14-42-grand-finale' : 'MONOGRAPH // LAPS 14-42 // GRAND FINALE',
+      'radiation-delta-network' :
+          'MONOGRAPH // TOPOLOGY // RADIATION Δ-NETWORK',
+      'standard-galactic-decentralized-kb' :
+          'MONOGRAPH // VAULT // STANDARD GALACTIC KB',
       'bibliography' : 'CATALOG // FOUNDATIONAL BIBLIOGRAPHY'
     };
     breadcrumb.innerText = titles[paperId] || 'MONOGRAPH // RESEARCH';
