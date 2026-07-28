@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markowitz Mean-Variance Optimizer — AXIOM QUANT</title>
+    <meta name="description" content="From-scratch Markowitz mean-variance optimizer with efficient frontier canvas, max Sharpe tangency line, 5 asset universes, and threshold surface QP derivation.">
+    
+    <!-- Open Graph & Social Cards -->
+    <meta property="og:title" content="Markowitz Optimizer — AXIOM QUANT">
+    <meta property="og:description" content="Interactive Markowitz Mean-Variance Efficient Frontier and QP threshold surface derivation.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://axiomquant.org/markowitz">
+
+    <!-- MathJax for rendering equations -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@200;300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background Canvas Grid -->
+    <canvas id="backgroundGridCanvas"></canvas>
+
+    <div class="page-shell">
+        
+        <!-- Header -->
+        <header class="top-bar">
+            <div class="brand-group">
+                <a href="/" class="brand-link">
+                    <span class="crest">△</span>
+                    <span class="brand-name">AXIOM—QUANT</span>
+                </a>
+                <span class="route-tag">/MARKOWITZ</span>
+            </div>
+
+            <nav class="top-nav">
+                <a href="/" class="nav-link">← RETURN TO MANIFESTO</a>
+                <span class="status-badge">QP ENGINE v1.0</span>
+            </nav>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="markowitz-layout">
+            
+            <!-- Left Column: Controls & Presets -->
+            <aside class="controls-panel">
+                <div class="panel-card">
+                    <h3 class="card-label">01 // SELECT ASSET UNIVERSE</h3>
+                    <div class="preset-buttons">
+                        <button class="preset-btn active" data-universe="bigtech">Big Tech (AAPL/MSFT/GOOGL/AMZN/TSLA)</button>
+                        <button class="preset-btn" data-universe="finance">Finance (JPM/BAC/GS/MS/C)</button>
+                        <button class="preset-btn" data-universe="energy">Energy (XOM/CVX/COP/SLB/EOG)</button>
+                        <button class="preset-btn" data-universe="crypto">Crypto (BTC/ETH/SOL/BNB/AVAX)</button>
+                        <button class="preset-btn" data-universe="etfs">ETFs (SPY/QQQ/IWM/TLT/GLD)</button>
+                    </div>
+                </div>
+
+                <div class="panel-card">
+                    <h3 class="card-label">02 // CUSTOM ASSET DATA / PARAMETERS</h3>
+                    <div class="field-row">
+                        <label for="rfRate">RISK-FREE RATE ($r_f$):</label>
+                        <div class="input-with-unit">
+                            <input type="number" id="rfRate" value="4.5" step="0.1" min="0" max="20" />
+                            <span>%</span>
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <label for="simPortfolios">MONTE CARLO SAMPLES:</label>
+                        <select id="simPortfolios">
+                            <option value="1000">1,000 Portfolios</option>
+                            <option value="3000" selected>3,000 Portfolios</option>
+                            <option value="5000">5,000 Portfolios</option>
+                        </select>
+                    </div>
+
+                    <div class="custom-ticker-box">
+                        <label for="customTickers">CUSTOM TICKER LIST (COMMA SEPARATED):</label>
+                        <input type="text" id="customTickers" placeholder="e.g. NVDA, META, AMD, PLTR" />
+                        <button class="btn-primary" onclick="applyCustomTickers()">APPLY CUSTOM UNIVERSE</button>
+                    </div>
+                </div>
+
+                <!-- Asset Summary Table -->
+                <div class="panel-card">
+                    <h3 class="card-label">03 // UNIVERSE EXPECTED RETURNS & VOLATILITY</h3>
+                    <div class="table-wrapper">
+                        <table id="assetSummaryTable" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>TICKER</th>
+                                    <th>E(R) %</th>
+                                    <th>VOL ($\sigma$) %</th>
+                                    <th>SHARPE</th>
+                                </tr>
+                            </thead>
+                            <tbody><!-- Populated dynamically --></tbody>
+                        </table>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right Column: Interactive Frontier Canvas & Results -->
+            <section class="visualizer-panel">
+                
+                <!-- Main Canvas Visualizer -->
+                <div class="canvas-card">
+                    <div class="canvas-header">
+                        <div class="title-group">
+                            <h2>EFFICIENT FRONTIER & CAPITAL ALLOCATION LINE</h2>
+                            <span class="sub-legend">Individual Assets (●) | Min Variance (▲) | Max Sharpe Tangency (★)</span>
+                        </div>
+                        <div class="canvas-telemetry">
+                            <span id="maxSharpeVal" class="gold-text">MAX SHARPE: --</span>
+                        </div>
+                    </div>
+
+                    <div class="frontier-canvas-wrapper">
+                        <canvas id="frontierCanvas"></canvas>
+                        <div id="chartTooltip" class="chart-tooltip"></div>
+                    </div>
+                </div>
+
+                <!-- Optimal Weights Table comparison -->
+                <div class="weights-card">
+                    <h3 class="card-label">04 // OPTIMAL PORTFOLIO WEIGHT ALLOCATIONS ($w_i$)</h3>
+                    <div class="table-wrapper">
+                        <table id="weightsTable" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ASSET</th>
+                                    <th>MINIMUM VARIANCE WEIGHT</th>
+                                    <th>TANGENCY (MAX SHARPE) WEIGHT</th>
+                                    <th>ALLOCATION BARS</th>
+                                </tr>
+                            </thead>
+                            <tbody><!-- Populated dynamically --></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Mathematical QP & Axiom Thesis Derivation Section -->
+                <div class="math-derivation-card">
+                    <h3 class="card-label gold-text">05 // QUADRATIC PROGRAMMING & THE AXIOM THESIS</h3>
+                    
+                    <div class="math-content">
+                        <div class="math-column">
+                            <h4>Quadratic Optimization Formulation</h4>
+                            <p>The classical Markowitz mean-variance optimization problem is structured as a constrained Quadratic Program (QP):</p>
+                            
+                            <div class="equation-box">
+                                $$\min_{w} \quad \frac{1}{2} w^T \Sigma w \quad \text{subject to} \quad w^T \mathbf{1} = 1, \quad w^T \mu = r_p, \quad w \ge 0$$
+                            </div>
+
+                            <p>Constructing the Lagrangian $\mathcal{L}(w, \lambda, \gamma, \eta)$ with multipliers for portfolio budget, target return, and no-shorting constraints:</p>
+                            
+                            <div class="equation-box">
+                                $$\mathcal{L}(w, \lambda, \gamma, \eta) = \frac{1}{2} w^T \Sigma w - \lambda (w^T \mathbf{1} - 1) - \gamma (w^T \mu - r_p) - \eta^T w$$
+                            </div>
+                        </div>
+
+                        <div class="math-column">
+                            <h4>The Axiom Thesis: Threshold Surface Realizability</h4>
+                            <p class="thesis-quote">
+                                <em>"The Efficient Frontier is not merely a curve of optimal risk-return pairs; it is a <strong>threshold surface</strong> in high-dimensional state space—governed by the exact same mathematics as the <strong>graph realizability boundary</strong>."</em>
+                            </p>
+                            
+                            <p>As target return $r_p$ varies, the KKT slackness condition $\eta_i w_i = 0$ acts as a phase transition threshold. At critical Lagrange multipliers $(\lambda^*, \gamma^*)$, inactive assets cross from $w_i = 0$ (boundary) to $w_i > 0$ (interior), creating piecewise analytic phase shifts across the risk-return manifold.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="page-footer">
+            <span class="mono-label">AXIOM QUANT RESEARCH // MARKOWITZ MEAN-VARIANCE THESIS</span>
+            <span class="mono-label muted">PUBLISHED FOR AXIOMQUANT.ORG</span>
+        </footer>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
