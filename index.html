@@ -194,6 +194,12 @@
             .article-title { font-size: 24px; }
         }
     </style>
+
+<!-- KaTeX 0.16.9 Math Engine Integration -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
 </head>
 <body>
 <a href="#main" class="skip-link">Skip to main content</a>
@@ -409,7 +415,16 @@
         </aside>
 
         <!-- Main Reading Surface -->
-        <main class="portal-content">
+        
+<!-- Interactive Monograph Search & Math Engine Filter -->
+<div style="max-width: 900px; margin: 2rem auto; padding: 1.2rem 1.8rem; background: rgba(15, 18, 28, 0.85); border: 1px solid rgba(170, 150, 255, 0.25); border-radius: 12px; backdrop-filter: blur(12px);">
+  <div style="font-family: var(--mono, monospace); font-size: 0.8rem; color: #62e6c9; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.8rem;">
+    🔍 Search 13 Monographs & Mathematical Operators
+  </div>
+  <input type="text" id="monograph-search" placeholder="Type equation, operator name, or keyword (e.g. BitNet, SIMD, Monograph 13, Lovetta)..." style="width: 100%; padding: 0.75rem 1rem; background: #05060a; border: 1px solid rgba(170, 150, 255, 0.3); border-radius: 8px; color: #e7e2f7; font-family: var(--mono, monospace); font-size: 0.85rem; outline: none;">
+</div>
+
+<main class="portal-content">
             
             <!-- Top Telemetry Header -->
             <header class="content-header">
@@ -769,13 +784,15 @@ Turn 01 ───► Prompt / Tool   ───► Observation     ───► T
                     <div class="math-box">
                         $$\mathcal{H}_{	ext{galactic}} = \sum_{lpha \in \Omega} \hbar \omega_lpha \hat{a}_lpha^\dagger \hat{a}_lpha + rac{1}{4g^2} \int_{\mathcal{M}} 	ext{Tr}\left(\mathbf{F}_{\mu
 u} \mathbf{F}^{\mu
-u}ight) d^4x$$
+u}
+ight) d^4x$$
                     </div>
 
                     <h2>2. Zero-Copy SIMD Tensor Reduction</h2>
                     <p>Under the Standard Galactic operator mapping, discrete weight matrices \(\mathbf{W} \in \mathbb{R}^{m 	imes n}\) collapse into ternary states with zero memory allocation overhead:</p>
                     <div class="math-box">
-                        $$\widetilde{\mathbf{W}} = 	ext{quantize\_ternary}(\mathbf{W}) \implies \mathbf{Y} = \gamma \cdot \left( \mathbf{W}_{	ext{pos}} \mathbf{X} - \mathbf{W}_{	ext{neg}} \mathbf{X} ight)$$
+                        $$\widetilde{\mathbf{W}} = 	ext{quantize\_ternary}(\mathbf{W}) \implies \mathbf{Y} = \gamma \cdot \left( \mathbf{W}_{	ext{pos}} \mathbf{X} - \mathbf{W}_{	ext{neg}} \mathbf{X} 
+ight)$$
                     </div>
 
                     <h2>3. Rust Zero-Copy SIMD Kernel Code</h2>
@@ -1132,5 +1149,27 @@ id="paper-media-quines-appendices">
     </div>
 
     <script src="script.js?v=3.0.0"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const searchInput = document.getElementById("monograph-search");
+  if (!searchInput) return;
+
+  searchInput.addEventListener("input", function(e) {
+    const q = e.target.value.toLowerCase().trim();
+    const articles = document.querySelectorAll("article, .monograph-card, section");
+    
+    articles.forEach(art => {
+      const text = art.innerText.toLowerCase();
+      if (!q || text.includes(q)) {
+        art.style.display = "";
+      } else {
+        art.style.display = "none";
+      }
+    });
+  });
+});
+</script>
+
 </body>
 </html>
