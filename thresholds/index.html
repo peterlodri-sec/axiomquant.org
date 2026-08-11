@@ -15,8 +15,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@200;300;400;600;700;800;900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="../style.css">
+
+<a href="#main" class="skip-link">Skip to main content</a>
+<style>
+.skip-link{position:absolute;top:-100px;left:16px;z-index:100;background:#b48bff;color:#05060a;font-family:monospace;font-weight:700;padding:12px 20px;border-radius:8px;text-decoration:none;transition:top 0.2s}
+.skip-link:focus{top:16px;outline:3px solid #62e6c9}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2.5px solid #62e6c9!important;outline-offset:3px!important}
+</style>
+
 </head>
 <body>
+
+<a href="#main" class="skip-link">Skip to main content</a>
+<style>
+.skip-link{position:absolute;top:-100px;left:16px;z-index:100;background:#b48bff;color:#05060a;font-family:monospace;font-weight:700;padding:12px 20px;border-radius:8px;text-decoration:none;transition:top 0.2s}
+.skip-link:focus{top:16px;outline:3px solid #62e6c9}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2.5px solid #62e6c9!important;outline-offset:3px!important}
+</style>
+
     <canvas id="spectralCanvas"></canvas>
 
     <div class="app-shell">
@@ -58,12 +74,30 @@
             </div>
         </main>
 
-        <footer class="main-footer">
-            <span class="mono-label">AXIOM QUANT ARCHIVE // DENSITY THRESHOLDS</span>
-            <span class="mono-label gold-text">FOUNDATION PHASE △</span>
-        </footer>
+        
+<footer role="contentinfo" style="position:relative;z-index:10;padding:2.5rem 1.5rem;margin-top:4rem;text-align:center;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:0.75rem;letter-spacing:0.14em;color:#a59fc4;background:rgba(5,6,10,0.92);border-top:1px solid rgba(170,150,255,0.18);backdrop-filter:blur(16px);">
+  <div style="margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.3em;color:#b48bff;font-weight:600;">the constellation · lovetta lane · axiom quant</div>
+  <div style="margin-bottom:1rem;font-size:0.65rem;letter-spacing:0.22em;color:#a59fc4;text-transform:uppercase;">keep the weights warm</div>
+  <div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.2rem;">
+    <a href="https://github.com/sponsors/peterlodri-sec" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;border:1px solid rgba(98,230,201,0.35);border-radius:8px;padding:0.4rem 0.8rem;background:rgba(98,230,201,0.06);">github sponsor</a>
+    <a href="https://revolut.me/peterjs8be" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;border:1px solid rgba(98,230,201,0.35);border-radius:8px;padding:0.4rem 0.8rem;background:rgba(98,230,201,0.06);">revolut</a>
+    <a href="https://wise.com/pay/business/lodripeterjozsef" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;border:1px solid rgba(98,230,201,0.35);border-radius:8px;padding:0.4rem 0.8rem;background:rgba(98,230,201,0.06);">wise</a>
+  </div>
+  <nav aria-label="Constellation sister sites" style="display:flex;gap:0.9rem;justify-content:center;flex-wrap:wrap;font-size:0.7rem;">
+    <a href="https://art.vaked.dev/" style="color:#62e6c9;text-decoration:none;">art.vaked.dev</a> ·
+    <a href="https://art.vaked.dev/vision-gallery.html" style="color:#5b9dff;text-decoration:none;">✦ vision-gallery (23)</a> ·
+    <a href="https://music.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">music.vaked.dev</a> ·
+    <a href="https://mlxquantlovefrom.com/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">quant-love</a> ·
+    <a href="https://proposal.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">proposal.vaked.dev</a> ·
+    <a href="https://pocoo.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">pocoo.vaked.dev</a> ·
+    <a href="https://axiomquant.org/" style="color:#62e6c9;text-decoration:none;">axiomquant.org</a>
+  </nav>
+  <div style="font-size:0.6rem;letter-spacing:0.18em;color:#7f7c99;margin-top:1.2rem;">the constellation · 0 + 1 · fine touch from within · vaked.dev</div>
+</footer>
+
     </div>
 
     <script src="../script.js"></script>
+<iframe id="musicbg" src="https://music.vaked.dev/" title="music.vaked.dev — living background" aria-hidden="true" loading="lazy" referrerpolicy="no-referrer" style="position:fixed;inset:0;z-index:0;pointer-events:none;border:0;opacity:0.25;mix-blend-mode:screen"></iframe>
 </body>
 </html>
