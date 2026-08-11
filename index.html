@@ -202,6 +202,16 @@
 
   <link rel="alternate" type="application/rss+xml" title="AXIOM QUANT RSS Feed" href="/feed.xml">
   <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+
+<style id="pdf-export-styles">
+@media print {
+  body { background: #fff !important; color: #000 !important; font-family: serif !important; padding: 0 !important; }
+  header, nav, .search-bar, button, footer { display: none !important; }
+  .monograph-card { border: none !important; background: transparent !important; page-break-inside: avoid; }
+  .katex { color: #000 !important; }
+}
+</style>
+
 </head>
 <body>
 <a href="#main" class="skip-link">Skip to main content</a>
@@ -435,7 +445,12 @@
                     <span class="status-badge">FOUNDATION PHASE △</span>
                     <a href="https://github.com/peterlodri-sec/axiomquant.org" target="_blank" class="github-btn">GitHub ↗</a>
                 </div>
-            </header>
+            
+<div style="text-align:center; margin-top:1rem;">
+  <button onclick="window.print()" style="padding:0.6rem 1.2rem; background:rgba(98,230,201,0.15); border:1px solid rgba(98,230,201,0.4); color:#62e6c9; font-family:monospace; font-weight:bold; font-size:0.8rem; border-radius:8px; cursor:pointer;">📄 Export Monographs 1-13 as PDF</button>
+</div>
+
+</header>
 
             <!-- Active Article Body Container -->
             <article class="reader-surface" id="readerSurface">
