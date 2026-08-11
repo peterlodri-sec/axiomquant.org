@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>AXIOM QUANT — Universal Threshold Monograph Series</title>
+  <link>https://axiomquant.org/</link>
+  <description>Mathematical Monographs 1-13 on BitNet b1.58 ternary quantization, zero-copy SIMD contractions, and Lovetta Field operators.</description>
+  <language>en-us</language>
+  <lastBuildDate>Tue, 11 Aug 2026 02:32:16 +0000</lastBuildDate>
+  <atom:link href="https://axiomquant.org/feed.xml" rel="self" type="application/rss+xml" />
+  
+  <item>
+    <title>Monograph Chapter 13: Standard Galactic Computation</title>
+    <link>https://axiomquant.org/#monograph-13</link>
+    <description>Zero-copy SIMD BitNet b1.58 matrix contraction and ternary weight operator algebra.</description>
+    <pubDate>Tue, 11 Aug 2026 02:32:16 +0000</pubDate>
+    <guid>https://axiomquant.org/#monograph-13</guid>
+  </item>
+</channel>
+</rss>
