@@ -1,19 +1,18 @@
 /*
-  X-Frame-Options: DENY
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+  Pragma: no-cache
+  Expires: 0
+  X-Robots-Tag: noai, noimageai
   X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=()
-  Cache-Control: no-cache, no-store, must-revalidate
-  Access-Control-Allow-Origin: *
+  Permissions-Policy: accelerometer=(), camera=(), microphone=(), geolocation=(), payment=()
+  Content-Security-Policy: default-src 'self' 'unsafe-inline' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data: https:; connect-src 'self' https: wss:; frame-src 'self' https:;
 
 /.well-known/*
   Access-Control-Allow-Origin: *
   Content-Type: text/plain; charset=utf-8
-  Cache-Control: public, max-age=3600
-
-/.well-known/skills/*.json
-  Access-Control-Allow-Origin: *
-  Content-Type: application/json; charset=utf-8
 
 /llms.txt
   Access-Control-Allow-Origin: *
@@ -22,9 +21,3 @@
 /AGENTS.md
   Access-Control-Allow-Origin: *
   Content-Type: text/markdown; charset=utf-8
-
-/style.css
-  Cache-Control: no-cache, no-store, must-revalidate
-
-/script.js
-  Cache-Control: no-cache, no-store, must-revalidate
