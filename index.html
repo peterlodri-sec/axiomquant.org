@@ -452,6 +452,59 @@
 
 </header>
 
+  <!-- Interactive KaTeX Playground & SIMD Speed Calculator -->
+  <div style="max-width: 800px; margin: 2rem auto; padding: 1.5rem; background: rgba(15, 18, 28, 0.85); border: 1px solid rgba(170, 150, 255, 0.22); border-radius: 14px; backdrop-filter: blur(12px);">
+    <h2 style="font-size: 1.1rem; color: #b48bff; font-family: monospace; margin-bottom: 0.8rem;">📐 KaTeX Formula Playground &amp; SIMD Speed Calculator</h2>
+    
+    <div style="margin-bottom: 1rem;">
+      <label style="font-family: monospace; font-size: 0.8rem; color: #9a93b8; display: block; margin-bottom: 0.4rem;">Type LaTeX Expression:</label>
+      <input type="text" id="latex-input" value="\mathbf{W} \in \{-1, 0, +1\}^{N \times N}" style="width:100%; padding:0.6rem; background:#020305; border:1px solid rgba(170,150,255,0.3); color:#62e6c9; font-family:monospace; font-size:0.85rem; border-radius:8px;">
+    </div>
+
+    <div id="katex-preview" style="padding: 1rem; background: #05060a; border: 1px solid rgba(98,230,201,0.2); border-radius: 8px; text-align: center; font-size: 1.2rem; min-height: 60px; margin-bottom: 1rem;"></div>
+
+    <div>
+      <label id="simd-dim-label" style="font-family: monospace; font-size: 0.8rem; color: #9a93b8; display: block; margin-bottom: 0.4rem;">Matrix Dimension N: 512</label>
+      <input type="range" id="simd-slider" min="128" max="4096" step="128" value="512" style="width:100%; accent-color:#62e6c9;">
+      <div id="simd-speed-result" style="font-family: monospace; font-size: 0.85rem; color: #ffcf5c; margin-top: 0.5rem; text-align: right;">Estimated Speed: 16,964 tok/sec (0-Copy SIMD)</div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const latexInput = document.getElementById('latex-input');
+      const katexPreview = document.getElementById('katex-preview');
+      const simdSlider = document.getElementById('simd-slider');
+      const simdDimLabel = document.getElementById('simd-dim-label');
+      const simdSpeedResult = document.getElementById('simd-speed-result');
+
+      function updateMath() {
+        if (window.katex && katexPreview) {
+          try {
+            katex.render(latexInput.value, katexPreview, { throwOnError: false });
+          } catch(e) {}
+        }
+      }
+
+      function updateSIMD() {
+        const n = parseInt(simdSlider.value);
+        simdDimLabel.innerText = `Matrix Dimension N: ${n}`;
+        const speed = Math.round(16964 * (512 / n));
+        simdSpeedResult.innerText = `Estimated Speed: ${speed.toLocaleString()} tok/sec (0-Copy SIMD)`;
+      }
+
+      if (latexInput) {
+        latexInput.addEventListener('input', updateMath);
+        updateMath();
+      }
+      if (simdSlider) {
+        simdSlider.addEventListener('input', updateSIMD);
+        updateSIMD();
+      }
+    });
+  </script>
+
+
             <!-- Active Article Body Container -->
             <article class="reader-surface" id="readerSurface">
                 
