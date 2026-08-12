@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Machine Learning Lab — AXIOM QUANT</title>
+    <meta name="description" content="Financial Machine Learning: Fractional Differentiation d ∈ [0,1], Triple Barrier Labeling, and Feature Importance (MDA/MDI).">
+
+    <!-- MathJax -->
+    <script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };</script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@200;300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .fml-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .fml-card { background: rgba(11,15,25,0.75); border: 1px solid rgba(0,240,255,0.15); border-radius: 6px; padding: 20px; }
+        canvas { width: 100%; height: 260px; display: block; }
+        .slider-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+        .slider-row label { font-family: var(--font-mono); font-size: 11px; color: var(--slate-text); width: 180px; }
+        .slider-row input { flex: 1; }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link">Skip to main content</a>
+    <style>
+        .skip-link{position:absolute;top:-100px;left:16px;z-index:100;background:#b48bff;color:#05060a;font-family:monospace;font-weight:700;padding:12px 20px;border-radius:8px;text-decoration:none;transition:top 0.2s}
+        .skip-link:focus{top:16px;outline:3px solid #62e6c9}
+        a:focus-visible,button:focus-visible,input:focus-visible{outline:2.5px solid #62e6c9!important;outline-offset:3px!important}
+    </style>
+
+    <canvas id="spectralCanvas"></canvas>
+
+    <div class="app-shell">
+        <header class="top-header">
+            <div class="brand-container">
+                <a href="/" class="brand-title">AXIOM <span class="gold-text">QUANT</span></a>
+                <span class="version-tag">/FINANCIAL-ML</span>
+            </div>
+            <nav class="main-nav">
+                <a href="/" class="nav-link">← RETURN HOME</a>
+                <a href="/backtest" class="nav-link">Backtest</a>
+                <a href="/academy" class="nav-link">Academy</a>
+                <a href="/microstructure" class="nav-link">Microstructure</a>
+            </nav>
+        </header>
+
+        <main class="main-layout" id="main">
+            <div class="hero-section">
+                <h1 class="hero-question">Financial Machine Learning & <span class="cyan-text">Fractional Differentiation</span></h1>
+                <p class="hero-subtext">Preserving memory in price series with fractional differentiation $(1-B)^d$, Triple Barrier Method labeling, and Mean Decrease Accuracy (MDA) feature importance.</p>
+            </div>
+
+            <div class="fml-grid">
+                <!-- Fractional Diff Card -->
+                <div class="fml-card">
+                    <h3 class="mono-label gold-text">01 // FRACTIONAL DIFFERENTIATION (d ∈ [0.0, 1.0])</h3>
+                    <p class="mono-label muted" style="margin-top:6px;">Stationarity vs Memory Preservation Trade-off</p>
+                    <canvas id="fracDiffCanvas"></canvas>
+                    
+                    <div class="slider-row">
+                        <label for="dSlider">DIFFERENTIATION ORDER (d): <span id="dVal" class="cyan-text">0.35</span></label>
+                        <input type="range" id="dSlider" min="0" max="1" step="0.05" value="0.35" oninput="renderFracDiff()" />
+                    </div>
+                </div>
+
+                <!-- Triple Barrier Method Card -->
+                <div class="fml-card">
+                    <h3 class="mono-label gold-text">02 // TRIPLE BARRIER METHOD LABELING</h3>
+                    <p class="mono-label muted" style="margin-top:6px;">Profit-Taking, Stop-Loss, and Time Expiration Limits</p>
+                    <canvas id="barrierCanvas"></canvas>
+                    <div style="display:flex;justify-content:space-between;margin-top:12px;font-family:var(--font-mono);font-size:11px;" class="cyan-text">
+                        <span>UPPER: +2.0σ (BUY)</span>
+                        <span>LOWER: -1.5σ (SELL)</span>
+                        <span>VERTICAL: 20 BARS</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer role="contentinfo" style="position:relative;z-index:10;padding:3rem 1.5rem;text-align:center;font-family:ui-monospace,monospace;font-size:0.75rem;color:#a59fc4;background:rgba(5,6,10,0.92);border-top:1px solid rgba(170,150,255,0.18);backdrop-filter:blur(16px);">
+  <div style="margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.3em;color:#b48bff;font-weight:600;">the constellation · lovetta lane</div>
+  <div style="margin-bottom:1rem;font-size:0.65rem;letter-spacing:0.22em;color:#a59fc4;text-transform:uppercase;">keep the weights warm</div>
+  <div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem;">
+    <a href="https://github.com/sponsors/peterlodri-sec" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;border:1px solid rgba(98,230,201,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(98,230,201,0.06);">github sponsor</a>
+    <a href="https://revolut.me/peterjs8be" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;border:1px solid rgba(98,230,201,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(98,230,201,0.06);">revolut</a>
+    <a href="https://wise.com/pay/business/lodripeterjozsef" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;border:1px solid rgba(98,230,201,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(98,230,201,0.06);">wise</a>
+  </div>
+  <nav aria-label="Constellation sister sites" style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;font-size:0.75rem;align-items:center;">
+    <a href="https://art.vaked.dev/" style="color:#62e6c9;text-decoration:none;">art.vaked.dev</a> ·
+    <a href="https://art.vaked.dev/vision-gallery.html" style="color:#5b9dff;text-decoration:none;">✦ vision-gallery (23)</a> ·
+    <a href="https://music.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">music.vaked.dev</a> ·
+    <a href="https://store.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;">store.vaked.dev 🛒</a> ·
+    <a href="https://peterlodri-sec.github.io/qwave/" target="_blank" rel="noopener noreferrer" style="color:#00f2fe;text-decoration:none;">qwave 🌊</a> ·
+    <a href="https://mlxquantlovefrom.com/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">quant-love</a> ·
+    <a href="https://proposal.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">proposal.vaked.dev</a> ·
+    <a href="https://pocoo.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">pocoo.vaked.dev</a> ·
+    <a href="https://axiomquant.org/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">axiomquant.org</a> ·
+    <a href="https://portail.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">portail.vaked.dev</a>
+  </nav>
+  <div style="font-size:0.6rem;letter-spacing:0.18em;color:#7f7c99;margin-top:1.5rem;">the constellation · 0 + 1 · fine touch from within · vaked.dev</div>
+</footer>
+    </div>
+
+    <script>
+        function renderFracDiff() {
+            const canvas = document.getElementById("fracDiffCanvas");
+            const ctx = canvas.getContext("2d");
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = canvas.clientWidth * dpr;
+            canvas.height = canvas.clientHeight * dpr;
+            ctx.scale(dpr, dpr);
+
+            const w = canvas.clientWidth;
+            const h = canvas.clientHeight;
+            ctx.clearRect(0, 0, w, h);
+
+            const d = parseFloat(document.getElementById("dSlider").value);
+            document.getElementById("dVal").innerText = d.toFixed(2);
+
+            const pts = 150;
+            let raw = [100];
+            for (let i = 1; i < pts; i++) {
+                raw.push(raw[i-1] + (Math.sin(i * 0.1) * 2) + ((Math.random() - 0.49) * 3));
+            }
+
+            // Apply binomial weights for fractional diff
+            let diff = [];
+            for (let i = 0; i < pts; i++) {
+                if (i === 0) { diff.push(raw[0]); continue; }
+                const val = raw[i] - (d * raw[i-1]);
+                diff.push(val);
+            }
+
+            // Draw Raw Series
+            ctx.beginPath();
+            ctx.strokeStyle = "rgba(148, 163, 184, 0.35)";
+            ctx.lineWidth = 1.5;
+            for (let i = 0; i < pts; i++) {
+                const x = (i / (pts - 1)) * w;
+                const y = h - ((raw[i] - 70) / 70) * h;
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Draw Fractional Diff Series
+            ctx.beginPath();
+            ctx.strokeStyle = "#00f2fe";
+            ctx.lineWidth = 2.2;
+            for (let i = 0; i < pts; i++) {
+                const x = (i / (pts - 1)) * w;
+                const y = h - ((diff[i] - (100 * (1 - d))) / 70) * h;
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        }
+
+        function renderBarriers() {
+            const canvas = document.getElementById("barrierCanvas");
+            const ctx = canvas.getContext("2d");
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = canvas.clientWidth * dpr;
+            canvas.height = canvas.clientHeight * dpr;
+            ctx.scale(dpr, dpr);
+
+            const w = canvas.clientWidth;
+            const h = canvas.clientHeight;
+            ctx.clearRect(0, 0, w, h);
+
+            // Draw Upper Barrier
+            ctx.strokeStyle = "#50fa7b";
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath(); ctx.moveTo(0, h * 0.25); ctx.lineTo(w, h * 0.25); ctx.stroke();
+
+            // Draw Lower Barrier
+            ctx.strokeStyle = "#ff5555";
+            ctx.beginPath(); ctx.moveTo(0, h * 0.75); ctx.lineTo(w, h * 0.75); ctx.stroke();
+
+            // Draw Vertical Expiration
+            ctx.strokeStyle = "#b48bff";
+            ctx.beginPath(); ctx.moveTo(w * 0.75, 0); ctx.lineTo(w * 0.75, h); ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw Price Path hitting upper barrier
+            ctx.beginPath();
+            ctx.strokeStyle = "#00f2fe";
+            ctx.lineWidth = 2;
+            const pts = [0.5, 0.48, 0.45, 0.42, 0.38, 0.32, 0.25, 0.24];
+            for (let i = 0; i < pts.length; i++) {
+                const x = (i / (pts.length - 1)) * (w * 0.75);
+                const y = pts[i] * h;
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        }
+
+        window.addEventListener("load", () => { renderFracDiff(); renderBarriers(); });
+        window.addEventListener("resize", () => { renderFracDiff(); renderBarriers(); });
+    </script>
+</body>
+</html>

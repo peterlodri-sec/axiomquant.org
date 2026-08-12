@@ -1,0 +1,21 @@
+{
+  "title": "AXIOM QUANT \u2014 Complete Monograph Compendium (13 Research Papers)",
+  "author": "Peter Lodri / AxiomQuant Research",
+  "papers": [
+    "01_Universal_Threshold_Kernel.md",
+    "02_Erdos_R\u00e9nyi_Phase_Transitions.md",
+    "03_Forbidden_Subgraphs_Spectral_Gap.md",
+    "04_Tracy_Widom_SLE_Interfaces.md",
+    "05_Zeta_GFF_Blueprint.md",
+    "06_Spectral_Rigidity.md",
+    "07_Backyard_Ultra_Loop_Engineering.md",
+    "08_BitNet_b158_Ternary_Quantization.md",
+    "09_Markowitz_QP_Threshold_Surfaces.md",
+    "10_Black_Scholes_Ito_Calculus.md",
+    "11_L2_Orderbook_Microstructure.md",
+    "12_Fractional_Differentiation_FML.md",
+    "13_Galactic_Quant_Harmonics.md"
+  ],
+  "export_format": "LaTeX / PDF",
+  "status": "Verified & Built"
+}

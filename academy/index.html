@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academy & Quantitative Curriculum — AXIOM QUANT</title>
+    <meta name="description" content="AxiomQuant Academy: 5-module quantitative curriculum in Stochastic Calculus, Portfolio Optimization, Market Microstructure, Financial Machine Learning, and Graph Theory.">
+
+    <!-- MathJax -->
+    <script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };</script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@200;300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .curr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .curr-card { background: rgba(11,15,25,0.75); border: 1px solid rgba(0,240,255,0.15); border-radius: 8px; padding: 24px; transition: transform 0.2s, border-color 0.2s; }
+        .curr-card:hover { transform: translateY(-4px); border-color: var(--cyan-accent); }
+        .mod-num { font-family: var(--font-mono); font-size: 11px; color: var(--gold-text); font-weight: 700; letter-spacing: 0.1em; margin-bottom: 8px; }
+        .mod-title { font-family: var(--font-mono); font-size: 18px; color: #fff; margin-bottom: 10px; font-weight: 700; }
+        .mod-desc { font-size: 13px; color: var(--slate-text); margin-bottom: 16px; line-height: 1.6; }
+        .quiz-btn { display: inline-block; background: rgba(0, 240, 255, 0.1); border: 1px solid var(--cyan-accent); color: var(--cyan-accent); font-family: var(--font-mono); font-size: 11px; padding: 8px 14px; border-radius: 4px; text-decoration: none; cursor: pointer; }
+        .quiz-btn:hover { background: var(--cyan-accent); color: #000; }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link">Skip to main content</a>
+    <style>
+        .skip-link{position:absolute;top:-100px;left:16px;z-index:100;background:#b48bff;color:#05060a;font-family:monospace;font-weight:700;padding:12px 20px;border-radius:8px;text-decoration:none;transition:top 0.2s}
+        .skip-link:focus{top:16px;outline:3px solid #62e6c9}
+        a:focus-visible,button:focus-visible,input:focus-visible{outline:2.5px solid #62e6c9!important;outline-offset:3px!important}
+    </style>
+
+    <canvas id="spectralCanvas"></canvas>
+
+    <div class="app-shell">
+        <header class="top-header">
+            <div class="brand-container">
+                <a href="/" class="brand-title">AXIOM <span class="gold-text">QUANT</span></a>
+                <span class="version-tag">/ACADEMY</span>
+            </div>
+            <nav class="main-nav">
+                <a href="/" class="nav-link">← RETURN HOME</a>
+                <a href="/backtest" class="nav-link">Backtest</a>
+                <a href="/fml" class="nav-link">Financial ML</a>
+                <a href="/markowitz" class="nav-link">Markowitz</a>
+            </nav>
+        </header>
+
+        <main class="main-layout" id="main">
+            <div class="hero-section">
+                <h1 class="hero-question">AxiomQuant Academy & <span class="cyan-text">Quantitative Curriculum</span></h1>
+                <p class="hero-subtext">5-module rigorous curriculum covering Stochastic Calculus, Mean-Variance Optimization, Level-2 Market Microstructure, Financial Machine Learning, and Erdős Density Thresholds.</p>
+            </div>
+
+            <div class="curr-grid">
+                <!-- Module 1 -->
+                <div class="curr-card">
+                    <div class="mod-num">MODULE 01 // STOCHASTIC CALCULUS</div>
+                    <div class="mod-title">Black-Scholes & Itô's Lemma</div>
+                    <div class="mod-desc">Derivation of geometric Brownian motion, Itô's formula, Black-Scholes PDE, and European option Greeks ($\Delta, \Gamma, \Theta, \nu, \rho$).</div>
+                    <a href="/black-scholes" class="quiz-btn">Launch Module & Lab →</a>
+                </div>
+
+                <!-- Module 2 -->
+                <div class="curr-card">
+                    <div class="mod-num">MODULE 02 // PORTFOLIO THEORY</div>
+                    <div class="mod-title">Markowitz Mean-Variance QP</div>
+                    <div class="mod-desc">Quadratic Programming formulation, efficient frontier tangency line, Sharpe ratio optimization, and Monte Carlo portfolio risk simulation.</div>
+                    <a href="/markowitz" class="quiz-btn">Launch Module & Lab →</a>
+                </div>
+
+                <!-- Module 3 -->
+                <div class="curr-card">
+                    <div class="mod-num">MODULE 03 // MARKET MICROSTRUCTURE</div>
+                    <div class="mod-title">L2 Orderbook & VPIN Toxicity</div>
+                    <div class="mod-desc">Bid-ask depth ladders, order flow toxicity, Kyle's lambda market impact $\Delta P \sim \alpha \sqrt{V}$, and high-frequency liquidity metrics.</div>
+                    <a href="/microstructure" class="quiz-btn">Launch Module & Lab →</a>
+                </div>
+
+                <!-- Module 4 -->
+                <div class="curr-card">
+                    <div class="mod-num">MODULE 04 // ALGORITHMIC TRADING</div>
+                    <div class="mod-title">Pairs Cointegration & Backtest</div>
+                    <div class="mod-desc">Statistical arbitrage, spread $Z$-score entry/exit rules, stationarity testing, and backtesting performance analytics (Sharpe, CAGR, Drawdown).</div>
+                    <a href="/backtest" class="quiz-btn">Launch Module & Lab →</a>
+                </div>
+
+                <!-- Module 5 -->
+                <div class="curr-card">
+                    <div class="mod-num">MODULE 05 // FINANCIAL MACHINE LEARNING</div>
+                    <div class="mod-title">Fractional Diff & Triple Barrier</div>
+                    <div class="mod-desc">Fractional differentiation $(1-B)^d$, stationarity vs memory trade-off, Triple Barrier labeling, and Mean Decrease Accuracy (MDA) feature importance.</div>
+                    <a href="/fml" class="quiz-btn">Launch Module & Lab →</a>
+                </div>
+            </div>
+        </main>
+
+        <footer role="contentinfo" style="position:relative;z-index:10;padding:3rem 1.5rem;text-align:center;font-family:ui-monospace,monospace;font-size:0.75rem;color:#a59fc4;background:rgba(5,6,10,0.92);border-top:1px solid rgba(170,150,255,0.18);backdrop-filter:blur(16px);">
+  <div style="margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.3em;color:#b48bff;font-weight:600;">the constellation · lovetta lane</div>
+  <div style="margin-bottom:1rem;font-size:0.65rem;letter-spacing:0.22em;color:#a59fc4;text-transform:uppercase;">keep the weights warm</div>
+  <div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem;">
+    <a href="https://github.com/sponsors/peterlodri-sec" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;border:1px solid rgba(98,230,201,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(98,230,201,0.06);">github sponsor</a>
+    <a href="https://revolut.me/peterjs8be" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;border:1px solid rgba(98,230,201,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(98,230,201,0.06);">revolut</a>
+    <a href="https://wise.com/pay/business/lodripeterjozsef" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;border:1px solid rgba(98,230,201,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(98,230,201,0.06);">wise</a>
+  </div>
+  <nav aria-label="Constellation sister sites" style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;font-size:0.75rem;align-items:center;">
+    <a href="https://art.vaked.dev/" style="color:#62e6c9;text-decoration:none;">art.vaked.dev</a> ·
+    <a href="https://art.vaked.dev/vision-gallery.html" style="color:#5b9dff;text-decoration:none;">✦ vision-gallery (23)</a> ·
+    <a href="https://music.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">music.vaked.dev</a> ·
+    <a href="https://store.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;">store.vaked.dev 🛒</a> ·
+    <a href="https://peterlodri-sec.github.io/qwave/" target="_blank" rel="noopener noreferrer" style="color:#00f2fe;text-decoration:none;">qwave 🌊</a> ·
+    <a href="https://mlxquantlovefrom.com/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">quant-love</a> ·
+    <a href="https://proposal.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">proposal.vaked.dev</a> ·
+    <a href="https://pocoo.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">pocoo.vaked.dev</a> ·
+    <a href="https://axiomquant.org/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">axiomquant.org</a> ·
+    <a href="https://portail.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">portail.vaked.dev</a>
+  </nav>
+  <div style="font-size:0.6rem;letter-spacing:0.18em;color:#7f7c99;margin-top:1.5rem;">the constellation · 0 + 1 · fine touch from within · vaked.dev</div>
+</footer>
+    </div>
+</body>
+</html>

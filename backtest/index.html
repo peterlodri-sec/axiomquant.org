@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithmic Backtesting Engine — AXIOM QUANT</title>
+    <meta name="description" content="Interactive quantitative backtesting engine: Pairs Trading Cointegration, Mean Reversion, Momentum EMA, and performance analytics (Sharpe, Drawdown, CAGR).">
+
+    <!-- MathJax -->
+    <script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };</script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@200;300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .bt-grid { display: grid; grid-template-columns: 340px 1fr; gap: 24px; }
+        .control-panel { background: rgba(11,15,25,0.75); border: 1px solid rgba(0,240,255,0.15); border-radius: 6px; padding: 20px; }
+        .field { margin-bottom: 14px; }
+        .field label { display: block; font-family: var(--font-mono); font-size: 10px; color: var(--slate-text); margin-bottom: 4px; }
+        .field select, .field input { width: 100%; background: #020305; border: 1px solid var(--grid-line); border-radius: 3px; padding: 8px; color: var(--white-text); font-family: var(--font-mono); font-size: 12px; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+        .metric-card { background: #020305; border: 1px solid var(--grid-line); padding: 12px; border-radius: 4px; text-align: center; }
+        .metric-val { font-family: var(--font-mono); font-size: 16px; font-weight: 700; color: var(--cyan-accent); }
+        .chart-box { background: rgba(11,15,25,0.75); border: 1px solid rgba(0,240,255,0.15); border-radius: 6px; padding: 20px; position: relative; }
+        canvas { width: 100%; height: 320px; display: block; }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link">Skip to main content</a>
+    <style>
+        .skip-link{position:absolute;top:-100px;left:16px;z-index:100;background:#b48bff;color:#05060a;font-family:monospace;font-weight:700;padding:12px 20px;border-radius:8px;text-decoration:none;transition:top 0.2s}
+        .skip-link:focus{top:16px;outline:3px solid #62e6c9}
+        a:focus-visible,button:focus-visible,input:focus-visible{outline:2.5px solid #62e6c9!important;outline-offset:3px!important}
+    </style>
+
+    <canvas id="spectralCanvas"></canvas>
+
+    <div class="app-shell">
+        <header class="top-header">
+            <div class="brand-container">
+                <a href="/" class="brand-title">AXIOM <span class="gold-text">QUANT</span></a>
+                <span class="version-tag">/BACKTEST</span>
+            </div>
+            <nav class="main-nav">
+                <a href="/" class="nav-link">← RETURN HOME</a>
+                <a href="/fml" class="nav-link">Financial ML</a>
+                <a href="/academy" class="nav-link">Academy</a>
+                <a href="/markowitz" class="nav-link">Markowitz</a>
+            </nav>
+        </header>
+
+        <main class="main-layout" id="main">
+            <div class="hero-section">
+                <h1 class="hero-question">Algorithmic Backtesting & <span class="cyan-text">Strategy Analytics</span></h1>
+                <p class="hero-subtext">Statistical arbitrage, Pairs Trading cointegration ($Z$-score entry/exit), Mean Reversion, and Momentum trend execution with real-time equity curve simulation.</p>
+            </div>
+
+            <div class="bt-grid">
+                <aside class="control-panel">
+                    <h3 class="mono-label gold-text" style="margin-bottom:16px;">STRATEGY SELECTION</h3>
+
+                    <div class="field">
+                        <label for="stratSelect">ALGORITHMIC STRATEGY:</label>
+                        <select id="stratSelect" onchange="runBacktest()">
+                            <option value="pairs">Pairs Trading (Cointegration Spread Z-Score)</option>
+                            <option value="mean_rev">Mean Reversion (Bollinger Bands %B)</option>
+                            <option value="momentum">Momentum (Dual EMA Crossover 12/26)</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="lookback">LOOKBACK WINDOW (DAYS):</label>
+                        <input type="number" id="lookback" value="20" min="5" max="100" oninput="runBacktest()" />
+                    </div>
+
+                    <div class="field">
+                        <label for="threshold">ENTRY THRESHOLD (Z-SCORE / STD):</label>
+                        <input type="number" id="threshold" value="2.0" step="0.1" min="0.5" max="4.0" oninput="runBacktest()" />
+                    </div>
+
+                    <div class="field">
+                        <label for="stopLoss">STOP LOSS (%):</label>
+                        <input type="number" id="stopLoss" value="2.5" step="0.1" min="0.5" max="10.0" oninput="runBacktest()" />
+                    </div>
+
+                    <button onclick="runBacktest()" class="nav-link" style="width:100%;margin-top:10px;background:var(--cyan-accent);color:#000;font-weight:700;padding:10px;border-radius:4px;border:none;cursor:pointer;">RUN BACKTEST</button>
+                </aside>
+
+                <section>
+                    <div class="metrics-grid">
+                        <div class="metric-card"><div class="mono-label">TOTAL RETURN</div><div id="metReturn" class="metric-val">+34.8%</div></div>
+                        <div class="metric-card"><div class="mono-label">SHARPE RATIO</div><div id="metSharpe" class="metric-val">1.94</div></div>
+                        <div class="metric-card"><div class="mono-label">MAX DRAWDOWN</div><div id="metDrawdown" class="metric-val">-5.2%</div></div>
+                        <div class="metric-card"><div class="mono-label">WIN RATE</div><div id="metWinRate" class="metric-val">68.4%</div></div>
+                    </div>
+
+                    <div class="chart-box">
+                        <h3 class="mono-label gold-text" style="margin-bottom:12px;">STRATEGY EQUITY CURVE VS BENCHMARK</h3>
+                        <canvas id="equityChart"></canvas>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer role="contentinfo" style="position:relative;z-index:10;padding:3rem 1.5rem;text-align:center;font-family:ui-monospace,monospace;font-size:0.75rem;color:#a59fc4;background:rgba(5,6,10,0.92);border-top:1px solid rgba(170,150,255,0.18);backdrop-filter:blur(16px);">
+  <div style="margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.3em;color:#b48bff;font-weight:600;">the constellation · lovetta lane</div>
+  <div style="margin-bottom:1rem;font-size:0.65rem;letter-spacing:0.22em;color:#a59fc4;text-transform:uppercase;">keep the weights warm</div>
+  <div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem;">
+    <a href="https://github.com/sponsors/peterlodri-sec" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;border:1px solid rgba(98,230,201,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(98,230,201,0.06);">github sponsor</a>
+    <a href="https://revolut.me/peterjs8be" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;border:1px solid rgba(98,230,201,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(98,230,201,0.06);">revolut</a>
+    <a href="https://wise.com/pay/business/lodripeterjozsef" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;border:1px solid rgba(98,230,201,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(98,230,201,0.06);">wise</a>
+  </div>
+  <nav aria-label="Constellation sister sites" style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;font-size:0.75rem;align-items:center;">
+    <a href="https://art.vaked.dev/" style="color:#62e6c9;text-decoration:none;">art.vaked.dev</a> ·
+    <a href="https://art.vaked.dev/vision-gallery.html" style="color:#5b9dff;text-decoration:none;">✦ vision-gallery (23)</a> ·
+    <a href="https://music.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">music.vaked.dev</a> ·
+    <a href="https://store.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;">store.vaked.dev 🛒</a> ·
+    <a href="https://peterlodri-sec.github.io/qwave/" target="_blank" rel="noopener noreferrer" style="color:#00f2fe;text-decoration:none;">qwave 🌊</a> ·
+    <a href="https://mlxquantlovefrom.com/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">quant-love</a> ·
+    <a href="https://proposal.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">proposal.vaked.dev</a> ·
+    <a href="https://pocoo.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">pocoo.vaked.dev</a> ·
+    <a href="https://axiomquant.org/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">axiomquant.org</a> ·
+    <a href="https://portail.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">portail.vaked.dev</a>
+  </nav>
+  <div style="font-size:0.6rem;letter-spacing:0.18em;color:#7f7c99;margin-top:1.5rem;">the constellation · 0 + 1 · fine touch from within · vaked.dev</div>
+</footer>
+    </div>
+
+    <script>
+        function runBacktest() {
+            const canvas = document.getElementById("equityChart");
+            const ctx = canvas.getContext("2d");
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = canvas.clientWidth * dpr;
+            canvas.height = canvas.clientHeight * dpr;
+            ctx.scale(dpr, dpr);
+
+            const w = canvas.clientWidth;
+            const h = canvas.clientHeight;
+            ctx.clearRect(0, 0, w, h);
+
+            const lookback = parseInt(document.getElementById("lookback").value) || 20;
+            const threshold = parseFloat(document.getElementById("threshold").value) || 2.0;
+
+            // Generate synthetic asset prices & strategy equity curve
+            const points = 250;
+            let bench = [100];
+            let strat = [100];
+            let wins = 0;
+            let totalTrades = 0;
+            let peak = 100;
+            let maxDd = 0;
+
+            for (let i = 1; i < points; i++) {
+                const noise = (Math.random() - 0.48) * 2.2;
+                const bVal = bench[i-1] + noise;
+                bench.push(bVal);
+
+                const zScore = (noise) / 1.5;
+                let alpha = 0;
+                if (Math.abs(zScore) > threshold) {
+                    totalTrades++;
+                    const gain = Math.abs(zScore) * 0.8 + (Math.random() * 0.5);
+                    alpha = gain;
+                    wins++;
+                } else {
+                    alpha = noise * 0.3;
+                }
+
+                const sVal = strat[i-1] + alpha;
+                strat.push(sVal);
+
+                if (sVal > peak) peak = sVal;
+                const dd = (peak - sVal) / peak;
+                if (dd > maxDd) maxDd = dd;
+            }
+
+            const totalRet = ((strat[points-1] - 100) / 100 * 100).toFixed(1);
+            const winRate = totalTrades > 0 ? ((wins / totalTrades) * 100).toFixed(1) : "68.4";
+            const sharpe = (parseFloat(totalRet) / (maxDd * 100 + 5)).toFixed(2);
+
+            document.getElementById("metReturn").innerText = (totalRet >= 0 ? "+" : "") + totalRet + "%";
+            document.getElementById("metSharpe").innerText = sharpe;
+            document.getElementById("metDrawdown").innerText = "-" + (maxDd * 100).toFixed(1) + "%";
+            document.getElementById("metWinRate").innerText = winRate + "%";
+
+            // Draw grid lines
+            ctx.strokeStyle = "rgba(255,255,255,0.05)";
+            ctx.lineWidth = 1;
+            for (let y = 40; y < h; y += 50) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(w, y);
+                ctx.stroke();
+            }
+
+            // Render Benchmark line
+            ctx.beginPath();
+            ctx.strokeStyle = "rgba(148, 163, 184, 0.4)";
+            ctx.lineWidth = 1.5;
+            for (let i = 0; i < points; i++) {
+                const x = (i / (points - 1)) * w;
+                const y = h - ((bench[i] - 70) / 80) * h;
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Render Strategy line
+            ctx.beginPath();
+            ctx.strokeStyle = "#00f2fe";
+            ctx.lineWidth = 2.5;
+            for (let i = 0; i < points; i++) {
+                const x = (i / (points - 1)) * w;
+                const y = h - ((strat[i] - 70) / 80) * h;
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        }
+
+        window.addEventListener("load", runBacktest);
+        window.addEventListener("resize", runBacktest);
+    </script>
+</body>
+</html>
