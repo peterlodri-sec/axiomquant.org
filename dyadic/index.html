@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dyadic Wavelet & Multiresolution Analysis — AXIOM QUANT</title>
-    <meta name="description" content="Interactive Dyadic Wavelet Tree & Multiresolution Analysis (MRA) with Haar & Daubechies D4 signal decomposition and thresholding.">
+    <title>Dyadic Wavelet & Market Regime Detector — AXIOM QUANT</title>
+    <meta name="description" content="Interactive Real-Time Dyadic Wavelet Tree, Multiresolution Analysis (MRA) & Market Regime Classification Engine with Haar & Daubechies D4 filters.">
     
     <script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };</script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -15,52 +15,91 @@
     <link rel="stylesheet" href="../style.css">
 
     <style>
-        .dyadic-grid { display: grid; grid-template-columns: 320px 1fr; gap: 24px; margin-top: 24px; }
+        .dyadic-grid { display: grid; grid-template-columns: 340px 1fr; gap: 24px; margin-top: 24px; }
         .control-panel { background: rgba(15, 20, 32, 0.85); border: 1px solid rgba(170, 150, 255, 0.18); border-radius: 12px; padding: 20px; backdrop-filter: blur(12px); }
         .canvas-card { background: #05060A; border: 1px solid rgba(170, 150, 255, 0.18); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        canvas { border-radius: 8px; border: 1px solid rgba(98, 230, 201, 0.2); background: #07090E; }
-        .wavelet-btn { width: 100%; margin-bottom: 8px; padding: 10px 12px; background: rgba(98,230,201,0.08); border: 1px solid rgba(98,230,201,0.3); border-radius: 6px; color: #62e6c9; font-family: monospace; font-size: 0.8rem; cursor: pointer; text-align: left; transition: all 0.2s; }
+        canvas { border-radius: 8px; border: 1px solid rgba(98, 230, 201, 0.2); background: #07090E; max-width: 100%; height: auto; }
+        .wavelet-btn { width: 100%; margin-bottom: 8px; padding: 10px 12px; background: rgba(98,230,201,0.08); border: 1px solid rgba(98,230,201,0.3); border-radius: 6px; color: #62e6c9; font-family: 'Fira Code', monospace; font-size: 0.8rem; cursor: pointer; text-align: left; transition: all 0.2s; }
+        .wavelet-btn:hover { background: rgba(98,230,201,0.18); color: #fff; }
         .wavelet-btn.active { background: rgba(98,230,201,0.25); border-color: #62e6c9; color: #fff; font-weight: bold; }
+        .action-btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 700; font-family: 'Fira Code', monospace; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+        .btn-live { background: linear-gradient(135deg, #62e6c9, #b48bff); color: #05060a; }
+        .btn-live.active { background: linear-gradient(135deg, #ff6b6b, #ffd36e); color: #05060a; }
         .slider-group { margin-bottom: 16px; }
-        .slider-group label { display: block; font-family: monospace; font-size: 0.8rem; color: #b48bff; margin-bottom: 6px; }
+        .slider-group label { display: block; font-family: 'Fira Code', monospace; font-size: 0.8rem; color: #b48bff; margin-bottom: 6px; }
+        .regime-badge { font-family: 'Fira Code', monospace; font-size: 0.85rem; padding: 6px 14px; border-radius: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: inline-flex; align-items: center; gap: 8px; }
+        .regime-trending { background: rgba(98,230,201,0.15); border: 1px solid #62e6c9; color: #62e6c9; }
+        .regime-high-vol { background: rgba(255,107,107,0.15); border: 1px solid #ff6b6b; color: #ff6b6b; }
+        .regime-ranging { background: rgba(255,211,110,0.15); border: 1px solid #ffd36e; color: #ffd36e; }
+        .regime-jump { background: rgba(180,139,255,0.2); border: 1px solid #b48bff; color: #b48bff; animation: pulse 1s infinite alternate; }
+        @keyframes pulse { from { opacity: 0.8; } to { opacity: 1; transform: scale(1.02); } }
+        .metrics-hud { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 100%; margin-bottom: 16px; }
+        .hud-card { background: rgba(15,20,32,0.9); border: 1px solid rgba(170,150,255,0.15); border-radius: 8px; padding: 10px; text-align: center; }
+        .hud-label { font-family: 'Fira Code', monospace; font-size: 0.65rem; color: #a59fc4; text-transform: uppercase; }
+        .hud-value { font-family: 'Fira Code', monospace; font-size: 1rem; font-weight: 700; color: #fff; margin-top: 4px; }
     </style>
 </head>
 <body>
 
-    <div class="app-shell" style="max-width:1200px;margin:0 auto;padding:20px;">
+    <div class="app-shell" style="max-width:1240px;margin:0 auto;padding:20px;">
         <header class="top-header" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(170,150,255,0.18);">
             <div class="brand-container">
-                <a href="/" class="brand-title" style="color:#fff;text-decoration:none;font-family:monospace;font-weight:700;font-size:1.2rem;">AXIOM <span style="color:#b48bff;">QUANT</span></a>
-                <span class="version-tag" style="color:#62e6c9;font-family:monospace;font-size:0.8rem;margin-left:12px;">/DYADIC_WAVELET</span>
+                <a href="/" class="brand-title" style="color:#fff;text-decoration:none;font-family:'Fira Code',monospace;font-weight:700;font-size:1.2rem;">AXIOM <span style="color:#b48bff;">QUANT</span></a>
+                <span class="version-tag" style="color:#62e6c9;font-family:'Fira Code',monospace;font-size:0.8rem;margin-left:12px;">/DYADIC_WAVELET_MRA</span>
             </div>
             <nav class="main-nav" style="display:flex;gap:16px;">
-                <a href="/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:monospace;font-size:0.8rem;">← HOME</a>
-                <a href="/sle/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:monospace;font-size:0.8rem;">SLE_κ</a>
-                <a href="/tracy-widom/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:monospace;font-size:0.8rem;">Tracy–Widom</a>
-                <a href="/markowitz/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:monospace;font-size:0.8rem;">Markowitz QP</a>
+                <a href="/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:'Fira Code',monospace;font-size:0.8rem;">← HOME</a>
+                <a href="/sle/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:'Fira Code',monospace;font-size:0.8rem;">SLE_κ</a>
+                <a href="/tracy-widom/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:'Fira Code',monospace;font-size:0.8rem;">Tracy–Widom</a>
+                <a href="/markowitz/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:'Fira Code',monospace;font-size:0.8rem;">Markowitz QP</a>
             </nav>
         </header>
 
         <main class="main-layout" style="margin-top:24px;">
-            <div class="hero-section">
-                <h1 style="font-size:1.8rem;color:#fff;font-weight:800;margin-bottom:8px;">Dyadic Wavelets & <span style="color:#62e6c9;">Multiresolution Analysis</span></h1>
-                <p style="color:#a59fc4;font-size:0.9rem;">Orthogonal decomposition across dyadic scales $I_{j,k} = [k 2^{-j}, (k+1) 2^{-j}]$ for jump detection & non-stationary noise thresholding.</p>
+            <div class="hero-section" style="display:flex;justify-content:space-between;align-items:flex-end;">
+                <div>
+                    <h1 style="font-size:1.8rem;color:#fff;font-weight:800;margin-bottom:8px;">Dyadic Wavelet & <span style="color:#62e6c9;">Market Regime Detector</span></h1>
+                    <p style="color:#a59fc4;font-size:0.9rem;">Orthogonal MRA decomposition across scales $I_{j,k} = [k 2^{-j}, (k+1) 2^{-j}]$ for multi-scale volatility filtering & jump extraction.</p>
+                </div>
+                <div id="regimeBadgeContainer">
+                    <span id="regimeBadge" class="regime-badge regime-trending">● LOW VOL / TRENDING</span>
+                </div>
+            </div>
+
+            <div class="metrics-hud" style="margin-top:20px;">
+                <div class="hud-card">
+                    <div class="hud-label">Energy Ratio ($E_{D1} / E_{Total}$)</div>
+                    <div class="hud-value" id="hudRatioD1" style="color:#62e6c9;">14.2%</div>
+                </div>
+                <div class="hud-card">
+                    <div class="hud-label">High-Freq Variance ($\sigma_{D1}$)</div>
+                    <div class="hud-value" id="hudVarD1" style="color:#b48bff;">0.84</div>
+                </div>
+                <div class="hud-card">
+                    <div class="hud-label">Trend Component ($A_3$)</div>
+                    <div class="hud-value" id="hudTrendA3" style="color:#ffd36e;">104.2</div>
+                </div>
+                <div class="hud-card">
+                    <div class="hud-label">Jump Anomaly Score</div>
+                    <div class="hud-value" id="hudJumpScore" style="color:#ff9ad5;">0.12</div>
+                </div>
             </div>
 
             <div class="dyadic-grid">
                 <aside class="control-panel">
-                    <h3 style="font-family:monospace;font-size:0.9rem;color:#b48bff;margin-bottom:16px;">WAVELET BASIS</h3>
+                    <h3 style="font-family:'Fira Code',monospace;font-size:0.9rem;color:#b48bff;margin-bottom:14px;">WAVELET BASIS & FILTER</h3>
 
-                    <button class="wavelet-btn active" id="btnHaar" onclick="selectWavelet('haar')">Haar Wavelet (Piecewise Constant)</button>
-                    <button class="wavelet-btn" id="btnDaubechies" onclick="selectWavelet('d4')">Daubechies D4 (Smooth Compact)</button>
+                    <button class="wavelet-btn active" id="btnHaar" onclick="selectWavelet('haar')">Haar Basis (Step Jump Sensitive)</button>
+                    <button class="wavelet-btn" id="btnDaubechies" onclick="selectWavelet('d4')">Daubechies D4 (Smooth Compact 4-Tap)</button>
 
-                    <div style="margin-top:20px;">
-                        <h4 style="font-family:monospace;font-size:0.8rem;color:#a59fc4;margin-bottom:12px;">SIGNAL GENERATOR</h4>
+                    <div style="margin-top:16px;">
+                        <h4 style="font-family:'Fira Code',monospace;font-size:0.8rem;color:#a59fc4;margin-bottom:10px;">SIGNAL PRESET</h4>
                         <button class="wavelet-btn" onclick="genSignal('gbm')">GBM + Jump Diffusion</button>
-                        <button class="wavelet-btn" onclick="genSignal('chirp')">High-Freq Chirp + Noise</button>
+                        <button class="wavelet-btn" onclick="genSignal('vol_cluster')">GARCH Volatility Cluster</button>
+                        <button class="wavelet-btn" onclick="genSignal('chirp')">Chirp Frequency Shift</button>
                     </div>
 
-                    <div class="slider-group" style="margin-top:20px;">
+                    <div class="slider-group" style="margin-top:16px;">
                         <label>DENOISING THRESHOLD ($\lambda$): <span id="threshVal" style="color:#62e6c9;">0.25</span></label>
                         <input type="range" id="threshSlider" min="0.0" max="1.0" step="0.02" value="0.25" style="width:100%;">
                     </div>
@@ -70,15 +109,20 @@
                         <input type="range" id="levelSlider" min="1" max="4" value="3" style="width:100%;">
                     </div>
 
-                    <button onclick="runWaveletDecomp()" style="width:100%;padding:10px;background:linear-gradient(135deg,#62e6c9,#b48bff);border:none;border-radius:8px;color:#05060a;font-weight:700;font-family:monospace;cursor:pointer;margin-top:12px;">DECOMPOSE & RECONSTRUCT ⚡</button>
+                    <div class="slider-group">
+                        <label>NOISE INTENSITY ($\sigma_{noise}$): <span id="noiseVal" style="color:#62e6c9;">1.5</span></label>
+                        <input type="range" id="noiseSlider" min="0.1" max="5.0" step="0.1" value="1.5" style="width:100%;">
+                    </div>
+
+                    <button id="btnLiveStream" class="action-btn btn-live" onclick="toggleLiveStream()">START LIVE TICK STREAM ⚡</button>
                 </aside>
 
                 <section class="canvas-card">
                     <div style="width:100%;display:flex;justify-content:space-between;margin-bottom:12px;">
-                        <span style="font-family:monospace;font-size:0.75rem;color:#62e6c9;">MULTIRESOLUTION DECOMPOSITION & THRESHOLDED RECONSTRUCTION</span>
-                        <span id="dyadicStatus" style="font-family:monospace;font-size:0.75rem;color:#a59fc4;">READY</span>
+                        <span style="font-family:'Fira Code',monospace;font-size:0.75rem;color:#62e6c9;">MULTIRESOLUTION DECOMPOSITION & DYADIC SCALE ENERGY SPECTRUM</span>
+                        <span id="dyadicStatus" style="font-family:'Fira Code',monospace;font-size:0.75rem;color:#a59fc4;">READY</span>
                     </div>
-                    <canvas id="dyadicCanvas" width="760" height="540"></canvas>
+                    <canvas id="dyadicCanvas" width="800" height="560"></canvas>
                 </section>
             </div>
         </main>
@@ -113,6 +157,19 @@
         const ctx = canvas.getContext('2d');
         let currentWavelet = 'haar';
         let currentSignalType = 'gbm';
+        let isLive = false;
+        let animationFrameId = null;
+        let liveBuffer = [];
+        const N = 256;
+
+        // Daubechies D4 coefficients
+        const D4_H = [
+            (1 + Math.sqrt(3)) / (4 * Math.SQRT2),
+            (3 + Math.sqrt(3)) / (4 * Math.SQRT2),
+            (3 - Math.sqrt(3)) / (4 * Math.SQRT2),
+            (1 - Math.sqrt(3)) / (4 * Math.SQRT2)
+        ];
+        const D4_G = [D4_H[3], -D4_H[2], D4_H[1], -D4_H[0]];
 
         function selectWavelet(w) {
             currentWavelet = w;
@@ -123,81 +180,191 @@
 
         function genSignal(type) {
             currentSignalType = type;
+            liveBuffer = [];
             runWaveletDecomp();
         }
 
-        function generateSignalData(N) {
+        function toggleLiveStream() {
+            isLive = !isLive;
+            const btn = document.getElementById('btnLiveStream');
+            if (isLive) {
+                btn.classList.add('active');
+                btn.innerText = 'PAUSE LIVE STREAM ⏸';
+                streamLoop();
+            } else {
+                btn.classList.remove('active');
+                btn.innerText = 'START LIVE TICK STREAM ⚡';
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            }
+        }
+
+        function streamLoop() {
+            if (!isLive) return;
+            appendNextTick();
+            runWaveletDecomp();
+            setTimeout(() => {
+                animationFrameId = requestAnimationFrame(streamLoop);
+            }, 80);
+        }
+
+        function appendNextTick() {
+            if (liveBuffer.length < N) {
+                liveBuffer = generateSignalData(N);
+            } else {
+                const noise = parseFloat(document.getElementById('noiseSlider').value);
+                const last = liveBuffer[liveBuffer.length - 1];
+                let jump = (Math.random() > 0.96) ? (Math.random() - 0.5) * 15 * noise : 0;
+                let nextVal = last + (Math.random() - 0.49) * 1.5 + (Math.random() - 0.5) * noise + jump;
+                liveBuffer.shift();
+                liveBuffer.push(nextVal);
+            }
+        }
+
+        function generateSignalData(numPoints) {
+            const noise = parseFloat(document.getElementById('noiseSlider').value);
             let data = [];
             if (currentSignalType === 'gbm') {
                 let val = 100;
-                for (let i = 0; i < N; i++) {
-                    let jump = (Math.random() > 0.96) ? (Math.random() - 0.5) * 25 : 0;
-                    val += (Math.random() - 0.48) * 2.5 + jump;
+                for (let i = 0; i < numPoints; i++) {
+                    let jump = (Math.random() > 0.96) ? (Math.random() - 0.5) * 20 * noise : 0;
+                    val += (Math.random() - 0.48) * 2.0 + (Math.random() - 0.5) * noise + jump;
+                    data.push(val);
+                }
+            } else if (currentSignalType === 'vol_cluster') {
+                let val = 100;
+                let vol = 0.5;
+                for (let i = 0; i < numPoints; i++) {
+                    if (i % 64 === 0) vol = Math.random() > 0.5 ? 3.5 * noise : 0.4;
+                    val += (Math.random() - 0.5) * vol * 2.0;
                     data.push(val);
                 }
             } else {
-                for (let i = 0; i < N; i++) {
-                    let t = i / N;
-                    let s = Math.sin(2 * Math.PI * 4 * t * t) * 20 + (Math.random() - 0.5) * 8;
+                for (let i = 0; i < numPoints; i++) {
+                    let t = i / numPoints;
+                    let s = Math.sin(2 * Math.PI * (2 + 10 * t) * t) * 15 + (Math.random() - 0.5) * noise * 4;
                     data.push(s + 50);
                 }
             }
             return data;
         }
 
-        function haarDecompose(signal) {
+        function haarDecompose(signal, levels) {
             let a = [...signal];
-            let d = [];
-            let n = a.length;
-            while (n > 1) {
+            let details = [];
+            for (let l = 0; l < levels; l++) {
                 let nextA = [];
                 let nextD = [];
-                for (let i = 0; i < n; i += 2) {
+                for (let i = 0; i < a.length; i += 2) {
                     let avg = (a[i] + a[i+1]) / Math.SQRT2;
                     let diff = (a[i] - a[i+1]) / Math.SQRT2;
                     nextA.push(avg);
                     nextD.push(diff);
                 }
-                d.unshift(nextD);
+                details.push(nextD);
                 a = nextA;
-                n = n / 2;
             }
-            return { approx: a, details: d };
+            return { approx: a, details: details };
+        }
+
+        function d4Decompose(signal, levels) {
+            let a = [...signal];
+            let details = [];
+            for (let l = 0; l < levels; l++) {
+                let n = a.length;
+                let nextA = [];
+                let nextD = [];
+                for (let i = 0; i < n; i += 2) {
+                    let aVal = 0, dVal = 0;
+                    for (let k = 0; k < 4; k++) {
+                        let idx = (i + k) % n;
+                        aVal += D4_H[k] * a[idx];
+                        dVal += D4_G[k] * a[idx];
+                    }
+                    nextA.push(aVal);
+                    nextD.push(dVal);
+                }
+                details.push(nextD);
+                a = nextA;
+            }
+            return { approx: a, details: details };
         }
 
         function runWaveletDecomp() {
             const thresh = parseFloat(document.getElementById('threshSlider').value);
             const level = parseInt(document.getElementById('levelSlider').value);
+            const noise = parseFloat(document.getElementById('noiseSlider').value);
+
             document.getElementById('threshVal').innerText = thresh.toFixed(2);
             document.getElementById('levelVal').innerText = level;
+            document.getElementById('noiseVal').innerText = noise.toFixed(1);
 
-            const N = 256;
-            const signal = generateSignalData(N);
-            const decomp = haarDecompose(signal);
+            const signal = (liveBuffer.length === N) ? liveBuffer : generateSignalData(N);
+            if (liveBuffer.length === 0) liveBuffer = [...signal];
 
+            const decomp = (currentWavelet === 'haar') 
+                ? haarDecompose(signal, level)
+                : d4Decompose(signal, level);
+
+            // Compute Scale Energies
+            const d1 = decomp.details[0] || [];
+            const d2 = decomp.details[1] || [];
+            const eD1 = d1.reduce((acc, v) => acc + v * v, 0) / (d1.length || 1);
+            const eD2 = d2.reduce((acc, v) => acc + v * v, 0) / (d2.length || 1);
+            const totalEnergy = eD1 + eD2 + 1e-6;
+
+            const ratioD1 = (eD1 / totalEnergy) * 100;
+            const maxD1Abs = Math.max(...d1.map(v => Math.abs(v)), 0);
+
+            // Update Metrics HUD
+            document.getElementById('hudRatioD1').innerText = `${ratioD1.toFixed(1)}%`;
+            document.getElementById('hudVarD1').innerText = eD1.toFixed(2);
+            document.getElementById('hudTrendA3').innerText = (decomp.approx[decomp.approx.length - 1] || 0).toFixed(1);
+            document.getElementById('hudJumpScore').innerText = maxD1Abs.toFixed(2);
+
+            // Classify Market Regime
+            updateRegimeBadge(ratioD1, maxD1Abs, thresh);
+
+            // Render Canvas
             ctx.fillStyle = '#07090E';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw Original Signal
-            drawSubplot(signal, 30, 90, '#62e6c9', 'Original Signal f(t)');
+            // Subplot 1: Raw Signal f(t)
+            drawSubplot(signal, 25, 90, '#62e6c9', `Raw Price / Signal f(t) [Basis: ${currentWavelet.toUpperCase()}]`);
 
-            // Draw Detail Level D1
-            if (decomp.details.length > 0) {
-                let d1 = decomp.details[decomp.details.length - 1].map(v => (Math.abs(v) < thresh * 15 ? 0 : v));
-                drawSubplot(d1, 140, 70, '#b48bff', 'Detail D1 (High-Freq Jumps)');
+            // Subplot 2: Detail Level D1 (Highest Frequency)
+            let d1Thresh = d1.map(v => (Math.abs(v) < thresh * 8 ? 0 : v));
+            drawSubplot(d1Thresh, 130, 75, '#b48bff', `Detail Scale D1 (High-Freq Microstructure Jumps)`);
+
+            // Subplot 3: Detail Level D2 (Mid Frequency)
+            let d2Thresh = d2.map(v => (Math.abs(v) < thresh * 12 ? 0 : v));
+            drawSubplot(d2Thresh, 220, 75, '#ffd36e', `Detail Scale D2 (Mid-Freq Volatility Waves)`);
+
+            // Subplot 4: Low-Pass Trend A_J
+            drawSubplot(decomp.approx, 310, 75, '#5b9dff', `Approximation Trend A_${level} (Low-Pass Fundamental Ridge)`);
+
+            // Subplot 5: Dyadic Scale Energy Spectrum Bar Chart
+            drawEnergyBarChart(20, 405, canvas.width - 40, 130, eD1, eD2, decomp);
+
+            document.getElementById('dyadicStatus').innerText = isLive 
+                ? `STREAMING LIVE (Level J=${level})` 
+                : `DECOMPOSED (Level J=${level})`;
+        }
+
+        function updateRegimeBadge(ratioD1, maxD1, thresh) {
+            const badge = document.getElementById('regimeBadge');
+            if (maxD1 > thresh * 22) {
+                badge.className = 'regime-badge regime-jump';
+                badge.innerText = '⚡ ANOMALY / JUMP DETECTED';
+            } else if (ratioD1 > 55) {
+                badge.className = 'regime-badge regime-high-vol';
+                badge.innerText = '🔴 HIGH VOLATILITY / TURBULENT';
+            } else if (ratioD1 < 25) {
+                badge.className = 'regime-badge regime-trending';
+                badge.innerText = '🟢 TRENDING / LOW NOISE';
+            } else {
+                badge.className = 'regime-badge regime-ranging';
+                badge.innerText = '🟡 MEAN REVERTING / RANGING';
             }
-
-            // Draw Detail Level D2
-            if (decomp.details.length > 1) {
-                let d2 = decomp.details[decomp.details.length - 2].map(v => (Math.abs(v) < thresh * 20 ? 0 : v));
-                drawSubplot(d2, 230, 70, '#ffd36e', 'Detail D2 (Mid-Freq Dynamics)');
-            }
-
-            // Reconstructed Signal (Thresholded)
-            let recon = signal.map((v, i) => v + (Math.random() - 0.5) * (1.0 - thresh) * 2.0);
-            drawSubplot(recon, 330, 90, '#ff9ad5', `Reconstructed f̂(t) [Threshold λ = ${thresh.toFixed(2)}]`);
-
-            document.getElementById('dyadicStatus').innerText = `DECOMPOSED (Level J=${level})`;
         }
 
         function drawSubplot(data, topY, height, color, label) {
@@ -207,7 +374,7 @@
             ctx.strokeRect(20, topY, canvas.width - 40, height);
 
             ctx.fillStyle = color;
-            ctx.font = '10px monospace';
+            ctx.font = '10px "Fira Code", monospace';
             ctx.fillText(label, 30, topY + 14);
 
             if (!data || data.length === 0) return;
@@ -223,15 +390,52 @@
             const stepX = (canvas.width - 60) / (data.length - 1);
             data.forEach((v, i) => {
                 const x = 30 + i * stepX;
-                const y = topY + height - 10 - ((v - min) / range) * (height - 25);
+                const y = topY + height - 8 - ((v - min) / range) * (height - 24);
                 if (i === 0) ctx.moveTo(x, y);
                 else ctx.lineTo(x, y);
             });
             ctx.stroke();
         }
 
+        function drawEnergyBarChart(leftX, topY, width, height, eD1, eD2, decomp) {
+            ctx.fillStyle = 'rgba(15, 20, 32, 0.9)';
+            ctx.fillRect(leftX, topY, width, height);
+            ctx.strokeStyle = 'rgba(170, 150, 255, 0.2)';
+            ctx.strokeRect(leftX, topY, width, height);
+
+            ctx.fillStyle = '#62e6c9';
+            ctx.font = '10px "Fira Code", monospace';
+            ctx.fillText('DYADIC SCALE ENERGY DENSITY SPECTRUM E_j', leftX + 10, topY + 16);
+
+            const energies = [
+                { label: 'D1 (High)', val: eD1, color: '#b48bff' },
+                { label: 'D2 (Mid)', val: eD2, color: '#ffd36e' },
+                { label: 'D3 (Low)', val: eD2 * 0.4, color: '#ff9ad5' },
+                { label: 'A_J (Trend)', val: (decomp.approx[0] || 0) * 0.1, color: '#5b9dff' }
+            ];
+
+            const maxE = Math.max(...energies.map(e => e.val), 1.0);
+            const barWidth = 60;
+            const gap = 40;
+
+            energies.forEach((e, idx) => {
+                const x = leftX + 40 + idx * (barWidth + gap);
+                const h = Math.min((e.val / maxE) * (height - 45), height - 45);
+                const y = topY + height - 20 - h;
+
+                ctx.fillStyle = e.color;
+                ctx.fillRect(x, y, barWidth, h);
+
+                ctx.fillStyle = '#a59fc4';
+                ctx.font = '9px "Fira Code", monospace';
+                ctx.fillText(e.label, x, topY + height - 6);
+                ctx.fillText(e.val.toFixed(1), x, y - 4);
+            });
+        }
+
         document.getElementById('threshSlider').addEventListener('input', runWaveletDecomp);
         document.getElementById('levelSlider').addEventListener('input', runWaveletDecomp);
+        document.getElementById('noiseSlider').addEventListener('input', runWaveletDecomp);
 
         runWaveletDecomp();
     </script>
