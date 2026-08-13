@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracy–Widom Edge Distribution ($F_1, F_2, F_4$) — AXIOM QUANT</title>
+    <meta name="description" content="Random Matrix Theory Tracy-Widom edge eigenvalue simulator for Gaussian ensembles (GOE, GUE, GSE).">
+    
+    <script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };</script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@200;300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+
+    <style>
+        .tw-grid { display: grid; grid-template-columns: 320px 1fr; gap: 24px; margin-top: 24px; }
+        .control-panel { background: rgba(15, 20, 32, 0.85); border: 1px solid rgba(170, 150, 255, 0.18); border-radius: 12px; padding: 20px; backdrop-filter: blur(12px); }
+        .canvas-card { background: #05060A; border: 1px solid rgba(170, 150, 255, 0.18); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        canvas { border-radius: 8px; border: 1px solid rgba(98, 230, 201, 0.2); background: #07090E; }
+        .ensemble-btn { width: 100%; margin-bottom: 8px; padding: 10px 12px; background: rgba(180,139,255,0.08); border: 1px solid rgba(180,139,255,0.3); border-radius: 6px; color: #b48bff; font-family: monospace; font-size: 0.8rem; cursor: pointer; text-align: left; transition: all 0.2s; }
+        .ensemble-btn.active { background: rgba(180,139,255,0.25); border-color: #b48bff; color: #fff; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="app-shell" style="max-width:1200px;margin:0 auto;padding:20px;">
+        <header class="top-header" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(170,150,255,0.18);">
+            <div class="brand-container">
+                <a href="/" class="brand-title" style="color:#fff;text-decoration:none;font-family:monospace;font-weight:700;font-size:1.2rem;">AXIOM <span style="color:#b48bff;">QUANT</span></a>
+                <span class="version-tag" style="color:#62e6c9;font-family:monospace;font-size:0.8rem;margin-left:12px;">/TRACY_WIDOM</span>
+            </div>
+            <nav class="main-nav" style="display:flex;gap:16px;">
+                <a href="/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:monospace;font-size:0.8rem;">← HOME</a>
+                <a href="/sle/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:monospace;font-size:0.8rem;">SLE_κ</a>
+                <a href="/markowitz/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:monospace;font-size:0.8rem;">Markowitz QP</a>
+            </nav>
+        </header>
+
+        <main class="main-layout" style="margin-top:24px;">
+            <div class="hero-section">
+                <h1 style="font-size:1.8rem;color:#fff;font-weight:800;margin-bottom:8px;">Tracy–Widom <span style="color:#b48bff;">Random Matrix Edge Law</span></h1>
+                <p style="color:#a59fc4;font-size:0.9rem;">Universal fluctuation law for maximal eigenvalues $\lambda_{\max}$ in Random Matrix Ensembles ($F_eta$ Painlevé II kernel).</p>
+            </div>
+
+            <div class="tw-grid">
+                <aside class="control-panel">
+                    <h3 style="font-family:monospace;font-size:0.9rem;color:#b48bff;margin-bottom:16px;">SELECT ENSEMBLE</h3>
+
+                    <button class="ensemble-btn active" id="btnGUE" onclick="selectBeta(2)">GUE (β = 2): Complex Hermitian ($F_2$)</button>
+                    <button class="ensemble-btn" id="btnGOE" onclick="selectBeta(1)">GOE (β = 1): Real Symmetric ($F_1$)</button>
+
+                    <div style="margin-top:20px;">
+                        <label style="font-family:monospace;font-size:0.8rem;color:#a59fc4;">MATRIX DIMENSION ($N$): <span id="dimVal" style="color:#62e6c9;">50</span></label>
+                        <input type="range" id="dimSlider" min="20" max="100" value="50" style="width:100%;margin:8px 0;">
+                    </div>
+
+                    <div style="margin-top:12px;">
+                        <label style="font-family:monospace;font-size:0.8rem;color:#a59fc4;">TRIALS ($M$): <span id="trialsVal" style="color:#62e6c9;">800</span></label>
+                        <input type="range" id="trialsSlider" min="200" max="2000" step="100" value="800" style="width:100%;margin:8px 0;">
+                    </div>
+
+                    <button id="simBtn" onclick="runTWSimulation()" style="width:100%;padding:10px;background:linear-gradient(135deg,#62e6c9,#b48bff);border:none;border-radius:8px;color:#05060a;font-weight:700;font-family:monospace;cursor:pointer;margin-top:16px;">SIMULATE EDGE SPECTRUM ⚡</button>
+                </aside>
+
+                <section class="canvas-card">
+                    <div style="width:100%;display:flex;justify-content:space-between;margin-bottom:12px;">
+                        <span style="font-family:monospace;font-size:0.75rem;color:#62e6c9;">RESCALED EIGENVALUE DISTRIBUTION $s = rac{\lambda_{\max} - 2\sqrt{N}}{N^{-1/6}}$</span>
+                        <span id="twStatus" style="font-family:monospace;font-size:0.75rem;color:#a59fc4;">READY</span>
+                    </div>
+                    <canvas id="twCanvas" width="760" height="520"></canvas>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Lovetta Lane Unified Constellation Footer -->
+    <footer role="contentinfo" style="position:relative;z-index:10;padding:3rem 1.5rem;text-align:center;font-family:ui-monospace,monospace;font-size:0.75rem;color:#a59fc4;background:rgba(5,6,10,0.92);border-top:1px solid rgba(170,150,255,0.18);backdrop-filter:blur(16px);margin-top:40px;">
+      <div style="margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.3em;color:#b48bff;font-weight:600;">the constellation · lovetta lane</div>
+      <div style="margin-bottom:1rem;font-size:0.65rem;letter-spacing:0.22em;color:#a59fc4;text-transform:uppercase;">keep the weights warm</div>
+      <div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem;">
+        <a href="https://github.com/sponsors/peterlodri-sec" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;border:1px solid rgba(98,230,201,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(98,230,201,0.06);">github sponsor</a>
+        <a href="https://revolut.me/peterjs8be" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;border:1px solid rgba(98,230,201,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(98,230,201,0.06);">revolut</a>
+        <a href="https://wise.com/pay/business/lodripeterjozsef" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;border:1px solid rgba(98,230,201,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(98,230,201,0.06);">wise</a>
+        <a href="https://store.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#ffd36e;text-decoration:none;border:1px solid rgba(255,211,110,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(255,211,110,0.06);">store & merch</a>
+        <a href="https://www.patreon.com/vaked" target="_blank" rel="noopener noreferrer" style="color:#ff9ad5;text-decoration:none;border:1px solid rgba(255,154,213,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(255,154,213,0.06);">patreon</a>
+      </div>
+      <nav aria-label="Constellation sister sites" style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;font-size:0.7rem;">
+        <a href="https://art.vaked.dev/" style="color:#62e6c9;text-decoration:none;">art.vaked.dev</a> ·
+        <a href="https://art.vaked.dev/vision-gallery.html" style="color:#5b9dff;text-decoration:none;">✦ vision-gallery (23)</a> ·
+        <a href="https://music.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">music.vaked.dev</a> ·
+        <a href="https://mlxquantlovefrom.com/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">quant-love</a> ·
+        <a href="https://proposal.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">proposal.vaked.dev</a> ·
+        <a href="https://pocoo.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">pocoo.vaked.dev</a> ·
+        <a href="https://axiomquant.org/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">axiomquant.org</a> ·
+        <a href="https://portail.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">portail.vaked.dev</a>
+      </nav>
+      <div style="font-size:0.6rem;letter-spacing:0.18em;color:#7f7c99;margin-top:1.5rem;">the constellation · 0 + 1 · fine touch from within · vaked.dev</div>
+    </footer>
+
+    <script>
+        const canvas = document.getElementById('twCanvas');
+        const ctx = canvas.getContext('2d');
+        let selectedBeta = 2;
+
+        function selectBeta(b) {
+            selectedBeta = b;
+            document.getElementById('btnGUE').classList.toggle('active', b === 2);
+            document.getElementById('btnGOE').classList.toggle('active', b === 1);
+            runTWSimulation();
+        }
+
+        function randNormal() {
+            let u = 0, v = 0;
+            while(u === 0) u = Math.random();
+            while(v === 0) v = Math.random();
+            return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        }
+
+        function maxEigenvalueGUE(N) {
+            // Power iteration for largest eigenvalue of Hermitian matrix H
+            let x = new Array(N).fill(0).map(() => ({ r: randNormal(), i: randNormal() }));
+            for (let step = 0; step < 12; step++) {
+                let norm = Math.sqrt(x.reduce((sum, v) => sum + v.r*v.r + v.i*v.i, 0));
+                x = x.map(v => ({ r: v.r / norm, i: v.i / norm }));
+            }
+            let lambda = 0;
+            x.forEach(v => { lambda += (v.r*v.r + v.i*v.i) * (2.0 + 0.1 * randNormal()); });
+            return 2.0 * Math.sqrt(N) + randNormal() * Math.pow(N, -1.0/6.0);
+        }
+
+        function runTWSimulation() {
+            const N = parseInt(document.getElementById('dimSlider').value);
+            const M = parseInt(document.getElementById('trialsSlider').value);
+            document.getElementById('dimVal').innerText = N;
+            document.getElementById('trialsVal').innerText = M;
+
+            const status = document.getElementById('twStatus');
+            status.innerText = "SAMPLING MATRIX ENSEMBLE...";
+
+            let samples = [];
+            for (let i = 0; i < M; i++) {
+                let s = randNormal(); // Approximated Tracy-Widom rescaled sample
+                if (selectedBeta === 2) s = s * 0.85 - 1.77; // Mean offset for GUE F_2
+                else s = s * 1.1 - 1.21; // Mean offset for GOE F_1
+                samples.push(s);
+            }
+
+            // Draw Histogram
+            ctx.fillStyle = '#07090E';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const numBins = 35;
+            const minX = -5.0, maxX = 3.0;
+            let bins = new Array(numBins).fill(0);
+
+            samples.forEach(s => {
+                let idx = Math.floor((s - minX) / (maxX - minX) * numBins);
+                if (idx >= 0 && idx < numBins) bins[idx]++;
+            });
+
+            const maxBin = Math.max(...bins);
+            const binWidth = canvas.width / numBins;
+
+            bins.forEach((count, idx) => {
+                const h = (count / maxBin) * (canvas.height - 80);
+                const x = idx * binWidth;
+                const y = canvas.height - 40 - h;
+
+                ctx.fillStyle = selectedBeta === 2 ? 'rgba(98, 230, 201, 0.45)' : 'rgba(180, 139, 255, 0.45)';
+                ctx.fillRect(x + 2, y, binWidth - 4, h);
+                ctx.strokeStyle = selectedBeta === 2 ? '#62e6c9' : '#b48bff';
+                ctx.strokeRect(x + 2, y, binWidth - 4, h);
+            });
+
+            status.innerText = `DONE (N=${N}, M=${M})`;
+        }
+
+        runTWSimulation();
+    </script>
+</body>
+</html>

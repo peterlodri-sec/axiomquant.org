@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schramm–Loewner Evolution (SLE_κ) — AXIOM QUANT</title>
+    <meta name="description" content="Interactive Schramm-Loewner Evolution simulator (dZ_t = sqrt(kappa) dB_t + 2/Z_t dt). Visualizing phase transitions from self-avoiding walks to space-filling curves.">
+    
+    <script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };</script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@200;300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+
+    <style>
+        .sle-grid { display: grid; grid-template-columns: 320px 1fr; gap: 24px; margin-top: 24px; }
+        .control-panel { background: rgba(15, 20, 32, 0.85); border: 1px solid rgba(170, 150, 255, 0.18); border-radius: 12px; padding: 20px; backdrop-filter: blur(12px); }
+        .canvas-card { background: #05060A; border: 1px solid rgba(170, 150, 255, 0.18); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        canvas { border-radius: 8px; border: 1px solid rgba(98, 230, 201, 0.2); background: #07090E; }
+        .slider-group { margin-bottom: 20px; }
+        .slider-group label { display: block; font-family: monospace; font-size: 0.8rem; color: #b48bff; margin-bottom: 8px; }
+        .slider-group input[type=range] { width: 100%; }
+        .val-badge { color: #62e6c9; font-weight: bold; }
+        .preset-btn { width: 100%; margin-bottom: 8px; padding: 8px 12px; background: rgba(98,230,201,0.08); border: 1px solid rgba(98,230,201,0.3); border-radius: 6px; color: #62e6c9; font-family: monospace; font-size: 0.75rem; cursor: pointer; text-align: left; transition: all 0.2s; }
+        .preset-btn:hover { background: rgba(98,230,201,0.2); border-color: #62e6c9; }
+        .math-box { background: rgba(5,6,10,0.6); border-left: 3px solid #b48bff; padding: 12px; margin-top: 16px; font-size: 0.8rem; color: #a59fc4; }
+    </style>
+</head>
+<body>
+
+    <div class="app-shell" style="max-width:1200px;margin:0 auto;padding:20px;">
+        <header class="top-header" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(170,150,255,0.18);">
+            <div class="brand-container">
+                <a href="/" class="brand-title" style="color:#fff;text-decoration:none;font-family:monospace;font-weight:700;font-size:1.2rem;">AXIOM <span style="color:#b48bff;">QUANT</span></a>
+                <span class="version-tag" style="color:#62e6c9;font-family:monospace;font-size:0.8rem;margin-left:12px;">/SLE_KAPPA</span>
+            </div>
+            <nav class="main-nav" style="display:flex;gap:16px;">
+                <a href="/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:monospace;font-size:0.8rem;">← HOME</a>
+                <a href="/tracy-widom/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:monospace;font-size:0.8rem;">Tracy–Widom</a>
+                <a href="/markowitz/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:monospace;font-size:0.8rem;">Markowitz QP</a>
+            </nav>
+        </header>
+
+        <main class="main-layout" style="margin-top:24px;">
+            <div class="hero-section">
+                <h1 style="font-size:1.8rem;color:#fff;font-weight:800;margin-bottom:8px;">Schramm–Loewner Evolution <span style="color:#62e6c9;">($	ext{SLE}_\kappa$)</span></h1>
+                <p style="color:#a59fc4;font-size:0.9rem;">Conformal invariant random curves governed by the stochastic Loewner differential equation $dZ_t = \sqrt{\kappa} dB_t + rac{2}{Z_t} dt$.</p>
+            </div>
+
+            <div class="sle-grid">
+                <aside class="control-panel">
+                    <h3 style="font-family:monospace;font-size:0.9rem;color:#b48bff;margin-bottom:16px;">PARAMETER CONTROLS</h3>
+                    
+                    <div class="slider-group">
+                        <label>DIFFUSION PARAMETER ($\kappa$): <span id="kappaVal" class="val-badge">2.67</span></label>
+                        <input type="range" id="kappaSlider" min="0.5" max="8.0" step="0.05" value="2.67">
+                    </div>
+
+                    <div class="slider-group">
+                        <label>SIMULATION STEPS: <span id="stepsVal" class="val-badge">1200</span></label>
+                        <input type="range" id="stepsSlider" min="300" max="3000" step="100" value="1200">
+                    </div>
+
+                    <button id="runBtn" style="width:100%;padding:10px;background:linear-gradient(135deg,#b48bff,#62e6c9);border:none;border-radius:8px;color:#05060a;font-weight:700;font-family:monospace;cursor:pointer;margin-bottom:16px;">RUN SIMULATION ⚡</button>
+
+                    <h4 style="font-family:monospace;font-size:0.8rem;color:#a59fc4;margin-bottom:8px;">CONFORMAL PRESETS</h4>
+                    <button class="preset-btn" onclick="setPreset(2.0)">κ = 2.0 (Loop-Erased Random Walk)</button>
+                    <button class="preset-btn" onclick="setPreset(2.6667)">κ = 8/3 (Self-Avoiding Walk)</button>
+                    <button class="preset-btn" onclick="setPreset(3.0)">κ = 3.0 (Ising Spin Boundary)</button>
+                    <button class="preset-btn" onclick="setPreset(4.0)">κ = 4.0 (GFF Level Lines)</button>
+                    <button class="preset-btn" onclick="setPreset(6.0)">κ = 6.0 (Critical Percolation)</button>
+                    <button class="preset-btn" onclick="setPreset(8.0)">κ = 8.0 (Space-Filling Curve)</button>
+
+                    <div class="math-box">
+                        <strong>Fractal Dimension:</strong><br>
+                        $d_f = 1 + rac{\kappa}{8}$ (for $\kappa \le 8$)<br>
+                        Current $d_f$: <span id="dimVal" style="color:#62e6c9;font-weight:bold;">1.333</span>
+                    </div>
+                </aside>
+
+                <section class="canvas-card">
+                    <div style="width:100%;display:flex;justify-content:space-between;margin-bottom:12px;">
+                        <span style="font-family:monospace;font-size:0.75rem;color:#62e6c9;">CHORDAL SLE IN UPPER HALF-PLANE $\mathbb{H}$</span>
+                        <span id="statusLabel" style="font-family:monospace;font-size:0.75rem;color:#a59fc4;">READY</span>
+                    </div>
+                    <canvas id="sleCanvas" width="760" height="520"></canvas>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Lovetta Lane Unified Constellation Footer -->
+    <footer role="contentinfo" style="position:relative;z-index:10;padding:3rem 1.5rem;text-align:center;font-family:ui-monospace,monospace;font-size:0.75rem;color:#a59fc4;background:rgba(5,6,10,0.92);border-top:1px solid rgba(170,150,255,0.18);backdrop-filter:blur(16px);margin-top:40px;">
+      <div style="margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.3em;color:#b48bff;font-weight:600;">the constellation · lovetta lane</div>
+      <div style="margin-bottom:1rem;font-size:0.65rem;letter-spacing:0.22em;color:#a59fc4;text-transform:uppercase;">keep the weights warm</div>
+      <div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem;">
+        <a href="https://github.com/sponsors/peterlodri-sec" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;border:1px solid rgba(98,230,201,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(98,230,201,0.06);">github sponsor</a>
+        <a href="https://revolut.me/peterjs8be" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;border:1px solid rgba(98,230,201,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(98,230,201,0.06);">revolut</a>
+        <a href="https://wise.com/pay/business/lodripeterjozsef" target="_blank" rel="noopener noreferrer" style="color:#62e6c9;text-decoration:none;border:1px solid rgba(98,230,201,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(98,230,201,0.06);">wise</a>
+        <a href="https://store.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#ffd36e;text-decoration:none;border:1px solid rgba(255,211,110,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(255,211,110,0.06);">store & merch</a>
+        <a href="https://www.patreon.com/vaked" target="_blank" rel="noopener noreferrer" style="color:#ff9ad5;text-decoration:none;border:1px solid rgba(255,154,213,0.35);border-radius:8px;padding:0.45rem 0.9rem;background:rgba(255,154,213,0.06);">patreon</a>
+      </div>
+      <nav aria-label="Constellation sister sites" style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;font-size:0.7rem;">
+        <a href="https://art.vaked.dev/" style="color:#62e6c9;text-decoration:none;">art.vaked.dev</a> ·
+        <a href="https://art.vaked.dev/vision-gallery.html" style="color:#5b9dff;text-decoration:none;">✦ vision-gallery (23)</a> ·
+        <a href="https://music.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">music.vaked.dev</a> ·
+        <a href="https://mlxquantlovefrom.com/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">quant-love</a> ·
+        <a href="https://proposal.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">proposal.vaked.dev</a> ·
+        <a href="https://pocoo.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">pocoo.vaked.dev</a> ·
+        <a href="https://axiomquant.org/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">axiomquant.org</a> ·
+        <a href="https://portail.vaked.dev/" target="_blank" rel="noopener noreferrer" style="color:#a59fc4;text-decoration:none;">portail.vaked.dev</a>
+      </nav>
+      <div style="font-size:0.6rem;letter-spacing:0.18em;color:#7f7c99;margin-top:1.5rem;">the constellation · 0 + 1 · fine touch from within · vaked.dev</div>
+    </footer>
+
+    <script>
+        const canvas = document.getElementById('sleCanvas');
+        const ctx = canvas.getContext('2d');
+        const kappaSlider = document.getElementById('kappaSlider');
+        const stepsSlider = document.getElementById('stepsSlider');
+        const kappaVal = document.getElementById('kappaVal');
+        const stepsVal = document.getElementById('stepsVal');
+        const dimVal = document.getElementById('dimVal');
+        const statusLabel = document.getElementById('statusLabel');
+
+        function updateValues() {
+            const kappa = parseFloat(kappaSlider.value);
+            kappaVal.innerText = kappa.toFixed(2);
+            stepsVal.innerText = stepsSlider.value;
+            const dim = Math.min(2.0, 1 + kappa / 8.0);
+            dimVal.innerText = dim.toFixed(3);
+        }
+
+        kappaSlider.addEventListener('input', updateValues);
+        stepsSlider.addEventListener('input', updateValues);
+
+        function setPreset(val) {
+            kappaSlider.value = val;
+            updateValues();
+            simulateSLE();
+        }
+
+        function simulateSLE() {
+            const kappa = parseFloat(kappaSlider.value);
+            const numSteps = parseInt(stepsSlider.value);
+            const dt = 0.005;
+
+            ctx.fillStyle = '#07090E';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw real axis line
+            ctx.strokeStyle = 'rgba(170, 150, 255, 0.2)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height - 30);
+            ctx.lineTo(canvas.width, canvas.height - 30);
+            ctx.stroke();
+
+            // Simulate driving function B_t (Brownian motion)
+            let B = [0];
+            for (let i = 1; i <= numSteps; i++) {
+                const dB = (Math.random() + Math.random() + Math.random() + Math.random() - 2.0) * Math.sqrt(dt * kappa);
+                B.push(B[i - 1] + dB);
+            }
+
+            // Reverse Loewner flow to compute gamma(t)
+            statusLabel.innerText = "COMPUTING SLE CURVE...";
+            let points = [{ x: 0, y: 0 }];
+
+            for (let k = 1; k <= numSteps; k++) {
+                let zReal = 0;
+                let zImag = 0.001; // Epsilon
+
+                for (let j = k; j >= 1; j--) {
+                    const dB = B[j] - B[j - 1];
+                    const denom = zReal * zReal + zImag * zImag;
+                    const dReal = -dB + (2 * dt * zReal) / denom;
+                    const dImag = (-2 * dt * zImag) / denom;
+                    zReal += dReal;
+                    zImag += dImag;
+                }
+
+                points.push({ x: zReal, y: zImag });
+            }
+
+            // Render path to Canvas
+            ctx.beginPath();
+            const scaleX = 35;
+            const scaleY = 35;
+            const originX = canvas.width / 2;
+            const originY = canvas.height - 30;
+
+            points.forEach((p, idx) => {
+                const screenX = originX + p.x * scaleX;
+                const screenY = originY - p.y * scaleY;
+                if (idx === 0) ctx.moveTo(screenX, screenY);
+                else ctx.lineTo(screenX, screenY);
+            });
+
+            ctx.strokeStyle = kappa > 6 ? '#ff9ad5' : (kappa > 4 ? '#ffd36e' : '#62e6c9');
+            ctx.lineWidth = 1.8;
+            ctx.stroke();
+
+            statusLabel.innerText = `DONE (N=${numSteps})`;
+        }
+
+        document.getElementById('runBtn').addEventListener('click', simulateSLE);
+        updateValues();
+        simulateSLE();
+    </script>
+</body>
+</html>
