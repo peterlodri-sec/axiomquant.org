@@ -87,6 +87,19 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:2.5px solid #62
                     </div>
 
                     <div class="field-row">
+                        <label for="riskAversion">RISK AVERSION ($\gamma$): <span id="riskAversionVal" class="gold-text">3.0</span></label>
+                        <input type="range" id="riskAversion" value="3.0" min="0.5" max="10.0" step="0.1" oninput="document.getElementById('riskAversionVal').textContent=this.value; runOptimization();" />
+                    </div>
+
+                    <div class="field-row">
+                        <label for="shortSelling">SHORT SELLING:</label>
+                        <select id="shortSelling" onchange="runOptimization()">
+                            <option value="long_only" selected>Long Only ($w_i \ge 0$)</option>
+                            <option value="unconstrained">Unconstrained ($w_i \in \mathbb{R}$)</option>
+                        </select>
+                    </div>
+
+                    <div class="field-row">
                         <label for="simPortfolios">MONTE CARLO SAMPLES:</label>
                         <select id="simPortfolios">
                             <option value="1000">1,000 Portfolios</option>
@@ -152,6 +165,7 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:2.5px solid #62
                                     <th>ASSET</th>
                                     <th>MINIMUM VARIANCE WEIGHT</th>
                                     <th>TANGENCY (MAX SHARPE) WEIGHT</th>
+                                    <th>OPTIMAL $\gamma$ WEIGHT</th>
                                     <th>ALLOCATION BARS</th>
                                 </tr>
                             </thead>

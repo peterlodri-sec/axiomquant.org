@@ -184,10 +184,16 @@ function resizeFrontierCanvas() {
   renderFrontierChart();
 }
 
+let gammaPortfolio = null;
+
 // MATHEMATICAL OPTIMIZATION ENGINE
 function runOptimization() {
   const rfRate =
       (parseFloat(document.getElementById('rfRate')?.value) || 4.5) / 100.0;
+  const riskAversion =
+      parseFloat(document.getElementById('riskAversion')?.value) || 3.0;
+  const shortSellingMode =
+      document.getElementById('shortSelling')?.value || 'long_only';
   const numSamples =
       parseInt(document.getElementById('simPortfolios')?.value) || 3000;
   const assets = currentUniverse.assets;
@@ -211,24 +217,28 @@ function runOptimization() {
   let maxSharpe = -Infinity;
 
   for (let s = 0; s < numSamples; s++) {
-    // Uniform / Dirichlet normalized weights
-    const rawW = Array(n).fill(0).map(() => Math.random());
-    const sumW = rawW.reduce((a, b) => a + b, 0);
-    const w = rawW.map(v => v / sumW);
+    let w;
+    if (shortSellingMode === 'unconstrained') {
+      const rawW = Array(n).fill(0).map(() => (Math.random() - 0.3) * 2.0);
+      const sumW = rawW.reduce((a, b) => a + b, 0);
+      w = rawW.map(v => v / (sumW || 1.0));
+    } else {
+      const rawW = Array(n).fill(0).map(() => Math.random());
+      const sumW = rawW.reduce((a, b) => a + b, 0);
+      w = rawW.map(v => v / sumW);
+    }
 
-    // Portfolio Return: E(Rp) = sum(w_i * mu_i)
     let ret = 0;
     for (let i = 0; i < n; i++)
       ret += w[i] * assets[i].ret;
 
-    // Portfolio Variance: Var(Rp) = w' * Cov * w
     let varP = 0;
     for (let i = 0; i < n; i++) {
       for (let j = 0; j < n; j++) {
         varP += w[i] * w[j] * cov[i][j];
       }
     }
-    const volP = Math.sqrt(varP);
+    const volP = Math.sqrt(Math.max(varP, 1e-8));
     const sharpe = (ret - rfRate) / volP;
 
     const portObj = {weights : w, ret, vol : volP, sharpe};
@@ -245,14 +255,23 @@ function runOptimization() {
     }
   }
 
+  // Find portfolio closest to target Risk Aversion Utility U(w) = E(R) - (γ/2)*σ^2
+  let maxUtility = -Infinity;
+  sampledPortfolios.forEach(p => {
+    const u = p.ret - (riskAversion / 2.0) * (p.vol * p.vol);
+    if (u > maxUtility) {
+      maxUtility = u;
+      gammaPortfolio = p;
+    }
+  });
+
   // Update UI Elements
   updateAssetSummaryTable(rfRate);
   updateWeightsTable();
   const maxSharpeEl = document.getElementById('maxSharpeVal');
   if (maxSharpeEl && maxSharpePortfolio) {
     maxSharpeEl.innerText =
-        `MAX SHARPE: ${maxSharpePortfolio.sharpe.toFixed(3)} | MIN VOL: ${
-            (minVarPortfolio.vol * 100).toFixed(2)}%`;
+        `MAX SHARPE: ${maxSharpePortfolio.sharpe.toFixed(3)} | γ=${riskAversion.toFixed(1)} VOL: ${(gammaPortfolio ? gammaPortfolio.vol * 100 : 0).toFixed(2)}%`;
   }
 
   renderFrontierChart();
@@ -397,6 +416,29 @@ function renderFrontierChart() {
     ctx.lineWidth = 1.5;
     ctx.stroke();
   }
+
+  // 6. Draw Selected Risk Aversion γ Target Point (Cyan Diamond ◆)
+  if (gammaPortfolio) {
+    const gX = toScreenX(gammaPortfolio.vol);
+    const gY = toScreenY(gammaPortfolio.ret);
+
+    ctx.fillStyle = '#62E6C9';
+    ctx.beginPath();
+    ctx.moveTo(gX, gY - 8);
+    ctx.lineTo(gX + 7, gY);
+    ctx.lineTo(gX, gY + 8);
+    ctx.lineTo(gX - 7, gY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.fillStyle = '#62E6C9';
+    ctx.font = '10px "Fira Code", monospace';
+    const riskAversion = parseFloat(document.getElementById('riskAversion')?.value) || 3.0;
+    ctx.fillText(`γ=${riskAversion.toFixed(1)}`, gX + 10, gY + 4);
+  }
 }
 
 // HOVER TOOLTIP INTERACTION
@@ -496,6 +538,7 @@ function updateWeightsTable() {
   currentUniverse.assets.forEach((a, i) => {
     const minW = (minVarPortfolio.weights[i] * 100).toFixed(2);
     const tangW = (maxSharpePortfolio.weights[i] * 100).toFixed(2);
+    const gammaW = gammaPortfolio ? (gammaPortfolio.weights[i] * 100).toFixed(2) : tangW;
     const color = colors[i % colors.length];
 
     const row = document.createElement('tr');
@@ -503,9 +546,10 @@ function updateWeightsTable() {
             <td><strong>${a.ticker}</strong></td>
             <td>${minW}%</td>
             <td class="gold-text"><strong>${tangW}%</strong></td>
+            <td class="cyan-text"><strong>${gammaW}%</strong></td>
             <td>
                 <div class="weight-bar-container">
-                    <div class="weight-segment" style="width: ${tangW}%; background-color: ${color};"></div>
+                    <div class="weight-segment" style="width: ${Math.max(0, Math.min(100, parseFloat(gammaW)))}%; background-color: ${color};"></div>
                 </div>
             </td>
         `;
