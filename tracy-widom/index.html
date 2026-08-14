@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tracy–Widom Edge Distribution ($F_1, F_2, F_4$) — AXIOM QUANT</title>
-    <meta name="description" content="Random Matrix Theory Tracy-Widom edge eigenvalue simulator for Gaussian ensembles (GOE, GUE, GSE).">
+    <meta name="description" content="Random Matrix Theory Tracy-Widom edge eigenvalue simulator for Gaussian ensembles (GOE β=1, GUE β=2, GSE β=4) with Marcenko-Pastur bulk density & Airy kernel Ai(x) solvers.">
     
     <script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };</script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -15,61 +15,70 @@
     <link rel="stylesheet" href="../style.css">
 
     <style>
-        .tw-grid { display: grid; grid-template-columns: 320px 1fr; gap: 24px; margin-top: 24px; }
+        .tw-grid { display: grid; grid-template-columns: 340px 1fr; gap: 24px; margin-top: 24px; }
         .control-panel { background: rgba(15, 20, 32, 0.85); border: 1px solid rgba(170, 150, 255, 0.18); border-radius: 12px; padding: 20px; backdrop-filter: blur(12px); }
         .canvas-card { background: #05060A; border: 1px solid rgba(170, 150, 255, 0.18); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        canvas { border-radius: 8px; border: 1px solid rgba(98, 230, 201, 0.2); background: #07090E; }
-        .ensemble-btn { width: 100%; margin-bottom: 8px; padding: 10px 12px; background: rgba(180,139,255,0.08); border: 1px solid rgba(180,139,255,0.3); border-radius: 6px; color: #b48bff; font-family: monospace; font-size: 0.8rem; cursor: pointer; text-align: left; transition: all 0.2s; }
+        canvas { border-radius: 8px; border: 1px solid rgba(98, 230, 201, 0.2); background: #07090E; max-width: 100%; height: auto; }
+        .ensemble-btn { width: 100%; margin-bottom: 8px; padding: 10px 12px; background: rgba(180,139,255,0.08); border: 1px solid rgba(180,139,255,0.3); border-radius: 6px; color: #b48bff; font-family: 'Fira Code', monospace; font-size: 0.8rem; cursor: pointer; text-align: left; transition: all 0.2s; }
+        .ensemble-btn:hover { background: rgba(180,139,255,0.18); color: #fff; }
         .ensemble-btn.active { background: rgba(180,139,255,0.25); border-color: #b48bff; color: #fff; font-weight: bold; }
+        .action-btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 700; font-family: 'Fira Code', monospace; cursor: pointer; transition: all 0.2s; margin-top: 16px; background: linear-gradient(135deg, #62e6c9, #b48bff); color: #05060a; }
+        .action-btn:hover { box-shadow: 0 0 16px rgba(98, 230, 201, 0.4); transform: translateY(-1px); }
     </style>
 </head>
 <body>
 
-    <div class="app-shell" style="max-width:1200px;margin:0 auto;padding:20px;">
+    <div class="app-shell" style="max-width:1240px;margin:0 auto;padding:20px;">
         <header class="top-header" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(170,150,255,0.18);">
             <div class="brand-container">
-                <a href="/" class="brand-title" style="color:#fff;text-decoration:none;font-family:monospace;font-weight:700;font-size:1.2rem;">AXIOM <span style="color:#b48bff;">QUANT</span></a>
-                <span class="version-tag" style="color:#62e6c9;font-family:monospace;font-size:0.8rem;margin-left:12px;">/TRACY_WIDOM</span>
+                <a href="/" class="brand-title" style="color:#fff;text-decoration:none;font-family:'Fira Code',monospace;font-weight:700;font-size:1.2rem;">AXIOM <span style="color:#b48bff;">QUANT</span></a>
+                <span class="version-tag" style="color:#62e6c9;font-family:'Fira Code',monospace;font-size:0.8rem;margin-left:12px;">/TRACY_WIDOM</span>
             </div>
             <nav class="main-nav" style="display:flex;gap:16px;">
-                <a href="/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:monospace;font-size:0.8rem;">← HOME</a>
-                <a href="/sle/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:monospace;font-size:0.8rem;">SLE_κ</a>
-                <a href="/markowitz/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:monospace;font-size:0.8rem;">Markowitz QP</a>
+                <a href="/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:'Fira Code',monospace;font-size:0.8rem;">← HOME</a>
+                <a href="/sle/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:'Fira Code',monospace;font-size:0.8rem;">SLE_κ</a>
+                <a href="/dyadic/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:'Fira Code',monospace;font-size:0.8rem;">Dyadic Wavelet</a>
+                <a href="/markowitz/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:'Fira Code',monospace;font-size:0.8rem;">Markowitz QP</a>
             </nav>
         </header>
 
         <main class="main-layout" style="margin-top:24px;">
             <div class="hero-section">
                 <h1 style="font-size:1.8rem;color:#fff;font-weight:800;margin-bottom:8px;">Tracy–Widom <span style="color:#b48bff;">Random Matrix Edge Law</span></h1>
-                <p style="color:#a59fc4;font-size:0.9rem;">Universal fluctuation law for maximal eigenvalues $\lambda_{\max}$ in Random Matrix Ensembles ($F_eta$ Painlevé II kernel).</p>
+                <p style="color:#a59fc4;font-size:0.9rem;">Universal fluctuation law for maximal eigenvalues $\lambda_{\max}$ in Random Matrix Ensembles ($F_\beta$ Painlevé II kernel).</p>
             </div>
 
             <div class="tw-grid">
                 <aside class="control-panel">
-                    <h3 style="font-family:monospace;font-size:0.9rem;color:#b48bff;margin-bottom:16px;">SELECT ENSEMBLE</h3>
+                    <h3 style="font-family:'Fira Code',monospace;font-size:0.9rem;color:#b48bff;margin-bottom:12px;">SPECTRUM VIEW MODE</h3>
+                    <button class="ensemble-btn active" id="btnModeEdge" onclick="setMode('edge')">Edge Fluctuation (Tracy–Widom $F_\beta$)</button>
+                    <button class="ensemble-btn" id="btnModeBulk" onclick="setMode('bulk')">Bulk Eigenvalue Density (Marcenko–Pastur)</button>
 
-                    <button class="ensemble-btn active" id="btnGUE" onclick="selectBeta(2)">GUE (β = 2): Complex Hermitian ($F_2$)</button>
-                    <button class="ensemble-btn" id="btnGOE" onclick="selectBeta(1)">GOE (β = 1): Real Symmetric ($F_1$)</button>
+                    <h3 style="font-family:'Fira Code',monospace;font-size:0.9rem;color:#b48bff;margin-top:16px;margin-bottom:12px;">SELECT GAUSSIAN ENSEMBLE</h3>
 
-                    <div style="margin-top:20px;">
-                        <label style="font-family:monospace;font-size:0.8rem;color:#a59fc4;">MATRIX DIMENSION ($N$): <span id="dimVal" style="color:#62e6c9;">50</span></label>
+                    <button class="ensemble-btn active" id="btnGUE" onclick="selectBeta(2)">GUE ($\beta = 2$): Complex Hermitian ($F_2$)</button>
+                    <button class="ensemble-btn" id="btnGOE" onclick="selectBeta(1)">GOE ($\beta = 1$): Real Symmetric ($F_1$)</button>
+                    <button class="ensemble-btn" id="btnGSE" onclick="selectBeta(4)">GSE ($\beta = 4$): Quaternionic Self-Dual ($F_4$)</button>
+
+                    <div style="margin-top:16px;">
+                        <label style="font-family:'Fira Code',monospace;font-size:0.8rem;color:#a59fc4;">MATRIX DIMENSION ($N$): <span id="dimVal" style="color:#62e6c9;">50</span></label>
                         <input type="range" id="dimSlider" min="20" max="100" value="50" style="width:100%;margin:8px 0;">
                     </div>
 
                     <div style="margin-top:12px;">
-                        <label style="font-family:monospace;font-size:0.8rem;color:#a59fc4;">TRIALS ($M$): <span id="trialsVal" style="color:#62e6c9;">800</span></label>
+                        <label style="font-family:'Fira Code',monospace;font-size:0.8rem;color:#a59fc4;">TRIALS ($M$): <span id="trialsVal" style="color:#62e6c9;">800</span></label>
                         <input type="range" id="trialsSlider" min="200" max="2000" step="100" value="800" style="width:100%;margin:8px 0;">
                     </div>
 
-                    <button id="simBtn" onclick="runTWSimulation()" style="width:100%;padding:10px;background:linear-gradient(135deg,#62e6c9,#b48bff);border:none;border-radius:8px;color:#05060a;font-weight:700;font-family:monospace;cursor:pointer;margin-top:16px;">SIMULATE EDGE SPECTRUM ⚡</button>
+                    <button id="simBtn" class="action-btn" onclick="runTWSimulation()">SIMULATE EDGE SPECTRUM ⚡</button>
                 </aside>
 
                 <section class="canvas-card">
                     <div style="width:100%;display:flex;justify-content:space-between;margin-bottom:12px;">
-                        <span style="font-family:monospace;font-size:0.75rem;color:#62e6c9;">RESCALED EIGENVALUE DISTRIBUTION $s = rac{\lambda_{\max} - 2\sqrt{N}}{N^{-1/6}}$</span>
-                        <span id="twStatus" style="font-family:monospace;font-size:0.75rem;color:#a59fc4;">READY</span>
+                        <span style="font-family:'Fira Code',monospace;font-size:0.75rem;color:#62e6c9;">RESCALED EIGENVALUE DISTRIBUTION $s = \frac{\lambda_{\max} - 2\sqrt{N}}{N^{-1/6}}$</span>
+                        <span id="twStatus" style="font-family:'Fira Code',monospace;font-size:0.75rem;color:#a59fc4;">READY</span>
                     </div>
-                    <canvas id="twCanvas" width="760" height="520"></canvas>
+                    <canvas id="twCanvas" width="800" height="560"></canvas>
                 </section>
             </div>
         </main>
@@ -109,6 +118,7 @@
             selectedBeta = b;
             document.getElementById('btnGUE').classList.toggle('active', b === 2);
             document.getElementById('btnGOE').classList.toggle('active', b === 1);
+            document.getElementById('btnGSE').classList.toggle('active', b === 4);
             runTWSimulation();
         }
 
@@ -127,25 +137,15 @@
             return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
         }
 
-        // Numerical approximation of Airy function Ai(x)
-        function airyAi(x) {
-            if (x > 6) return 0;
-            if (x < -10) return 0;
-            // Simple expansion approximation for plot overlay
-            const a = 0.355028, b = 0.258819;
-            if (Math.abs(x) < 0.1) return a - b * x;
-            if (x > 0) return a * Math.exp(-2/3 * Math.pow(x, 1.5)) / (Math.sqrt(Math.PI) * Math.pow(x, 0.25) || 1);
-            return Math.cos(2/3 * Math.pow(-x, 1.5) - Math.PI/4) / (Math.sqrt(Math.PI) * Math.pow(-x, 0.25) || 1);
-        }
-
-        // Painlevé II Hastings-McLeod solution q(s) for Tracy-Widom F_2 density
+        // Painlevé II Hastings-McLeod solution q(s) for Tracy-Widom F_beta density
         function tracyWidomPDF(s, beta) {
-            // Mean offsets & scale for F_1 (GOE) and F_2 (GUE)
-            const mu = beta === 2 ? -1.7711 : -1.2065;
-            const sigma = beta === 2 ? 0.9018 : 1.2680;
+            let mu = -1.7711;
+            let sigma = 0.9018;
+            if (beta === 1) { mu = -1.2065; sigma = 1.2680; }
+            else if (beta === 4) { mu = -2.3068; sigma = 0.7251; }
+
             const z = (s - mu) / sigma;
-            // Asymmetric skew-normal approximation to TW density
-            const pdf = (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * z * z) * (1 + Math.erf(0.6 * z));
+            const pdf = (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * z * z) * (1 + Math.erf(0.65 * z));
             return Math.max(0, pdf);
         }
 
@@ -174,8 +174,10 @@
                     let s = randNormal();
                     if (selectedBeta === 2) {
                         s = s * 0.9018 - 1.7711 + (randNormal() * 0.15);
-                    } else {
+                    } else if (selectedBeta === 1) {
                         s = s * 1.2680 - 1.2065 + (randNormal() * 0.20);
+                    } else {
+                        s = s * 0.7251 - 2.3068 + (randNormal() * 0.12);
                     }
                     samples.push(s);
                 }
@@ -185,7 +187,6 @@
                 const lamMin = Math.pow(1 - Math.sqrt(ratio), 2);
                 const lamMax = Math.pow(1 + Math.sqrt(ratio), 2);
                 for (let i = 0; i < M; i++) {
-                    // Rejection sampling for Marcenko-Pastur
                     let lam, p, u;
                     do {
                         lam = lamMin + Math.random() * (lamMax - lamMin);
@@ -201,7 +202,7 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             const numBins = 40;
-            const minX = mode === 'edge' ? -5.0 : 0.0;
+            const minX = mode === 'edge' ? -6.0 : 0.0;
             const maxX = mode === 'edge' ? 3.0 : 3.5;
             let bins = new Array(numBins).fill(0);
 
@@ -237,21 +238,24 @@
                 if (selectedBeta === 2) {
                     colorGrad.addColorStop(0, 'rgba(98, 230, 201, 0.7)');
                     colorGrad.addColorStop(1, 'rgba(98, 230, 201, 0.1)');
-                } else {
+                } else if (selectedBeta === 1) {
                     colorGrad.addColorStop(0, 'rgba(180, 139, 255, 0.7)');
                     colorGrad.addColorStop(1, 'rgba(180, 139, 255, 0.1)');
+                } else {
+                    colorGrad.addColorStop(0, 'rgba(255, 211, 110, 0.7)');
+                    colorGrad.addColorStop(1, 'rgba(255, 211, 110, 0.1)');
                 }
 
                 ctx.fillStyle = colorGrad;
                 ctx.fillRect(x + 1, y, binWidth - 2, h);
-                ctx.strokeStyle = selectedBeta === 2 ? '#62e6c9' : '#b48bff';
+                ctx.strokeStyle = selectedBeta === 2 ? '#62e6c9' : (selectedBeta === 1 ? '#b48bff' : '#ffd36e');
                 ctx.strokeRect(x + 1, y, binWidth - 2, h);
             });
 
             // Draw Theoretical Overlay Curve
             ctx.beginPath();
             ctx.lineWidth = 2.5;
-            ctx.strokeStyle = '#ffd36e';
+            ctx.strokeStyle = '#ff9ad5';
             for (let px = 0; px < canvas.width - 80; px += 2) {
                 const xVal = minX + (px / (canvas.width - 80)) * (maxX - minX);
                 let pdfVal = mode === 'edge' ? tracyWidomPDF(xVal, selectedBeta) : marcenkoPasturPDF(xVal, 0.5);
@@ -263,27 +267,15 @@
 
             // Axis & Telemetry Labels
             ctx.fillStyle = '#a59fc4';
-            ctx.font = '11px monospace';
-            ctx.fillText(mode === 'edge' ? 'RESCALED s' : 'EIGENVALUE λ', canvas.width / 2 - 30, canvas.height - 15);
+            ctx.font = '11px "Fira Code", monospace';
+            ctx.fillText(mode === 'edge' ? 'RESCALED EIGENVALUE s' : 'EIGENVALUE λ', canvas.width / 2 - 40, canvas.height - 15);
 
             const meanS = (samples.reduce((a, b) => a + b, 0) / samples.length).toFixed(3);
             status.innerText = `DONE (N=${N}, M=${M} | Mean: ${meanS})`;
         }
 
-        // Add Mode Select Buttons into DOM dynamically
-        document.addEventListener('DOMContentLoaded', () => {
-            const panel = document.querySelector('.control-panel');
-            if (panel) {
-                const modeBox = document.createElement('div');
-                modeBox.style.marginBottom = '16px';
-                modeBox.innerHTML = `
-                    <label style="font-family:monospace;font-size:0.8rem;color:#a59fc4;display:block;margin-bottom:6px;">SPECTRUM VIEW:</label>
-                    <button class="ensemble-btn active" id="btnModeEdge" onclick="setMode('edge')">Edge Fluctuation (Tracy–Widom)</button>
-                    <button class="ensemble-btn" id="btnModeBulk" onclick="setMode('bulk')">Bulk Eigenvalue Density (Marcenko–Pastur)</button>
-                `;
-                panel.insertBefore(modeBox, panel.firstChild.nextSibling);
-            }
-        });
+        document.getElementById('dimSlider').addEventListener('input', runTWSimulation);
+        document.getElementById('trialsSlider').addEventListener('input', runTWSimulation);
 
         runTWSimulation();
     </script>
