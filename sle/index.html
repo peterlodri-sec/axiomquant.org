@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schramm–Loewner Evolution (SLE_κ) — Radial, Chordal & Conformal Grid — AXIOM QUANT</title>
-    <meta name="description" content="Interactive Schramm-Loewner Evolution (SLE_κ) simulator with Loewner differential equation solvers in Chordal (H) and Radial (D) geometries, conformal map inversions g_t(z), and phase transition indicators.">
+    <title>Schramm–Loewner Evolution (SLE_κ) — Radial, Chordal, Conformal Grid & Density Heatmaps — AXIOM QUANT</title>
+    <meta name="description" content="Interactive Schramm-Loewner Evolution (SLE_κ) simulator with Loewner differential equation solvers in Chordal (H) and Radial (D) geometries, conformal map inversions g_t(z), 2D spatial density heatmaps, and phase transition indicators.">
     
     <script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };</script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -101,6 +101,7 @@
                     <button id="runBtn" class="action-btn btn-run" onclick="simulateSLE()">RUN INSTANT SOLVER ⚡</button>
                     <button id="animateBtn" class="action-btn btn-animate" onclick="toggleAnimation()">ANIMATE CONFORMAL FLOW ▶</button>
                     <button id="gridBtn" class="action-btn btn-grid" onclick="toggleConformalGrid()">TOGGLE CONFORMAL MESH GRID 🌐</button>
+                    <button id="heatmapBtn" class="action-btn btn-grid" onclick="toggleDensityHeatmap()">TOGGLE 2D DENSITY HEATMAP 🔥</button>
 
                     <h4 style="font-family:'Fira Code',monospace;font-size:0.8rem;color:#a59fc4;margin-top:14px;margin-bottom:8px;">PHYSICS & STATISTICAL PRESETS</h4>
                     <button class="preset-btn" onclick="setPreset(2.0)">κ = 2.0 (Loop-Erased Random Walk)</button>
@@ -183,6 +184,7 @@
         let currentDriver = 'bm';
         let isAnimating = false;
         let showConformalGrid = false;
+        let showDensityHeatmap = false;
         let animStep = 0;
         let computedPoints = [];
         let driverValues = [];
@@ -210,6 +212,14 @@
             showConformalGrid = !showConformalGrid;
             const btn = document.getElementById('gridBtn');
             if (showConformalGrid) btn.classList.add('active');
+            else btn.classList.remove('active');
+            renderPoints(computedPoints);
+        }
+
+        function toggleDensityHeatmap() {
+            showDensityHeatmap = !showDensityHeatmap;
+            const btn = document.getElementById('heatmapBtn');
+            if (showDensityHeatmap) btn.classList.add('active');
             else btn.classList.remove('active');
             renderPoints(computedPoints);
         }
@@ -328,6 +338,43 @@
             statusLabel.innerText = `SOLVED (N=${numSteps})`;
         }
 
+        function drawDensityHeatmapOverlay(pts, originX, originY, scaleX, scaleY) {
+            const gridSize = 16;
+            const cols = Math.ceil(canvas.width / gridSize);
+            const rows = Math.ceil(canvas.height / gridSize);
+            const counts = new Array(cols * rows).fill(0);
+
+            let maxCount = 1;
+            pts.forEach(p => {
+                let sX, sY;
+                if (geometryMode === 'chordal') {
+                    sX = originX + p.x * scaleX;
+                    sY = originY - p.y * scaleY;
+                } else {
+                    sX = originX + p.x * scaleX;
+                    sY = originY - p.y * scaleY;
+                }
+                const c = Math.floor(sX / gridSize);
+                const r = Math.floor(sY / gridSize);
+                if (c >= 0 && c < cols && r >= 0 && r < rows) {
+                    const idx = r * cols + c;
+                    counts[idx]++;
+                    if (counts[idx] > maxCount) maxCount = counts[idx];
+                }
+            });
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const val = counts[r * cols + c];
+                    if (val > 0) {
+                        const intensity = Math.min(1.0, val / maxCount);
+                        ctx.fillStyle = `rgba(255, 100, 180, ${intensity * 0.35})`;
+                        ctx.fillRect(c * gridSize, r * gridSize, gridSize, gridSize);
+                    }
+                }
+            }
+        }
+
         function drawConformalGridOverlay(originX, originY, scaleX, scaleY) {
             ctx.strokeStyle = 'rgba(180, 139, 255, 0.12)';
             ctx.lineWidth = 1;
@@ -358,6 +405,10 @@
                 const scaleY = 32;
                 const originX = canvas.width / 2;
                 const originY = canvas.height - 40;
+
+                if (showDensityHeatmap) {
+                    drawDensityHeatmapOverlay(pts, originX, originY, scaleX, scaleY);
+                }
 
                 if (showConformalGrid) {
                     drawConformalGridOverlay(originX, originY, scaleX, scaleY);
@@ -394,6 +445,10 @@
                 const originX = canvas.width / 2;
                 const originY = canvas.height / 2;
                 const radius = Math.min(canvas.width, canvas.height) * 0.42;
+
+                if (showDensityHeatmap) {
+                    drawDensityHeatmapOverlay(pts, originX, originY, radius, radius);
+                }
 
                 ctx.strokeStyle = 'rgba(98, 230, 201, 0.3)';
                 ctx.lineWidth = 1.5;
