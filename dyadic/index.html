@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dyadic Wavelet & Market Regime Detector — AXIOM QUANT</title>
-    <meta name="description" content="Interactive Real-Time Dyadic Wavelet Tree, Multiresolution Analysis (MRA) & Market Regime Classification Engine with Haar & Daubechies D4 filters.">
+    <meta name="description" content="Interactive Real-Time Dyadic Wavelet Tree, Multiresolution Analysis (MRA), Time-Frequency Scalogram & Market Regime Classification Engine with Haar, Daubechies D4 & Coiflet filters.">
     
     <script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };</script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -59,7 +59,7 @@
             <div class="hero-section" style="display:flex;justify-content:space-between;align-items:flex-end;">
                 <div>
                     <h1 style="font-size:1.8rem;color:#fff;font-weight:800;margin-bottom:8px;">Dyadic Wavelet & <span style="color:#62e6c9;">Market Regime Detector</span></h1>
-                    <p style="color:#a59fc4;font-size:0.9rem;">Orthogonal MRA decomposition across scales $I_{j,k} = [k 2^{-j}, (k+1) 2^{-j}]$ for multi-scale volatility filtering & jump extraction.</p>
+                    <p style="color:#a59fc4;font-size:0.9rem;">Orthogonal MRA decomposition across scales $I_{j,k} = [k 2^{-j}, (k+1) 2^{-j}]$ for multi-scale volatility filtering & scalogram analysis.</p>
                 </div>
                 <div id="regimeBadgeContainer">
                     <span id="regimeBadge" class="regime-badge regime-trending">● LOW VOL / TRENDING</span>
@@ -91,6 +91,7 @@
 
                     <button class="wavelet-btn active" id="btnHaar" onclick="selectWavelet('haar')">Haar Basis (Step Jump Sensitive)</button>
                     <button class="wavelet-btn" id="btnDaubechies" onclick="selectWavelet('d4')">Daubechies D4 (Smooth Compact 4-Tap)</button>
+                    <button class="wavelet-btn" id="btnCoiflet" onclick="selectWavelet('coif6')">Coiflet 6-Tap (Symmetric Vanishing Moments)</button>
 
                     <div style="margin-top:16px;">
                         <h4 style="font-family:'Fira Code',monospace;font-size:0.8rem;color:#a59fc4;margin-bottom:10px;">SIGNAL PRESET</h4>
@@ -119,10 +120,10 @@
 
                 <section class="canvas-card">
                     <div style="width:100%;display:flex;justify-content:space-between;margin-bottom:12px;">
-                        <span style="font-family:'Fira Code',monospace;font-size:0.75rem;color:#62e6c9;">MULTIRESOLUTION DECOMPOSITION & DYADIC SCALE ENERGY SPECTRUM</span>
+                        <span style="font-family:'Fira Code',monospace;font-size:0.75rem;color:#62e6c9;">MULTIRESOLUTION DECOMPOSITION & TIME-FREQUENCY SCALOGRAM</span>
                         <span id="dyadicStatus" style="font-family:'Fira Code',monospace;font-size:0.75rem;color:#a59fc4;">READY</span>
                     </div>
-                    <canvas id="dyadicCanvas" width="800" height="560"></canvas>
+                    <canvas id="dyadicCanvas" width="800" height="620"></canvas>
                 </section>
             </div>
         </main>
@@ -171,10 +172,15 @@
         ];
         const D4_G = [D4_H[3], -D4_H[2], D4_H[1], -D4_H[0]];
 
+        // Coiflet 6 coefficients
+        const COIF6_H = [-0.01565578, -0.07273262, 0.38486482, 0.85257202, 0.33789766, -0.07273262];
+        const COIF6_G = [COIF6_H[5], -COIF6_H[4], COIF6_H[3], -COIF6_H[2], COIF6_H[1], -COIF6_H[0]];
+
         function selectWavelet(w) {
             currentWavelet = w;
             document.getElementById('btnHaar').classList.toggle('active', w === 'haar');
             document.getElementById('btnDaubechies').classList.toggle('active', w === 'd4');
+            document.getElementById('btnCoiflet').classList.toggle('active', w === 'coif6');
             runWaveletDecomp();
         }
 
@@ -289,6 +295,29 @@
             return { approx: a, details: details };
         }
 
+        function coif6Decompose(signal, levels) {
+            let a = [...signal];
+            let details = [];
+            for (let l = 0; l < levels; l++) {
+                let n = a.length;
+                let nextA = [];
+                let nextD = [];
+                for (let i = 0; i < n; i += 2) {
+                    let aVal = 0, dVal = 0;
+                    for (let k = 0; k < 6; k++) {
+                        let idx = (i + k) % n;
+                        aVal += COIF6_H[k] * a[idx];
+                        dVal += COIF6_G[k] * a[idx];
+                    }
+                    nextA.push(aVal);
+                    nextD.push(dVal);
+                }
+                details.push(nextD);
+                a = nextA;
+            }
+            return { approx: a, details: details };
+        }
+
         function runWaveletDecomp() {
             const thresh = parseFloat(document.getElementById('threshSlider').value);
             const level = parseInt(document.getElementById('levelSlider').value);
@@ -301,9 +330,10 @@
             const signal = (liveBuffer.length === N) ? liveBuffer : generateSignalData(N);
             if (liveBuffer.length === 0) liveBuffer = [...signal];
 
-            const decomp = (currentWavelet === 'haar') 
-                ? haarDecompose(signal, level)
-                : d4Decompose(signal, level);
+            let decomp;
+            if (currentWavelet === 'haar') decomp = haarDecompose(signal, level);
+            else if (currentWavelet === 'd4') decomp = d4Decompose(signal, level);
+            else decomp = coif6Decompose(signal, level);
 
             // Compute Scale Energies
             const d1 = decomp.details[0] || [];
@@ -329,21 +359,24 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Subplot 1: Raw Signal f(t)
-            drawSubplot(signal, 25, 90, '#62e6c9', `Raw Price / Signal f(t) [Basis: ${currentWavelet.toUpperCase()}]`);
+            drawSubplot(signal, 20, 85, '#62e6c9', `Raw Price / Signal f(t) [Basis: ${currentWavelet.toUpperCase()}]`);
 
             // Subplot 2: Detail Level D1 (Highest Frequency)
             let d1Thresh = d1.map(v => (Math.abs(v) < thresh * 8 ? 0 : v));
-            drawSubplot(d1Thresh, 130, 75, '#b48bff', `Detail Scale D1 (High-Freq Microstructure Jumps)`);
+            drawSubplot(d1Thresh, 115, 75, '#b48bff', `Detail Scale D1 (High-Freq Microstructure Jumps)`);
 
             // Subplot 3: Detail Level D2 (Mid Frequency)
             let d2Thresh = d2.map(v => (Math.abs(v) < thresh * 12 ? 0 : v));
-            drawSubplot(d2Thresh, 220, 75, '#ffd36e', `Detail Scale D2 (Mid-Freq Volatility Waves)`);
+            drawSubplot(d2Thresh, 200, 75, '#ffd36e', `Detail Scale D2 (Mid-Freq Volatility Waves)`);
 
             // Subplot 4: Low-Pass Trend A_J
-            drawSubplot(decomp.approx, 310, 75, '#5b9dff', `Approximation Trend A_${level} (Low-Pass Fundamental Ridge)`);
+            drawSubplot(decomp.approx, 285, 75, '#5b9dff', `Approximation Trend A_${level} (Low-Pass Fundamental Ridge)`);
 
-            // Subplot 5: Dyadic Scale Energy Spectrum Bar Chart
-            drawEnergyBarChart(20, 405, canvas.width - 40, 130, eD1, eD2, decomp);
+            // Subplot 5: Dyadic Scalogram Density Heatmap
+            drawScalogram(370, 110, decomp.details);
+
+            // Subplot 6: Dyadic Scale Energy Spectrum Bar Chart
+            drawEnergyBarChart(20, 495, canvas.width - 40, 110, eD1, eD2, decomp);
 
             document.getElementById('dyadicStatus').innerText = isLive 
                 ? `STREAMING LIVE (Level J=${level})` 
@@ -365,6 +398,38 @@
                 badge.className = 'regime-badge regime-ranging';
                 badge.innerText = '🟡 MEAN REVERTING / RANGING';
             }
+        }
+
+        function drawScalogram(topY, height, details) {
+            const leftX = 20;
+            const width = canvas.width - 40;
+            ctx.fillStyle = 'rgba(15, 20, 32, 0.9)';
+            ctx.fillRect(leftX, topY, width, height);
+            ctx.strokeStyle = 'rgba(170, 150, 255, 0.2)';
+            ctx.strokeRect(leftX, topY, width, height);
+
+            ctx.fillStyle = '#ff9ad5';
+            ctx.font = '10px "Fira Code", monospace';
+            ctx.fillText('DYADIC TIME-FREQUENCY SCALOGRAM DENSITY HEATMAP', leftX + 10, topY + 14);
+
+            if (!details || details.length === 0) return;
+
+            const numLevels = details.length;
+            const rowHeight = (height - 24) / numLevels;
+
+            details.forEach((det, lvlIdx) => {
+                const y = topY + 20 + lvlIdx * rowHeight;
+                const cellWidth = width / det.length;
+                const maxVal = Math.max(...det.map(v => Math.abs(v)), 1.0);
+
+                det.forEach((val, k) => {
+                    const x = leftX + k * cellWidth;
+                    const norm = Math.min(1.0, Math.abs(val) / maxVal);
+                    const hue = (1.0 - norm) * 240; // blue to red
+                    ctx.fillStyle = `hsl(${hue}, 85%, 55%)`;
+                    ctx.fillRect(x, y, cellWidth + 0.5, rowHeight - 1);
+                });
+            });
         }
 
         function drawSubplot(data, topY, height, color, label) {
