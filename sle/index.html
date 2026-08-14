@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schramm–Loewner Evolution (SLE_κ) — AXIOM QUANT</title>
-    <meta name="description" content="Interactive Schramm-Loewner Evolution simulator (dZ_t = sqrt(kappa) dB_t + 2/Z_t dt). Visualizing Loewner driving functions and phase transitions.">
+    <title>Schramm–Loewner Evolution (SLE_κ) — Radial & Chordal Conformal Flow — AXIOM QUANT</title>
+    <meta name="description" content="Interactive Schramm-Loewner Evolution (SLE_κ) simulator with Loewner differential equation solvers in Chordal (H) and Radial (D) geometries. Explore phase transitions at κ=4, κ=8, fractal Hausdorff dimensions, and Loewner driving functions.">
     
     <script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };</script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -15,24 +15,31 @@
     <link rel="stylesheet" href="../style.css">
 
     <style>
-        .sle-grid { display: grid; grid-template-columns: 340px 1fr; gap: 24px; margin-top: 24px; }
+        .sle-grid { display: grid; grid-template-columns: 360px 1fr; gap: 24px; margin-top: 24px; }
         .control-panel { background: rgba(15, 20, 32, 0.85); border: 1px solid rgba(170, 150, 255, 0.18); border-radius: 12px; padding: 20px; backdrop-filter: blur(12px); }
         .canvas-card { background: #05060A; border: 1px solid rgba(170, 150, 255, 0.18); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        canvas { border-radius: 8px; border: 1px solid rgba(98, 230, 201, 0.2); background: #07090E; max-width: 100%; height: auto; }
+        .canvas-wrapper { display: flex; flex-direction: column; gap: 16px; width: 100%; align-items: center; }
+        canvas { border-radius: 8px; border: 1px solid rgba(98, 230, 201, 0.25); background: #07090E; max-width: 100%; height: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }
         .slider-group { margin-bottom: 16px; }
         .slider-group label { display: block; font-family: 'Fira Code', monospace; font-size: 0.8rem; color: #b48bff; margin-bottom: 6px; }
-        .slider-group input[type=range] { width: 100%; }
+        .slider-group input[type=range] { width: 100%; accent-color: #62e6c9; }
         .val-badge { color: #62e6c9; font-weight: bold; }
         .preset-btn { width: 100%; margin-bottom: 6px; padding: 8px 12px; background: rgba(98,230,201,0.08); border: 1px solid rgba(98,230,201,0.3); border-radius: 6px; color: #62e6c9; font-family: 'Fira Code', monospace; font-size: 0.75rem; cursor: pointer; text-align: left; transition: all 0.2s; }
-        .preset-btn:hover { background: rgba(98,230,201,0.2); border-color: #62e6c9; color: #fff; }
+        .preset-btn:hover { background: rgba(98,230,201,0.2); border-color: #62e6c9; color: #fff; transform: translateX(2px); }
+        .mode-btn-group { display: flex; gap: 8px; margin-bottom: 14px; }
+        .mode-btn { flex: 1; padding: 8px; background: rgba(180,139,255,0.1); border: 1px solid rgba(180,139,255,0.3); border-radius: 6px; color: #b48bff; font-family: 'Fira Code', monospace; font-size: 0.75rem; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.2s; }
+        .mode-btn.active { background: rgba(180,139,255,0.25); border-color: #b48bff; color: #fff; box-shadow: 0 0 12px rgba(180,139,255,0.3); }
         .action-btn { width: 100%; padding: 10px; border: none; border-radius: 8px; font-weight: 700; font-family: 'Fira Code', monospace; cursor: pointer; transition: all 0.2s; margin-bottom: 8px; }
         .btn-run { background: linear-gradient(135deg, #b48bff, #62e6c9); color: #05060a; }
+        .btn-run:hover { box-shadow: 0 0 16px rgba(98,230,201,0.4); transform: translateY(-1px); }
         .btn-animate { background: linear-gradient(135deg, #ffd36e, #ff9ad5); color: #05060a; }
-        .math-box { background: rgba(5,6,10,0.6); border-left: 3px solid #b48bff; padding: 12px; margin-top: 14px; font-size: 0.8rem; color: #a59fc4; font-family: 'Fira Code', monospace; }
-        .phase-badge { font-family: 'Fira Code', monospace; font-size: 0.8rem; padding: 6px 12px; border-radius: 16px; font-weight: 700; display: inline-block; }
+        .btn-animate:hover { box-shadow: 0 0 16px rgba(255,211,110,0.4); transform: translateY(-1px); }
+        .math-box { background: rgba(5,6,10,0.7); border-left: 3px solid #b48bff; padding: 12px; margin-top: 14px; font-size: 0.8rem; color: #a59fc4; font-family: 'Fira Code', monospace; border-radius: 0 8px 8px 0; }
+        .phase-badge { font-family: 'Fira Code', monospace; font-size: 0.8rem; padding: 6px 14px; border-radius: 16px; font-weight: 700; display: inline-block; }
         .phase-simple { background: rgba(98,230,201,0.15); border: 1px solid #62e6c9; color: #62e6c9; }
         .phase-touch { background: rgba(255,211,110,0.15); border: 1px solid #ffd36e; color: #ffd36e; }
         .phase-fill { background: rgba(255,154,213,0.15); border: 1px solid #ff9ad5; color: #ff9ad5; }
+        .driver-card { width: 100%; background: #07090E; border: 1px solid rgba(170,150,255,0.15); border-radius: 8px; padding: 12px; }
     </style>
 </head>
 <body>
@@ -41,7 +48,7 @@
         <header class="top-header" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid rgba(170,150,255,0.18);">
             <div class="brand-container">
                 <a href="/" class="brand-title" style="color:#fff;text-decoration:none;font-family:'Fira Code',monospace;font-weight:700;font-size:1.2rem;">AXIOM <span style="color:#b48bff;">QUANT</span></a>
-                <span class="version-tag" style="color:#62e6c9;font-family:'Fira Code',monospace;font-size:0.8rem;margin-left:12px;">/SLE_KAPPA</span>
+                <span class="version-tag" style="color:#62e6c9;font-family:'Fira Code',monospace;font-size:0.8rem;margin-left:12px;">/SLE_KAPPA_LAB</span>
             </div>
             <nav class="main-nav" style="display:flex;gap:16px;">
                 <a href="/" class="nav-link" style="color:#a59fc4;text-decoration:none;font-family:'Fira Code',monospace;font-size:0.8rem;">← HOME</a>
@@ -55,7 +62,7 @@
             <div class="hero-section" style="display:flex;justify-content:space-between;align-items:flex-end;">
                 <div>
                     <h1 style="font-size:1.8rem;color:#fff;font-weight:800;margin-bottom:8px;">Schramm–Loewner Evolution <span style="color:#62e6c9;">($\text{SLE}_\kappa$)</span></h1>
-                    <p style="color:#a59fc4;font-size:0.9rem;">Conformal invariant random curves governed by the stochastic Loewner differential equation $\frac{\partial g_t(z)}{\partial t} = \frac{2}{g_t(z) - U_t}$.</p>
+                    <p style="color:#a59fc4;font-size:0.9rem;">Conformal invariant stochastic geometry solving $\frac{\partial g_t(z)}{\partial t} = \frac{2}{g_t(z) - U_t}$ in $\mathbb{H}$ and radial flows in $\mathbb{D}$.</p>
                 </div>
                 <div>
                     <span id="phaseBadge" class="phase-badge phase-simple">PHASE: SIMPLE CURVE (κ ≤ 4)</span>
@@ -64,28 +71,35 @@
 
             <div class="sle-grid">
                 <aside class="control-panel">
-                    <h3 style="font-family:'Fira Code',monospace;font-size:0.9rem;color:#b48bff;margin-bottom:14px;">LOEWNER DRIVING FUNCTION</h3>
+                    <h3 style="font-family:'Fira Code',monospace;font-size:0.85rem;color:#b48bff;margin-bottom:10px;">GEOMETRY MODE</h3>
+                    <div class="mode-btn-group">
+                        <button id="modeChordal" class="mode-btn active" onclick="setGeometryMode('chordal')">Chordal ($\mathbb{H}$)</button>
+                        <button id="modeRadial" class="mode-btn" onclick="setGeometryMode('radial')">Radial ($\mathbb{D}$)</button>
+                    </div>
+
+                    <h3 style="font-family:'Fira Code',monospace;font-size:0.85rem;color:#b48bff;margin-bottom:10px;">LOEWNER DRIVING FUNCTION $U_t$</h3>
                     
                     <button class="preset-btn" id="btnDriverBM" onclick="setDriver('bm')">Pure Brownian Motion $U_t = \sqrt{\kappa} B_t$</button>
                     <button class="preset-btn" id="btnDriverPeriodic" onclick="setDriver('periodic')">Periodic Oscillatory $U_t = \sin(3t) + \sqrt{\kappa} B_t$</button>
-                    <button class="preset-btn" id="btnDriverSlit" onclick="setDriver('slit')">Discontinuous Slit $U_t = \text{sgn}(\sin(t)) \cdot 2 + \sqrt{\kappa} B_t$</button>
+                    <button class="preset-btn" id="btnDriverSlit" onclick="setDriver('slit')">Discontinuous Slit $U_t = 2\text{sgn}(\sin(2t)) + \sqrt{\kappa} B_t$</button>
+                    <button class="preset-btn" id="btnDriverDrift" onclick="setDriver('drift')">Linear Drift $U_t = 1.5t + \sqrt{\kappa} B_t$</button>
 
-                    <h3 style="font-family:'Fira Code',monospace;font-size:0.9rem;color:#b48bff;margin-top:16px;margin-bottom:14px;">PARAMETERS</h3>
+                    <h3 style="font-family:'Fira Code',monospace;font-size:0.85rem;color:#b48bff;margin-top:16px;margin-bottom:12px;">PARAMETERS</h3>
 
                     <div class="slider-group">
                         <label>DIFFUSION PARAMETER ($\kappa$): <span id="kappaVal" class="val-badge">2.67</span></label>
-                        <input type="range" id="kappaSlider" min="0.5" max="8.0" step="0.05" value="2.67">
+                        <input type="range" id="kappaSlider" min="0.5" max="10.0" step="0.05" value="2.67">
                     </div>
 
                     <div class="slider-group">
-                        <label>SIMULATION STEPS ($N$): <span id="stepsVal" class="val-badge">1200</span></label>
-                        <input type="range" id="stepsSlider" min="300" max="2500" step="100" value="1200">
+                        <label>SIMULATION STEPS ($N$): <span id="stepsVal" class="val-badge">1400</span></label>
+                        <input type="range" id="stepsSlider" min="300" max="3000" step="100" value="1400">
                     </div>
 
                     <button id="runBtn" class="action-btn btn-run" onclick="simulateSLE()">RUN INSTANT SOLVER ⚡</button>
                     <button id="animateBtn" class="action-btn btn-animate" onclick="toggleAnimation()">ANIMATE CONFORMAL FLOW ▶</button>
 
-                    <h4 style="font-family:'Fira Code',monospace;font-size:0.8rem;color:#a59fc4;margin-top:12px;margin-bottom:8px;">PHYSICS PRESETS</h4>
+                    <h4 style="font-family:'Fira Code',monospace;font-size:0.8rem;color:#a59fc4;margin-top:14px;margin-bottom:8px;">PHYSICS & STATISTICAL PRESETS</h4>
                     <button class="preset-btn" onclick="setPreset(2.0)">κ = 2.0 (Loop-Erased Random Walk)</button>
                     <button class="preset-btn" onclick="setPreset(2.6667)">κ = 8/3 (Self-Avoiding Walk)</button>
                     <button class="preset-btn" onclick="setPreset(3.0)">κ = 3.0 (Ising Spin Boundary)</button>
@@ -94,18 +108,29 @@
                     <button class="preset-btn" onclick="setPreset(8.0)">κ = 8.0 (Space-Filling Curve)</button>
 
                     <div class="math-box">
-                        <strong>Fractal Hausdroff Dimension:</strong><br>
+                        <strong>Fractal Hausdorff Dimension:</strong><br>
                         $d_f = \min\left(2, 1 + \frac{\kappa}{8}\right)$<br>
                         Current $d_f$: <span id="dimVal" style="color:#62e6c9;font-weight:bold;">1.333</span>
                     </div>
                 </aside>
 
                 <section class="canvas-card">
-                    <div style="width:100%;display:flex;justify-content:space-between;margin-bottom:12px;">
-                        <span style="font-family:'Fira Code',monospace;font-size:0.75rem;color:#62e6c9;">CHORDAL SLE TRACE IN UPPER HALF-PLANE $\mathbb{H}$</span>
-                        <span id="statusLabel" style="font-family:'Fira Code',monospace;font-size:0.75rem;color:#a59fc4;">READY</span>
+                    <div class="canvas-wrapper">
+                        <div style="width:100%;display:flex;justify-content:space-between;align-items:center;">
+                            <span id="geometryLabel" style="font-family:'Fira Code',monospace;font-size:0.75rem;color:#62e6c9;">CHORDAL SLE TRACE IN UPPER HALF-PLANE $\mathbb{H}$</span>
+                            <span id="statusLabel" style="font-family:'Fira Code',monospace;font-size:0.75rem;color:#a59fc4;">READY</span>
+                        </div>
+
+                        <canvas id="sleCanvas" width="780" height="520"></canvas>
+
+                        <div class="driver-card">
+                            <div style="font-family:'Fira Code',monospace;font-size:0.7rem;color:#b48bff;margin-bottom:6px;display:flex;justify-content:space-between;">
+                                <span>LOEWNER DRIVER PROCESS $U_t$ vs TIME $t$</span>
+                                <span id="driverInfo" style="color:#a59fc4;">U(0)=0.00</span>
+                            </div>
+                            <canvas id="driverCanvas" width="756" height="110"></canvas>
+                        </div>
                     </div>
-                    <canvas id="sleCanvas" width="800" height="560"></canvas>
                 </section>
             </div>
         </main>
@@ -138,6 +163,9 @@
     <script>
         const canvas = document.getElementById('sleCanvas');
         const ctx = canvas.getContext('2d');
+        const driverCanvas = document.getElementById('driverCanvas');
+        const driverCtx = driverCanvas.getContext('2d');
+
         const kappaSlider = document.getElementById('kappaSlider');
         const stepsSlider = document.getElementById('stepsSlider');
         const kappaVal = document.getElementById('kappaVal');
@@ -145,17 +173,32 @@
         const dimVal = document.getElementById('dimVal');
         const statusLabel = document.getElementById('statusLabel');
         const phaseBadge = document.getElementById('phaseBadge');
+        const geometryLabel = document.getElementById('geometryLabel');
+        const driverInfo = document.getElementById('driverInfo');
 
+        let geometryMode = 'chordal';
         let currentDriver = 'bm';
         let isAnimating = false;
         let animStep = 0;
         let computedPoints = [];
+        let driverValues = [];
+
+        function setGeometryMode(mode) {
+            geometryMode = mode;
+            document.getElementById('modeChordal').className = mode === 'chordal' ? 'mode-btn active' : 'mode-btn';
+            document.getElementById('modeRadial').className = mode === 'radial' ? 'mode-btn active' : 'mode-btn';
+            geometryLabel.innerText = mode === 'chordal' 
+                ? 'CHORDAL SLE TRACE IN UPPER HALF-PLANE \u214d' 
+                : 'RADIAL SLE TRACE IN UNIT DISK \u2141 (TARGET = ORIGIN)';
+            simulateSLE();
+        }
 
         function setDriver(d) {
             currentDriver = d;
-            document.getElementById('btnDriverBM').style.borderColor = d === 'bm' ? '#62e6c9' : 'rgba(98,230,201,0.3)';
-            document.getElementById('btnDriverPeriodic').style.borderColor = d === 'periodic' ? '#62e6c9' : 'rgba(98,230,201,0.3)';
-            document.getElementById('btnDriverSlit').style.borderColor = d === 'slit' ? '#62e6c9' : 'rgba(98,230,201,0.3)';
+            ['bm','periodic','slit','drift'].forEach(name => {
+                const el = document.getElementById('btnDriver' + name.charAt(0).toUpperCase() + name.slice(1));
+                if (el) el.style.borderColor = (d === name) ? '#62e6c9' : 'rgba(98,230,201,0.3)';
+            });
             simulateSLE();
         }
 
@@ -168,13 +211,13 @@
 
             if (kappa <= 4.0) {
                 phaseBadge.className = 'phase-badge phase-simple';
-                phaseBadge.innerText = 'PHASE: SIMPLE CURVE (κ ≤ 4)';
+                phaseBadge.innerText = 'PHASE: SIMPLE CURVE (\u03ba \u2264 4)';
             } else if (kappa < 8.0) {
                 phaseBadge.className = 'phase-badge phase-touch';
-                phaseBadge.innerText = 'PHASE: SELF-TOUCHING (4 < κ < 8)';
+                phaseBadge.innerText = 'PHASE: SELF-TOUCHING (4 < \u03ba < 8)';
             } else {
                 phaseBadge.className = 'phase-badge phase-fill';
-                phaseBadge.innerText = 'PHASE: SPACE-FILLING (κ ≥ 8)';
+                phaseBadge.innerText = 'PHASE: SPACE-FILLING (\u03ba \u2265 8)';
             }
         }
 
@@ -191,62 +234,86 @@
             isAnimating = !isAnimating;
             const btn = document.getElementById('animateBtn');
             if (isAnimating) {
-                btn.innerText = 'PAUSE ANIMATION ⏸';
+                btn.innerText = 'PAUSE ANIMATION \u23f8';
                 animStep = 0;
                 animateFlow();
             } else {
-                btn.innerText = 'ANIMATE CONFORMAL FLOW ▶';
+                btn.innerText = 'ANIMATE CONFORMAL FLOW \u25b6';
             }
         }
 
         function animateFlow() {
             if (!isAnimating || animStep >= computedPoints.length) {
                 isAnimating = false;
-                document.getElementById('animateBtn').innerText = 'ANIMATE CONFORMAL FLOW ▶';
+                document.getElementById('animateBtn').innerText = 'ANIMATE CONFORMAL FLOW \u25b6';
                 return;
             }
-            animStep += 15;
+            animStep += Math.max(10, Math.floor(computedPoints.length / 120));
             renderPoints(computedPoints.slice(0, animStep));
             requestAnimationFrame(animateFlow);
         }
 
         function simulateSLE() {
             isAnimating = false;
-            document.getElementById('animateBtn').innerText = 'ANIMATE CONFORMAL FLOW ▶';
+            document.getElementById('animateBtn').innerText = 'ANIMATE CONFORMAL FLOW \u25b6';
 
             const kappa = parseFloat(kappaSlider.value);
             const numSteps = parseInt(stepsSlider.value);
-            const dt = 0.005;
+            const dt = 0.004;
 
-            // Generate driving function U_t
-            let U = [0];
+            // 1. Generate driving function U_t
+            driverValues = [0];
             for (let i = 1; i <= numSteps; i++) {
                 const t = i * dt;
                 const dB = (Math.random() + Math.random() + Math.random() + Math.random() - 2.0) * Math.sqrt(dt * kappa);
-                let driverVal = U[i - 1] + dB;
-                if (currentDriver === 'periodic') driverVal += Math.sin(4 * t) * 0.15;
-                if (currentDriver === 'slit') driverVal += (Math.sin(2 * t) > 0 ? 0.3 : -0.3);
-                U.push(driverVal);
+                let driverVal = driverValues[i - 1] + dB;
+                if (currentDriver === 'periodic') driverVal += Math.sin(3 * t) * 0.12;
+                if (currentDriver === 'slit') driverVal += (Math.sin(2 * t) > 0 ? 0.25 : -0.25);
+                if (currentDriver === 'drift') driverVal += 1.2 * dt;
+                driverValues.push(driverVal);
             }
 
-            // Reverse Loewner flow computation
-            computedPoints = [{ x: 0, y: 0 }];
-            for (let k = 1; k <= numSteps; k++) {
-                let zReal = 0;
-                let zImag = 0.001;
-                for (let j = k; j >= 1; j--) {
-                    const dU = U[j] - U[j - 1];
-                    const denom = zReal * zReal + zImag * zImag;
-                    const dReal = -dU + (2 * dt * zReal) / denom;
-                    const dImag = (-2 * dt * zImag) / denom;
-                    zReal += dReal;
-                    zImag += dImag;
+            driverInfo.innerText = `U_final=${driverValues[driverValues.length-1].toFixed(2)}`;
+
+            // 2. Loewner differential equation integration
+            computedPoints = [];
+            if (geometryMode === 'chordal') {
+                computedPoints.push({ x: 0, y: 0 });
+                for (let k = 1; k <= numSteps; k++) {
+                    let zReal = 0;
+                    let zImag = 0.001;
+                    for (let j = k; j >= 1; j--) {
+                        const dU = driverValues[j] - driverValues[j - 1];
+                        const denom = zReal * zReal + zImag * zImag;
+                        const dReal = -dU + (2 * dt * zReal) / denom;
+                        const dImag = (-2 * dt * zImag) / denom;
+                        zReal += dReal;
+                        zImag += dImag;
+                    }
+                    computedPoints.push({ x: zReal, y: zImag });
                 }
-                computedPoints.push({ x: zReal, y: zImag });
+            } else {
+                // Radial SLE in unit disk D (start from boundary point 1+0i)
+                computedPoints.push({ x: 1, y: 0 });
+                for (let k = 1; k <= numSteps; k++) {
+                    let r = 1.0;
+                    let theta = 0.0;
+                    for (let j = k; j >= 1; j--) {
+                        const U = driverValues[j];
+                        const dU = driverValues[j] - driverValues[j - 1];
+                        const diff = theta - U;
+                        const dr = -dt * r * (1 - r * r) / Math.max(0.0001, (1 + r * r - 2 * r * Math.cos(diff)));
+                        const dtheta = -dU + 2 * r * Math.sin(diff) * dt / Math.max(0.0001, (1 + r * r - 2 * r * Math.cos(diff)));
+                        r += dr;
+                        theta += dtheta;
+                    }
+                    computedPoints.push({ x: r * Math.cos(theta), y: r * Math.sin(theta) });
+                }
             }
 
             renderPoints(computedPoints);
-            statusLabel.innerText = `DONE (N=${numSteps})`;
+            renderDriverGraph(driverValues);
+            statusLabel.innerText = `SOLVED (N=${numSteps})`;
         }
 
         function renderPoints(pts) {
@@ -254,37 +321,111 @@
             ctx.fillStyle = '#07090E';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw real axis
-            ctx.strokeStyle = 'rgba(170, 150, 255, 0.2)';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(0, canvas.height - 35);
-            ctx.lineTo(canvas.width, canvas.height - 35);
-            ctx.stroke();
+            if (geometryMode === 'chordal') {
+                // Draw boundary axis for Upper Half-Plane
+                ctx.strokeStyle = 'rgba(170, 150, 255, 0.25)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(0, canvas.height - 40);
+                ctx.lineTo(canvas.width, canvas.height - 40);
+                ctx.stroke();
 
-            const scaleX = 35;
-            const scaleY = 35;
-            const originX = canvas.width / 2;
-            const originY = canvas.height - 35;
+                const scaleX = 32;
+                const scaleY = 32;
+                const originX = canvas.width / 2;
+                const originY = canvas.height - 40;
 
-            ctx.beginPath();
-            pts.forEach((p, idx) => {
-                const screenX = originX + p.x * scaleX;
-                const screenY = originY - p.y * scaleY;
-                if (idx === 0) ctx.moveTo(screenX, screenY);
-                else ctx.lineTo(screenX, screenY);
-            });
+                // Multi-color gradient curve
+                for (let i = 1; i < pts.length; i++) {
+                    const p1 = pts[i - 1];
+                    const p2 = pts[i];
+                    const sX1 = originX + p1.x * scaleX;
+                    const sY1 = originY - p1.y * scaleY;
+                    const sX2 = originX + p2.x * scaleX;
+                    const sY2 = originY - p2.y * scaleY;
 
-            ctx.strokeStyle = kappa >= 8 ? '#ff9ad5' : (kappa > 4 ? '#ffd36e' : '#62e6c9');
-            ctx.lineWidth = 1.8;
-            ctx.stroke();
+                    const progress = i / pts.length;
+                    const hue = (progress * 260 + 160) % 360;
+                    ctx.strokeStyle = `hsl(${hue}, 85%, 65%)`;
+                    ctx.lineWidth = 1.8;
+                    ctx.beginPath();
+                    ctx.moveTo(sX1, sY1);
+                    ctx.lineTo(sX2, sY2);
+                    ctx.stroke();
+                }
+            } else {
+                // Radial SLE Unit Disk D boundary
+                const originX = canvas.width / 2;
+                const originY = canvas.height / 2;
+                const radius = Math.min(canvas.width, canvas.height) * 0.42;
+
+                ctx.strokeStyle = 'rgba(98, 230, 201, 0.3)';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.arc(originX, originY, radius, 0, 2 * Math.PI);
+                ctx.stroke();
+
+                ctx.fillStyle = 'rgba(180, 139, 255, 0.15)';
+                ctx.beginPath();
+                ctx.arc(originX, originY, 4, 0, 2 * Math.PI);
+                ctx.fill();
+
+                // Multi-color gradient curve inside Disk
+                for (let i = 1; i < pts.length; i++) {
+                    const p1 = pts[i - 1];
+                    const p2 = pts[i];
+                    const sX1 = originX + p1.x * radius;
+                    const sY1 = originY - p1.y * radius;
+                    const sX2 = originX + p2.x * radius;
+                    const sY2 = originY - p2.y * radius;
+
+                    const progress = i / pts.length;
+                    const hue = (progress * 260 + 180) % 360;
+                    ctx.strokeStyle = `hsl(${hue}, 90%, 65%)`;
+                    ctx.lineWidth = 2.0;
+                    ctx.beginPath();
+                    ctx.moveTo(sX1, sY1);
+                    ctx.lineTo(sX2, sY2);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        function renderDriverGraph(vals) {
+            driverCtx.fillStyle = '#07090E';
+            driverCtx.fillRect(0, 0, driverCanvas.width, driverCanvas.height);
+
+            if (vals.length < 2) return;
+
+            let minV = Math.min(...vals);
+            let maxV = Math.max(...vals);
+            let range = Math.max(1.0, maxV - minV);
+
+            driverCtx.strokeStyle = 'rgba(170,150,255,0.15)';
+            driverCtx.lineWidth = 1;
+            const midY = driverCanvas.height / 2;
+            driverCtx.beginPath();
+            driverCtx.moveTo(0, midY);
+            driverCtx.lineTo(driverCanvas.width, midY);
+            driverCtx.stroke();
+
+            driverCtx.beginPath();
+            const dx = driverCanvas.width / (vals.length - 1);
+            for (let i = 0; i < vals.length; i++) {
+                const x = i * dx;
+                const normY = (vals[i] - minV) / range;
+                const y = driverCanvas.height - (normY * (driverCanvas.height - 16) + 8);
+                if (i === 0) driverCtx.moveTo(x, y);
+                else driverCtx.lineTo(x, y);
+            }
+
+            driverCtx.strokeStyle = '#62e6c9';
+            driverCtx.lineWidth = 1.5;
+            driverCtx.stroke();
         }
 
         updateValues();
         simulateSLE();
-    </script>
-</body>
-</html>);
     </script>
 </body>
 </html>
