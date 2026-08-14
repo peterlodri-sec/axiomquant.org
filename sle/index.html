@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schramm–Loewner Evolution (SLE_κ) — Radial & Chordal Conformal Flow — AXIOM QUANT</title>
-    <meta name="description" content="Interactive Schramm-Loewner Evolution (SLE_κ) simulator with Loewner differential equation solvers in Chordal (H) and Radial (D) geometries. Explore phase transitions at κ=4, κ=8, fractal Hausdorff dimensions, and Loewner driving functions.">
+    <title>Schramm–Loewner Evolution (SLE_κ) — Radial, Chordal & Conformal Grid — AXIOM QUANT</title>
+    <meta name="description" content="Interactive Schramm-Loewner Evolution (SLE_κ) simulator with Loewner differential equation solvers in Chordal (H) and Radial (D) geometries, conformal map inversions g_t(z), and phase transition indicators.">
     
     <script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };</script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -34,6 +34,8 @@
         .btn-run:hover { box-shadow: 0 0 16px rgba(98,230,201,0.4); transform: translateY(-1px); }
         .btn-animate { background: linear-gradient(135deg, #ffd36e, #ff9ad5); color: #05060a; }
         .btn-animate:hover { box-shadow: 0 0 16px rgba(255,211,110,0.4); transform: translateY(-1px); }
+        .btn-grid { background: rgba(180,139,255,0.15); border: 1px solid #b48bff; color: #b48bff; }
+        .btn-grid.active { background: rgba(180,139,255,0.35); color: #fff; box-shadow: 0 0 12px rgba(180,139,255,0.4); }
         .math-box { background: rgba(5,6,10,0.7); border-left: 3px solid #b48bff; padding: 12px; margin-top: 14px; font-size: 0.8rem; color: #a59fc4; font-family: 'Fira Code', monospace; border-radius: 0 8px 8px 0; }
         .phase-badge { font-family: 'Fira Code', monospace; font-size: 0.8rem; padding: 6px 14px; border-radius: 16px; font-weight: 700; display: inline-block; }
         .phase-simple { background: rgba(98,230,201,0.15); border: 1px solid #62e6c9; color: #62e6c9; }
@@ -82,7 +84,7 @@
                     <button class="preset-btn" id="btnDriverBM" onclick="setDriver('bm')">Pure Brownian Motion $U_t = \sqrt{\kappa} B_t$</button>
                     <button class="preset-btn" id="btnDriverPeriodic" onclick="setDriver('periodic')">Periodic Oscillatory $U_t = \sin(3t) + \sqrt{\kappa} B_t$</button>
                     <button class="preset-btn" id="btnDriverSlit" onclick="setDriver('slit')">Discontinuous Slit $U_t = 2\text{sgn}(\sin(2t)) + \sqrt{\kappa} B_t$</button>
-                    <button class="preset-btn" id="btnDriverDrift" onclick="setDriver('drift')">Linear Drift $U_t = 1.5t + \sqrt{\kappa} B_t$</button>
+                    <button class="preset-btn" id="btnDriverDrift" onclick="setDriver('drift')">Linear Drift $U_t = 1.2t + \sqrt{\kappa} B_t$</button>
 
                     <h3 style="font-family:'Fira Code',monospace;font-size:0.85rem;color:#b48bff;margin-top:16px;margin-bottom:12px;">PARAMETERS</h3>
 
@@ -98,6 +100,7 @@
 
                     <button id="runBtn" class="action-btn btn-run" onclick="simulateSLE()">RUN INSTANT SOLVER ⚡</button>
                     <button id="animateBtn" class="action-btn btn-animate" onclick="toggleAnimation()">ANIMATE CONFORMAL FLOW ▶</button>
+                    <button id="gridBtn" class="action-btn btn-grid" onclick="toggleConformalGrid()">TOGGLE CONFORMAL MESH GRID 🌐</button>
 
                     <h4 style="font-family:'Fira Code',monospace;font-size:0.8rem;color:#a59fc4;margin-top:14px;margin-bottom:8px;">PHYSICS & STATISTICAL PRESETS</h4>
                     <button class="preset-btn" onclick="setPreset(2.0)">κ = 2.0 (Loop-Erased Random Walk)</button>
@@ -179,6 +182,7 @@
         let geometryMode = 'chordal';
         let currentDriver = 'bm';
         let isAnimating = false;
+        let showConformalGrid = false;
         let animStep = 0;
         let computedPoints = [];
         let driverValues = [];
@@ -200,6 +204,14 @@
                 if (el) el.style.borderColor = (d === name) ? '#62e6c9' : 'rgba(98,230,201,0.3)';
             });
             simulateSLE();
+        }
+
+        function toggleConformalGrid() {
+            showConformalGrid = !showConformalGrid;
+            const btn = document.getElementById('gridBtn');
+            if (showConformalGrid) btn.classList.add('active');
+            else btn.classList.remove('active');
+            renderPoints(computedPoints);
         }
 
         function updateValues() {
@@ -316,24 +328,48 @@
             statusLabel.innerText = `SOLVED (N=${numSteps})`;
         }
 
+        function drawConformalGridOverlay(originX, originY, scaleX, scaleY) {
+            ctx.strokeStyle = 'rgba(180, 139, 255, 0.12)';
+            ctx.lineWidth = 1;
+
+            if (geometryMode === 'chordal') {
+                for (let x = -10; x <= 10; x += 1.0) {
+                    ctx.beginPath();
+                    ctx.moveTo(originX + x * scaleX, 0);
+                    ctx.lineTo(originX + x * scaleX, canvas.height);
+                    ctx.stroke();
+                }
+                for (let y = 0.5; y <= 15; y += 1.0) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, originY - y * scaleY);
+                    ctx.lineTo(canvas.width, originY - y * scaleY);
+                    ctx.stroke();
+                }
+            }
+        }
+
         function renderPoints(pts) {
             const kappa = parseFloat(kappaSlider.value);
             ctx.fillStyle = '#07090E';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             if (geometryMode === 'chordal') {
-                // Draw boundary axis for Upper Half-Plane
-                ctx.strokeStyle = 'rgba(170, 150, 255, 0.25)';
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(0, canvas.height - 40);
-                ctx.lineTo(canvas.width, canvas.height - 40);
-                ctx.stroke();
-
                 const scaleX = 32;
                 const scaleY = 32;
                 const originX = canvas.width / 2;
                 const originY = canvas.height - 40;
+
+                if (showConformalGrid) {
+                    drawConformalGridOverlay(originX, originY, scaleX, scaleY);
+                }
+
+                // Draw boundary axis for Upper Half-Plane
+                ctx.strokeStyle = 'rgba(170, 150, 255, 0.25)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(0, originY);
+                ctx.lineTo(canvas.width, originY);
+                ctx.stroke();
 
                 // Multi-color gradient curve
                 for (let i = 1; i < pts.length; i++) {
