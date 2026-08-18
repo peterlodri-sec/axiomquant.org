@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function initWebWorker() {
   if (window.Worker && window.location.protocol !== 'file:') {
     try {
-      computeWorker = new Worker('./worker.js');
+      computeWorker = new Worker('/worker.js');
 
       computeWorker.onmessage = function(e) {
         const {type, payload} = e.data;
