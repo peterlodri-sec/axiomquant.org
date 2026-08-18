@@ -13,7 +13,7 @@ A distinction delta: U -> {0, 1} persists under time evolution T: U -> U if dist
 D(x, y) = inf_{phi} || I(x) - I(phi(y)) ||_H measures invariant loss across degraded state transitions in Hilbert space H.
 
 ## MCP Servers & APIs
-- OpenAPI 3.1: https://axiomquant-landing.pages.dev/.well-known/openapi.json
-- MCP Server: https://axiomquant-landing.pages.dev/.well-known/mcp.json
-- Agent Skills: https://axiomquant-landing.pages.dev/.well-known/skills/axiomquant.json
+- OpenAPI 3.1: https://axiomquant.org/.well-known/openapi.json
+- MCP Server: https://axiomquant.org/.well-known/mcp.json
+- Agent Skills: https://axiomquant.org/.well-known/skills/axiomquant.json
 - QuantReddit API: /api/v1/board/threads, /api/v1/board/thread, /api/v1/board/reply
