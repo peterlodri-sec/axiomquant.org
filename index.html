@@ -471,10 +471,10 @@
 
 </style>
 
-<!-- KaTeX 0.16.9 Math Engine Integration -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+<!-- KaTeX Math Engine Integration -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}, {left: '\\[', right: '\\]', display: true}], throwOnError: false});"></script>
 
   <link rel="alternate" type="application/rss+xml" title="AXIOM QUANT RSS Feed" href="/feed.xml">
   <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
@@ -680,6 +680,20 @@
                         <div class="paper-info">
                             <span class="p-title">The Three Questions of Peter</span>
                             <span class="p-sub">Faith, Storms &amp; Unlimited Grace</span>
+                        </div>
+                    </li>
+                    <li class="paper-nav-item" data-paper="parametricity-and-commitment-honesty" onclick="loadPaper('parametricity-and-commitment-honesty')">
+                        <span class="paper-icon">⚖️</span>
+                        <div class="paper-info">
+                            <span class="p-title">Monograph 86. Parametricity</span>
+                            <span class="p-sub">Commitment Honesty &amp; Free Theorems</span>
+                        </div>
+                    </li>
+                    <li class="paper-nav-item" data-paper="space-bender-layers-and-books" onclick="loadPaper('space-bender-layers-and-books')">
+                        <span class="paper-icon">📚</span>
+                        <div class="paper-info">
+                            <span class="p-title">Space-Bender 29 Books</span>
+                            <span class="p-sub">Tarpit Scraper Labyrinth</span>
                         </div>
                     </li>
                     <li class="paper-nav-item" data-paper="quantreddit" onclick="loadPaper('quantreddit')">
@@ -1111,10 +1125,8 @@ Turn 01 ───► Prompt / Tool   ───► Observation     ───► T
                     <div class="byline">N. Flyxion &amp; P. Lodri • Axiom Quant Research Monograph</div>
                 </div>
 
-                <!-- PAPER: MATHEMATICAL APPENDICES A-G -->
-                <div class="paper-content" 
                 <!-- PAPER 13: STANDARD GALACTIC COMPUTATION -->
-                <div class="paper-content" id="paper-standard-galactic-computation">
+                <div class="paper-content" id="paper-standard-galactic-decentralized-kb">
                     <div class="article-meta">
                         <span class="meta-tag gold">MONOGRAPH CHAPTER 13</span>
                         <span class="meta-date">AUGUST 2026</span>
@@ -1355,6 +1367,69 @@ id="paper-media-quines-appendices">
                             <button onclick="runSpaceBenderFold()" style="background: linear-gradient(135deg, #FF007F, #00F0FF); color: #FFF; border: none; padding: 6px 14px; font-family: var(--font-mono); font-weight: bold; border-radius: 4px; cursor: pointer;">FOLD MANIFOLD -&gt;[ ]&lt;- 🌀</button>
                         </div>
                         <div id="spaceBenderFoldOutput" style="background: #000; border: 1px solid rgba(0, 240, 255, 0.3); padding: 12px; font-family: var(--font-mono); font-size: 12px; color: #00FF66; border-radius: 6px; white-space: pre-wrap;">Click "FOLD MANIFOLD -&gt;[ ]&lt;-" to compute space-bender recursive contraction...</div>
+                    </div>
+                </div>
+
+                <!-- MONOGRAPH 86: PARAMETRICITY & COMMITMENT HONESTY -->
+                <div class="paper-content" id="paper-parametricity-and-commitment-honesty">
+                    <div class="article-meta">
+                        <span class="meta-tag gold">MONOGRAPH 86</span>
+                        <span class="meta-tag cyan">FREE THEOREMS // PARAMETRICITY // COMMITMENT HONESTY</span>
+                        <span class="meta-date">AUGUST 2026</span>
+                    </div>
+
+                    <h1 class="article-title">Parametricity, Free Theorems &amp; The Law of Commitment Honesty in Sovereign Agent Constellations</h1>
+                    <div class="byline">P. Lodri &amp; Flyxion • Axiom Quant Research Monograph</div>
+
+                    <div class="abstract-box">
+                        <div class="abstract-title">ABSTRACT</div>
+                        <p>We formalize the interface economics of autonomous agent systems through the lens of Reynolds' relational parametricity and Wadler's "Theorems for Free!". We demonstrate that monolithic "installation" abstractions introduce <em>Commitment Leakage</em>, forcing representational commitments ($P_{\text{rep}}$) onto operations that require solely semantic invariants ($P_{\text{sem}}$). We state and prove the <strong>Law of Commitment Honesty</strong> and synthesize it with the empirical bounds of the <strong>Epistemic Audit of AI Extinction</strong>.</p>
+                    </div>
+
+                    <h2>1. Deconstructing the Install Monolith</h2>
+                    <p>In standard agent architectures, delivering procedural knowledge conflates three logically independent operations:</p>
+                    <div class="math-box">
+                        $$\text{INSTALL} = \text{RESOLVE} \;\oplus\; \text{SAVE} \;\oplus\; \text{TRIGGER}$$
+                    </div>
+                    <table style="width:100%; border-collapse:collapse; margin:16px 0; font-family:var(--font-mono); font-size:12px;">
+                        <thead>
+                            <tr style="border-bottom:1px solid var(--border-color); color:var(--cyan); text-align:left;">
+                                <th style="padding:6px;">Operation</th>
+                                <th style="padding:6px;">Type Analogue</th>
+                                <th style="padding:6px;">Semantic Invariant ($P_{\text{sem}}$)</th>
+                                <th style="padding:6px;">Representational Obligation ($P_{\text{rep}}$)</th>
+                                <th style="padding:6px;">Standing Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.08);">
+                                <td style="padding:6px; color:#FFF;">RESOLVE</td>
+                                <td style="padding:6px; color:var(--gold);">head</td>
+                                <td style="padding:6px;">Content Identity</td>
+                                <td style="padding:6px;">∅</td>
+                                <td style="padding:6px; color:#00FF66;">0 Tokens</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.08);">
+                                <td style="padding:6px; color:#FFF;">SAVE</td>
+                                <td style="padding:6px; color:var(--gold);">fst</td>
+                                <td style="padding:6px;">Local Persistence</td>
+                                <td style="padding:6px;">∅</td>
+                                <td style="padding:6px; color:#00FF66;">0 Tokens</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.08);">
+                                <td style="padding:6px; color:#FFF;">TRIGGER (Prompt)</td>
+                                <td style="padding:6px; color:var(--gold);">sort</td>
+                                <td style="padding:6px;">Unprompted Activation</td>
+                                <td style="padding:6px;">Prompt Residency</td>
+                                <td style="padding:6px; color:#FF5555;">50-100 Tokens</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2>2. The Law of Commitment Honesty</h2>
+                    <p>A system is <strong>Commitment-Honest</strong> if and only if the standing execution and context cost of each operation tracks strictly its own representational obligations:</p>
+                    <div class="math-box">
+                        $$\text{Commitment Leakage} = \left(\bigcup_{i} P_{\text{rep}}(\text{op}_i)\right) \setminus P_{\text{rep}}(\text{op}_{\text{target}}) = \emptyset$$
                     </div>
                 </div>
 
