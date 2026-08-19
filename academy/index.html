@@ -283,6 +283,42 @@
             text-align: center;
         }
 
+        /* Topic and Level Buttons */
+        .topic-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--slate-text);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .topic-btn:hover, .topic-btn.active {
+            color: var(--gold-text);
+            border-color: var(--gold-text);
+            background: rgba(255, 211, 110, 0.12);
+        }
+
+        .level-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--slate-text);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .level-btn:hover, .level-btn.active {
+            color: #ffffff;
+            border-color: var(--cyan-accent);
+            background: rgba(0, 240, 255, 0.15);
+        }
+
         /* HUD & Spotlight */
         #vaked-hud {
             position: fixed;
@@ -480,6 +516,46 @@
                     <svg id="payoffSvg" viewBox="0 0 600 160" style="width:100%; max-height:160px;"></svg>
                 </div>
             </div>
+
+            <!-- NOTEBOOKLM MULTI-TIER ELI5 KNOWLEDGE VAULT -->
+            <div class="lab-panel" style="border-color: rgba(255, 211, 110, 0.35);">
+                <div class="lab-header">
+                    <div>
+                        <div style="font-family:var(--font-mono); font-size:12px; color:var(--gold-text); font-weight:700;">NOTEBOOKLM STUDIO // MULTI-TIER ELI5 VAULT</div>
+                        <h2 style="font-family:var(--font-mono); font-size:22px; color:#fff; margin:4px 0 0 0;">Interactive Topic Explainer &amp; Video Script Studio</h2>
+                    </div>
+                    <div style="font-family:var(--font-mono); font-size:11px; color:var(--gold-text); background:rgba(255, 211, 110, 0.12); padding:4px 10px; border-radius:4px; border:1px solid rgba(255, 211, 110, 0.3);">
+                        🎙️ 3-Tier Depth Calibration (ELI5 → Eng → Math)
+                    </div>
+                </div>
+
+                <!-- Topic Selector -->
+                <div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:12px; margin-bottom:1.5rem; border-bottom:1px solid var(--border-subtle);">
+                    <button class="topic-btn active" onclick="selectTopic(1)">01. BitNet b1.58</button>
+                    <button class="topic-btn" onclick="selectTopic(2)">02. KOMPRESS v2</button>
+                    <button class="topic-btn" onclick="selectTopic(3)">03. Post-Quantum</button>
+                    <button class="topic-btn" onclick="selectTopic(4)">04. Extinction Audit</button>
+                    <button class="topic-btn" onclick="selectTopic(5)">05. Commitment Honesty</button>
+                    <button class="topic-btn" onclick="selectTopic(6)">06. Backyard Ultra</button>
+                    <button class="topic-btn" onclick="selectTopic(7)">07. Spectral Rigidity</button>
+                    <button class="topic-btn" onclick="selectTopic(8)">08. Vaked Compiler</button>
+                </div>
+
+                <!-- Level Selector -->
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:1.5rem;">
+                    <div style="display:flex; gap:8px;">
+                        <button class="level-btn active" id="btn-lvl-1" onclick="selectLevel(1)">🟢 Level 1: True ELI5</button>
+                        <button class="level-btn" id="btn-lvl-2" onclick="selectLevel(2)">🟡 Level 2: Engineering</button>
+                        <button class="level-btn" id="btn-lvl-3" onclick="selectLevel(3)">🔴 Level 3: Formal Math</button>
+                    </div>
+                    <button onclick="copyNotebookLMSource()" style="background:rgba(255,211,110,0.15); border:1px solid var(--gold-text); color:var(--gold-text); font-family:var(--font-mono); font-size:11px; padding:6px 14px; border-radius:6px; cursor:pointer;">📋 Copy Source for NotebookLM</button>
+                </div>
+
+                <!-- Active Script Container -->
+                <div id="explainer-content-box" style="background:#030712; border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:20px; font-family:var(--font-sans); font-size:13.5px; line-height:1.7; color:#e2e8f0; min-height:180px;">
+                    <!-- Injected via JavaScript -->
+                </div>
+            </div>
         </main>
 
         <footer style="text-align:center; font-family:var(--font-mono); font-size:12px; color:var(--slate-text); padding:2rem 0; border-top:1px solid var(--border-subtle);">
@@ -611,7 +687,138 @@
             `;
         }
 
-        document.addEventListener('DOMContentLoaded', calcGreeks);
+        // NotebookLM Multi-Tier ELI5 Studio Database
+        const EXPLAINER_DB = {
+            1: {
+                title: "01. BitNet b1.58 & Ternary Computing",
+                l1: `<strong>🟢 Level 1: True ELI5 — The 3-Way Switch vs The Giant Calculator</strong><br><br>
+                <em>"Imagine a lemonade stand where every customer makes you multiply 10-digit decimal numbers. That’s how normal AI works, burning up huge energy! BitNet replaces the heavy calculator with a 3-way lever: <strong>Add a scoop (+1)</strong>, <strong>Take away a scoop (-1)</strong>, or <strong>Do nothing (0)</strong>. No multiplication required! The AI runs at lightning speed, stays ice cold, and fits on your phone."</em>`,
+                l2: `<strong>🟡 Level 2: Engineering — Eliminating FP16 Memory Wall</strong><br><br>
+                LLM inference is memory-bandwidth bounded. Moving 16-bit float weights from HBM to compute registers costs $85\\%$ of total power. BitNet b1.58 quantizes weights into $\\{-1, 0, +1\\}$ using absolute-mean scaling $\\gamma = \\frac{1}{mn}\\sum |W_{ij}|$. Matrix multiplications $Y = WX$ transform into integer additions and bitmask SIMD subtractions: $Y = \\gamma \\cdot (X_{\\text{pos}} - X_{\\text{neg}})$. Packed in 64-bit registers, Metal kernels achieve 4x-10x throughput with 0 FP ALUs.`,
+                l3: `<strong>🔴 Level 3: Mathematical Rigor — Spectral Null Model & Marchenko-Pastur Law</strong><br><br>
+                Let $\\mathbf{W} \\in \\{-1, 0, +1\\}^{m \\times n}$ with sparsity $p = \\mathbb{P}(W_{ij} \\neq 0)$ and aspect ratio $\\gamma_s = m/n$. The singular values converge to Marchenko-Pastur bounds $s_{\\max}/\\sqrt{n} \\to \\sqrt{p}(1+\\sqrt{\\gamma_s})$ and $s_{\\min}/\\sqrt{n} \\to \\sqrt{p}(1-\\sqrt{\\gamma_s})$. Restricted Isometry Property $c p\\|x\\|^2 \\le \\|\\widetilde{W}x\\|^2 \\le C p\\|x\\|^2$ guarantees zero dimensional collapse across deep layers, with quantization error variance $\\sigma^2 \\approx 0.8\\gamma$ dual to LWE lattices.`
+            },
+            2: {
+                title: "02. KOMPRESS v2 Consensus Distillation",
+                l1: `<strong>🟢 Level 1: True ELI5 — The Council of 8 Wise Professors</strong><br><br>
+                <em>"If a student only copies one teacher, they copy all of that teacher's mistakes too. KOMPRESS v2 puts 8 diverse master professors in a room! When asked a question, all 8 professors whisper their answers together. The student only writes down what they ALL agree on. If one teacher has a hallucination, the other 7 immediately veto it."</em>`,
+                l2: `<strong>🟡 Level 2: Engineering — Geometric Consensus & Zero-Cost Logit Averaging</strong><br><br>
+                Arithmetic averaging $\\frac{1}{K}\\sum p_k$ fails when single teachers hallucinate with high confidence. The unnormalized geometric mean $\\bar{p}(i) \\propto \\prod p_k(i)^{1/K}$ acts as a multiplicative veto. By <strong>Proposition 1</strong>, $\\operatorname{softmax}(\\bar{z}/T) = \\bar{p}$ where $\\bar{z} = \\frac{1}{K}\\sum z_k$, meaning we achieve geometric probability consensus simply by averaging raw teacher logits with 0 probability normalization overhead.`,
+                l3: `<strong>🔴 Level 3: Mathematical Rigor — Optimization Equivalence & 4-Predicate Contracts</strong><br><br>
+                <strong>Proposition 2:</strong> $\\arg\\min_q \\frac{1}{K}\\sum D_{\\text{KL}}(q \\| p_k) = \\arg\\min_q D_{\\text{KL}}(q \\| \\bar{p})$. Distillation over $K$ teachers is mathematically identical to single-target KL minimization against consensus $\\bar{p}$. Reasoning correctness is guaranteed by the 4-predicate admissibility contract $\\mathcal{A}(c) = \\mathcal{P}(c) \\land \\mathcal{S}(c) \\land \\mathcal{T}(c) \\land \\mathcal{G}(c)$ across isolated Git worktrees.`
+            },
+            3: {
+                title: "03. Post-Quantum Cryptography & ML-KEM-1024",
+                l1: `<strong>🟢 Level 1: True ELI5 — The 1,000-Dimensional Crystal Fog Maze</strong><br><br>
+                <em>"Old internet locks use math multiplication that future quantum computers can snap open with Shor's algorithm. ML-KEM moves your secrets inside a 1,000-dimensional crystal grid filled with a pinch of random static fog. Even a super-smart quantum computer gets totally lost trying to find the secret crystal!"</em>`,
+                l2: `<strong>🟡 Level 2: Engineering — Module-LWE & Hybrid TLS 1.3 Handshakes</strong><br><br>
+                To defeat 'Harvest Now, Decrypt Later' adversaries, NIST FIPS 203 specifies Module Learning-With-Errors over polynomial rings $R_q = \\mathbb{Z}_q[X]/(X^{256}+1)$. Production systems deploy <code>X25519MLKEM768</code> hybrid key exchange: $\\text{SS} = \\text{HKDF}(\\text{SS}_{\\text{ECDH}} \\parallel \\text{SS}_{\\text{ML-KEM}})$, combining classical side-channel maturity with post-quantum security.`,
+                l3: `<strong>🔴 Level 3: Mathematical Rigor — Worst-Case Lattice Hardness Reduction</strong><br><br>
+                Decisional Module-LWE hardness reduces directly to the Shortest Independent Vector Problem ($\\text{SIVP}_\\gamma$) over module lattices. Classical block Korkine-Zolotarev (BKZ) reduction algorithms with parameter $\\beta \\ge 800$ demand exponential complexity $2^{\\Omega(\\beta)}$, securing 256 bits of post-quantum protection under chosen-ciphertext CPA/CCA2 transforms.`
+            },
+            4: {
+                title: "04. The Epistemic Extinction Audit",
+                l1: `<strong>🟢 Level 1: True ELI5 — The Super-Smart Brain Still Has to Bake Bread</strong><br><br>
+                <em>"A super-smart brain in a computer can read every recipe in the galaxy in one second, but it still cannot make an oven bake a loaf of bread in zero seconds! Atoms take time to bond, seeds take time to grow, and steel takes time to build. Thinking fast never breaks the physical speed limits of the real world."</em>`,
+                l2: `<strong>🟡 Level 2: Engineering — Denominator Fallacy & Physical Time Constants ($T_{\\text{phys}}$)</strong><br><br>
+                The 'Synthetic Agent Fallacy' confuses fluent token generation with physical causal control. Physical synthesis is strictly bounded by $T_{\\text{total}} = N_{\\text{iter}} \\times (T_{\\text{compute}} + T_{\\text{assay}} + T_{\\text{phys}})$. Software cannot accelerate chemical reaction kinetics or physical diffusion. Uncalibrated $p(\\text{doom})$ calculations fail the Denominator Audit $N_i = X_i p_i d_i$ and ignore the Counterfactual Risk Equation $R_{\\text{net}} = R_{\\text{intro}} - R_{\\text{mitigated}} + R_{\\text{foregone}}$.`,
+                l3: `<strong>🔴 Level 3: Mathematical Rigor — Thermodynamic Mutual Information Bounds</strong><br><br>
+                In open thermodynamic systems with Langevin dynamics $d\\mathbf{x}_t = \\mathbf{f}(\\mathbf{x}_t)dt + \\sqrt{2D}d\\mathbf{W}_t$, digital control mutual information degrades exponentially with Lyapunov horizon: $\\mathcal{I}(\\mathbf{x}_{t+\\tau}; \\text{Action}_t) \\le C \\tau e^{-\\lambda_{\\text{Lyapunov}}\\tau}$. Zero unbounded ungrounded causal control can propagate without continuous macroscopic physical feedback.`
+            },
+            5: {
+                title: "05. Parametricity & Commitment Honesty",
+                l1: `<strong>🟢 Level 1: True ELI5 — The Magic Pocket Library Card</strong><br><br>
+                <em>"If you go for a walk, you don't carry 50 giant encyclopedia books on your back 'just in case'. You carry a tiny library card! That's Commitment Honesty: your AI keeps all tools in the library and only pulls the single page it needs when you ask, keeping its backpack 100% free and light."</em>`,
+                l2: `<strong>🟡 Level 2: Engineering — Deconstructing the Install Monolith</strong><br><br>
+                Monolithic installation conflates $\\text{INSTALL} = \\text{RESOLVE} \\oplus \\text{SAVE} \\oplus \\text{TRIGGER}$. Resolving content ($\cong \\texttt{head}$) and local caching ($\cong \\texttt{fst}$) require zero standing tokens. Only prompt residency ($\cong \\texttt{sort}$) consumes context. Eliminating Commitment Leakage $\\bigcup P_{\\text{rep}}(\\text{op}_i) \\setminus P_{\\text{rep}}(\\text{target}) = \\emptyset$ preserves 100% capability with 0 standing token cost ($P_{\\text{rep}} = \\emptyset$).`,
+                l3: `<strong>🔴 Level 3: Mathematical Rigor — Reynolds Parametricity & Wadler's Free Theorems</strong><br><br>
+                By relational parametricity for polymorphic selectors $\\tau: \\forall X. [X] \\to X$, naturality requires $f \\circ \\tau_A = \\tau_B \\circ \\operatorname{map} f$. The Law of Commitment Honesty formally states that an interface operation $\\alpha$ is honest iff $\\mathcal{C}(\\alpha) = \\mathcal{O}(P_{\\text{sem}}(\\alpha))$ with $P_{\\text{rep}}(\\alpha) = \\emptyset \\quad \\forall \\alpha \\in \\{\\text{RESOLVE}, \\text{SAVE}\\}$.`
+            },
+            6: {
+                title: "06. Backyard Ultra Loop Engineering",
+                l1: `<strong>🟢 Level 1: True ELI5 — The 1-Hour Forest Runner</strong><br><br>
+                <em>"In a Backyard Ultra race, you run one 4-mile loop every hour. If you finish early, you rest, eat, and clean your shoes before the bell rings. In AI engineering, the robot runs one clean task, tests everything with a magnifying glass, wipes its chalkboard clean, and starts the next lap refreshed!"</em>`,
+                l2: `<strong>🟡 Level 2: Engineering — Isolated Git Worktrees & 4-Predicate Gating</strong><br><br>
+                Autonomous agents fail over long horizons due to monotonic context entropy. The Backyard Ultra architecture partitions work into atomic hourly laps with 4 invariants: (1) isolated <code>git worktree</code> sandboxes, (2) strict 4-predicate gating (AST $\\mathcal{P}$, Types $\\mathcal{S}$, Tests $\\mathcal{T}$, Git $\\mathcal{G}$), (3) deterministic attention resets, and (4) continuous failure recovery without human intervention.`,
+                l3: `<strong>🔴 Level 3: Mathematical Rigor — Discrete Dynamical Lyapunov Convergence</strong><br><br>
+                Let $\\mathcal{X}$ be the codebase state space. The loop admissibility operator ensures that distance to target specification $V(\\mathbf{x}) = \\|\\text{AST}(\\mathbf{x}) - \\text{AST}(\\mathbf{x}^*)\\|_{\\text{edit}}$ satisfies the monotonic Lyapunov stability invariant $\\Delta V(\\mathbf{x}_k) = V(\\mathbf{x}_{k+1}) - V(\\mathbf{x}_k) \\le 0$, proving asymptotic global convergence.`
+            },
+            7: {
+                title: "07. Spectral Rigidity & Random Matrices",
+                l1: `<strong>🟢 Level 1: True ELI5 — The Repelling Bus Seat Magnets</strong><br><br>
+                <em>"When people get on an empty bus, they don't sit on someone's lap—they space out evenly! In nature, atomic energy levels and stock market prices act like tiny repelling magnets that refuse to clump together. This secret order is called Spectral Rigidity."</em>`,
+                l2: `<strong>🟡 Level 2: Engineering — Marchenko-Pastur Denoising in Quantitative Finance</strong><br><br>
+                Given asset returns $X \\in \\mathbb{R}^{N \\times T}$ with $q = N/T$, the empirical correlation matrix bulk eigenvalues fall strictly inside $[\\sigma^2(1-\\sqrt{q})^2, \\sigma^2(1+\\sqrt{q})^2]$. Shaving the Marchenko-Pastur bulk eliminates random mathematical noise from true economic market factors. The spectral boundary fluctuations follow the Tracy-Widom distribution.`,
+                l3: `<strong>🔴 Level 3: Mathematical Rigor — Dyson Brownian Motion & Painlevé II</strong><br><br>
+                Eigenvalues evolve under Dyson Brownian motion $d\\lambda_i = \\frac{dB_i}{\\sqrt{N}} + \\frac{1}{N}\\sum_{j \\neq i} \\frac{dt}{\\lambda_i - \\lambda_j}$. Number variance is logarithmically rigid $\\operatorname{Var}(N) \\sim \\frac{1}{\\pi^2 \\beta}\\log L$. The extreme eigenvalue converges to Tracy-Widom $F_2(s) = \\det(I - K_{\\text{Airy}}) = \\exp(-\\int_s^\\infty (x-s)u(x)^2 dx)$ via the Painlevé II transcendent $u'' = 2u^3 + xu$.`
+            },
+            8: {
+                title: "08. The Vaked Compiler & Capability Graphs",
+                l1: `<strong>🟢 Level 1: True ELI5 — The Wise Castle Keymaster</strong><br><br>
+                <em>"If a helper wants to sweep the porch, the wise Keymaster gives them a tiny key that only opens the porch door—never the dragon vault! The Vaked Compiler checks all keys and blueprints before anyone moves, proving the castle is 100% safe before you start."</em>`,
+                l2: `<strong>🟡 Level 2: Engineering — Compile-Time POLA & LPG Pipeline</strong><br><br>
+                Vaked compiles declarative <code>.vaked</code> specs through recursive descent lexer/parser into a Labeled Property Graph (LPG). The checker enforces 4 invariants: (1) schema conformance, (2) cycle detection (<code>E-WORKFLOW-CYCLE</code>), (3) depth bounds (<code>E-WORKFLOW-DEPTH</code>), and (4) capability attenuation. Lowering is a pure function emitting byte-exact deterministic Nix/JSON artifacts.`,
+                l3: `<strong>🔴 Level 3: Mathematical Rigor — Capability Attenuation Lattices & Deadlock Freedom</strong><br><br>
+                Delegations are typed over a bounded lattice $(\\mathcal{C}, \\sqsubseteq)$ where $\\operatorname{cap}(B) \\sqsubseteq \\operatorname{cap}(A)$. The compiler formally proves that workflow dependency graphs $\\mathcal{G} = (V, E)$ are acyclic ($\operatorname{Cycles}(\\mathcal{G}) = \\emptyset$), guaranteeing deadlock-free execution in finite steps $T < \\infty$.`
+            }
+        };
+
+        let currentTopicId = 1;
+        let currentLevelId = 1;
+
+        function selectTopic(tId) {
+            currentTopicId = tId;
+            document.querySelectorAll('.topic-btn').forEach((btn, idx) => {
+                btn.classList.toggle('active', (idx + 1) === tId);
+            });
+            renderExplainer();
+        }
+
+        function selectLevel(lId) {
+            currentLevelId = lId;
+            document.getElementById('btn-lvl-1').classList.toggle('active', lId === 1);
+            document.getElementById('btn-lvl-2').classList.toggle('active', lId === 2);
+            document.getElementById('btn-lvl-3').classList.toggle('active', lId === 3);
+            renderExplainer();
+        }
+
+        function renderExplainer() {
+            const data = EXPLAINER_DB[currentTopicId];
+            const container = document.getElementById('explainer-content-box');
+            if (!container || !data) return;
+
+            let content = '';
+            if (currentLevelId === 1) content = data.l1;
+            else if (currentLevelId === 2) content = data.l2;
+            else if (currentLevelId === 3) content = data.l3;
+
+            container.innerHTML = `
+                <div style="font-family:var(--font-mono); font-size:11px; color:var(--gold-text); margin-bottom:8px; text-transform:uppercase;">TOPIC // ${data.title}</div>
+                <div>${content}</div>
+            `;
+
+            if (window.renderMathInElement) {
+                try {
+                    window.renderMathInElement(container, {
+                        delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}],
+                        throwOnError: false
+                    });
+                } catch(e) {}
+            }
+        }
+
+        function copyNotebookLMSource() {
+            const data = EXPLAINER_DB[currentTopicId];
+            const textToCopy = `# ${data.title}\n\n## Level 1 (ELI5)\n${data.l1.replace(/<[^>]*>?/gm, '')}\n\n## Level 2 (Engineering)\n${data.l2.replace(/<[^>]*>?/gm, '')}\n\n## Level 3 (Formal Math)\n${data.l3.replace(/<[^>]*>?/gm, '')}`;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('✓ NotebookLM Source for ' + data.title + ' copied to clipboard!');
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            calcGreeks();
+            renderExplainer();
+        });
     </script>
 </body>
 </html>
